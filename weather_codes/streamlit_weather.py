@@ -51,16 +51,11 @@ target_temp = st.sidebar.slider("Target temperature (°C)", min_value=-10.0, max
 
 top_k = st.sidebar.number_input("Top K countries", min_value=1, max_value=50, value=10, step=1)
 
-min_years = st.sidebar.slider(
-    "Min. years of data for that month (robustness)",
-    min_value=1, max_value=200, value=10, step=1
-)
-
 run_btn = st.sidebar.button("Find countries")
 
 # --------- Main area ----------
 st.subheader("Your selection")
-st.write(f"**Month:** {month_label}  •  **Target:** {target_temp:.1f} °C  •  **Top K:** {top_k}  •  **Min years:** {min_years}")
+st.write(f"**Month:** {month_label}  •  **Target:** {target_temp:.1f} °C  •  **Top K:** {top_k}")
 
 def compute_results():
     res = find_top_countries_for_month_temp(
@@ -68,7 +63,7 @@ def compute_results():
         month=month,
         target_temp_c=float(target_temp),
         top_k=int(top_k),
-        min_years=int(min_years),
+        min_years=10,
         agg="mean",
     ).reset_index(drop=True)
 
