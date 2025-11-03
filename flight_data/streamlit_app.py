@@ -9,6 +9,7 @@ from openai import OpenAI
 import base64
 import urllib.parse
 import sqlite3
+import time
 
 # Import your API client modules
 import amadeus_api_client as amadeus
@@ -52,6 +53,8 @@ if 'conversation_history' not in st.session_state:
     st.session_state.conversation_history = []
 if 'google_auth_flow_active' not in st.session_state:
     st.session_state.google_auth_flow_active = False
+if 'search_mode' not in st.session_state:
+    st.session_state.search_mode = 'manual' # 'manual' or 'chatbot'
  
 
 # --- Helper Functions (migrated from main.py) ---
@@ -241,32 +244,48 @@ def search_flights(flight_params, initial_query=None):
     st.session_state.flight_params = flight_params
     access_token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
     if access_token:
-        flight_offers = None
-        # --- Handle single date or date range ---
-        if "startDate" in flight_params and "endDate" in flight_params:
-            all_flight_offers_data = {"data": [], "dictionaries": {}}
-            start_date = datetime.datetime.strptime(flight_params["startDate"], "%Y-%m-%d").date()
-            end_date = datetime.datetime.strptime(flight_params["endDate"], "%Y-%m-%d").date()
-            
-            current_date = start_date
-            while current_date <= end_date:
-                daily_params = flight_params.copy()
-                daily_params["departureDate"] = current_date.strftime("%Y-%m-%d")
-                st.info(f"Searching for flights on {current_date.strftime('%Y-%m-%d')}...")
-                daily_offers = amadeus.search_flight_offers(access_token, daily_params)
-                if daily_offers and daily_offers.get("data"):
-                    time.sleep(0.2) # Respect API rate limits
-                    all_flight_offers_data["data"].extend(daily_offers["data"])
-                    for key, value in daily_offers.get("dictionaries", {}).items():
-                        if key in all_flight_offers_data["dictionaries"]:
-                            all_flight_offers_data["dictionaries"][key].update(value)
-                        else:
-                            all_flight_offers_data["dictionaries"][key] = value
-                current_date += datetime.timedelta(days=1)
-            flight_offers = all_flight_offers_data
-        else:
-            flight_offers = amadeus.search_flight_offers(access_token, flight_params)
+        # --- Prepare for multi-airport and multi-date search ---
+        origins = flight_params.get("originLocationCode", [])
+        destinations = flight_params.get("destinationLocationCode", [])
+        start_date_str = flight_params.get("departureDate")
+        end_date_str = flight_params.get("endDate", start_date_str)
 
+        # Ensure origins and destinations are lists
+        if not isinstance(origins, list): origins = [origins]
+        if not isinstance(destinations, list): destinations = [destinations]
+
+        all_flight_offers_data = {"data": [], "dictionaries": {}}
+        
+        start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
+        end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d").date()
+
+        # --- Loop through all combinations ---
+        num_days = (end_date - start_date).days + 1
+        total_searches = len(origins) * len(destinations) * num_days
+        if total_searches > 5:
+            st.warning(f"This is a large search with {total_searches} combinations. It may take some time.")
+
+        current_date = start_date
+        while current_date <= end_date:
+            for origin in origins:
+                for destination in destinations:
+                    if origin == destination: continue
+                    
+                    search_params = flight_params.copy()
+                    search_params["originLocationCode"] = origin
+                    search_params["destinationLocationCode"] = destination
+                    search_params["departureDate"] = current_date.strftime("%Y-%m-%d")
+                    
+                    st.info(f"Searching: {origin} → {destination} on {current_date.strftime('%Y-%m-%d')}...")
+                    daily_offers = amadeus.search_flight_offers(access_token, search_params)
+                    if daily_offers and daily_offers.get("data"):
+                        all_flight_offers_data["data"].extend(daily_offers["data"])
+                        # Deep merge the dictionaries
+                        for key, value_dict in daily_offers.get("dictionaries", {}).items():
+                            all_flight_offers_data["dictionaries"].setdefault(key, {}).update(value_dict)
+                    time.sleep(0.2) # Respect API rate limits
+            current_date += datetime.timedelta(days=1)
+        flight_offers = all_flight_offers_data
         if flight_offers and flight_offers.get("data"):
             st.session_state.flight_offers_data = flight_offers
             df = process_flight_offers_to_df(flight_offers)
@@ -360,25 +379,90 @@ if st.session_state.get("google_auth_flow_active"):
 
 # --- 1. SEARCH VIEW ---
 if st.session_state.view_state == 'search':
-    st.header("Describe Your Desired Flight")
-    # Display conversation history
-    for message in st.session_state.conversation_history:
-        with st.chat_message(message["role"]):
-           st.markdown(message["content"])
-    
-    tab1, tab2 = st.tabs(["🤖 Chatbot Search", "📝 Manual Search"])
+    if st.session_state.search_mode == 'manual':
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.header("Enter Flight Details")
+        with col2:
+            if st.button("🤖 Use Chatbot Instead"):
+                st.session_state.search_mode = 'chatbot'
+                st.rerun()
+        # --- Manual Search Form ---
+        try:
+            airports_df = get_airport_data_from_db()
+            airports_df.dropna(subset=['iata_code', 'city', 'name', 'page_rank'], inplace=True)
+            airports_df.sort_values(by='page_rank', ascending=False, inplace=True)
+            airports_df['display_name'] = airports_df['city'] + " (" + airports_df['iata_code'] + ") - " + airports_df['name']
+            airport_options = airports_df['display_name'].tolist()
+        except Exception as e:
+            st.error(f"Could not load airport data from DB: {e}")
+            airport_options = []
+        with st.form("manual_search_form"):
+            cols = st.columns(2)
+            if airport_options:
+                origin_display = cols[0].multiselect("Origin", options=airport_options, placeholder="Select one or more airports")
+                destination_display = cols[1].multiselect("Destination", options=airport_options, placeholder="Select one or more airports")
+            else:
+                origin = cols[0].text_input("Origin (IATA Code)", "FRA")
+                destination = cols[1].text_input("Destination (IATA Code)", "JFK")
+            # A single date input component that handles both single date and date range selection
+            today = datetime.date.today()
+            next_week = today + datetime.timedelta(days=6)
+            selected_dates = st.date_input(
+                "Select Date or Date Range",
+                (today, next_week),
+                min_value=today
+                )
+            st.write("Travelers")
+            cols = st.columns(3)
+            adults = cols[0].number_input("Adults", min_value=1, value=1)
+            children = cols[1].number_input("Children < 12 years", min_value=0, value=0)
+            infants = cols[2].number_input("Infants < 2 years", min_value=0, value=0)
+            non_stop = st.checkbox("Direct flights only", value=False)
+            submitted = st.form_submit_button("Search Flights")
+            if submitted:
+                if not origin_display or not destination_display:
+                    st.error("Please select at least one origin and one destination.")
+                else:
+                    # Process the output from the new date component
+                    if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
+                        start_date, end_date = selected_dates
+                    elif isinstance(selected_dates, tuple) and len(selected_dates) == 1:
+                        start_date = end_date = selected_dates[0]
+                    else: # Fallback for a single date object
+                        start_date = end_date = selected_dates
+                    origins = [re.search(r'\((\w{3})\)', o).group(1) for o in origin_display]
+                    destinations = [re.search(r'\((\w{3})\)', d).group(1) for d in destination_display]
+                    manual_params = {
+                        "originLocationCode": origins,
+                        "destinationLocationCode": destinations,
+                        "departureDate": start_date.strftime("%Y-%m-%d"),
+                        "endDate": end_date.strftime("%Y-%m-%d"),
+                        "adults": adults, 
+                        "children": children, 
+                        "infants": infants,
+                        "nonStop": non_stop
+                    }
+                    search_flights(manual_params)
 
-    with tab1:
+    elif st.session_state.search_mode == 'chatbot':
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.header("Describe Your Desired Flight")
+        with col2:
+            if st.button("📝 Use Manual Form"):
+                st.session_state.search_mode = 'manual'
+                st.rerun()
+        # --- Chatbot Interface ---
+        for message in st.session_state.conversation_history:
+            with st.chat_message(message["role"]):
+               st.markdown(message["content"])
         if user_query := st.chat_input("e.g., 'Flights from Frankfurt to New York tomorrow. One adult'"):
-            # Add user message to history and display it
             st.session_state.conversation_history.append({"role": "user", "content": user_query})
             with st.chat_message("user"):
                 st.markdown(user_query)
-
-            # Process the conversation with GPT
             with st.spinner("Thinking..."):
                 flight_params = extract_flight_info_with_gpt(st.session_state.conversation_history)
-
                 if flight_params and "followUpQuestion" in flight_params:
                     question = flight_params['followUpQuestion']
                     st.session_state.conversation_history.append({"role": "assistant", "content": question})
@@ -388,64 +472,6 @@ if st.session_state.view_state == 'search':
                     with st.chat_message("assistant"):
                         st.markdown("Great, I have all the details. Searching for flights...")
                     search_flights(flight_params, user_query)
-
-    with tab2:
-        # Load airport data for the manual search dropdowns
-        try:
-            airports_df = get_airport_data_from_db()
-            airports_df.dropna(subset=['iata_code', 'city', 'name', 'page_rank'], inplace=True)
-
-            # Sort by page_rank to show the most relevant airports first
-            airports_df.sort_values(by='page_rank', ascending=False, inplace=True)
-            
-            # Create a user-friendly display format: "City (IATA) - Airport Name"
-            airports_df['display_name'] = airports_df['city'] + " (" + airports_df['iata_code'] + ") - " + airports_df['name']
-            airport_options = airports_df['display_name'].tolist()
-            
-        except Exception as e:
-            st.error(f"Could not load airport data from DB: {e}")
-            airport_options = []
-        with st.form("manual_search_form"):
-            st.subheader("Enter Flight Details")
-            cols = st.columns(2)
-            if airport_options:
-                # Use a selectbox which supports autocomplete-style searching
-                origin_display = cols[0].selectbox("Origin", options=airport_options, index=None, placeholder="Select origin airport...")
-                destination_display = cols[1].selectbox("Destination", options=airport_options, index=None, placeholder="Select destination airport...")
-            else:
-                # Fallback to text input if the airports file is not found
-                origin = cols[0].text_input("Origin (IATA Code)", "FRA")
-                destination = cols[1].text_input("Destination (IATA Code)", "JFK")
-            
-            departure_date = st.date_input("Departure Date", datetime.date.today())
-            
-            st.write("Travelers")
-            cols = st.columns(3)
-            adults = cols[0].number_input("Adults", min_value=1, value=1)
-            children = cols[1].number_input("Children < 12 years", min_value=0, value=0)
-            infants = cols[2].number_input("Infants < 2 years", min_value=0, value=0)
-            
-            non_stop = st.checkbox("Direct flights only", value=False)
-
-            submitted = st.form_submit_button("Search Flights")
-
-            if submitted:
-                # Validate that both origin and destination have been selected
-                if not origin_display or not destination_display:
-                    st.error("Please select an origin and a destination.")
-                else:
-                    # Extract the 3-letter IATA code from the selected display string
-                    if airport_options:
-                        origin = re.search(r'\((\w{3})\)', origin_display).group(1)
-                        destination = re.search(r'\((\w{3})\)', destination_display).group(1)
-                    manual_params = {
-                        "originLocationCode": origin.upper(),
-                        "destinationLocationCode": destination.upper(),
-                        "departureDate": departure_date.strftime("%Y-%m-%d"),
-                        "adults": adults, "children": children, "infants": infants,
-                        "nonStop": non_stop
-                    }
-                    search_flights(manual_params)
 
 # --- 2. RESULTS VIEW ---
 elif st.session_state.view_state == 'results':
@@ -637,12 +663,43 @@ elif st.session_state.view_state == 'booking':
         with st.spinner("Booking your flight..."):
             access_token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
             order = amadeus.create_flight_order(access_token, st.session_state.priced_offer, travelers)
-            if order:
+            if 'data' in order:
                 st.session_state.confirmed_booking = order
                 st.session_state.view_state = 'confirmation'
                 st.rerun()
+            elif 'errors' in order:
+                # We have a structured error from the API
+                error_messages = []
+                for error in order['errors']:
+                    detail = error.get('detail', 'An unspecified error occurred.')
+                    source_pointer = error.get('source', {}).get('pointer', '')
+
+                    # Try to map the error source back to a user-friendly field name
+                    field_name = "in the form" # Default
+                    traveler_index = -1
+
+                    if source_pointer:
+                        match = re.search(r'/travelers/(\d+)', source_pointer)
+                        if match:
+                            traveler_index = int(match.group(1)) + 1
+                    
+                    # Make the error message more specific
+                    if "dateOfBirth" in source_pointer:
+                        field_name = "Date of Birth"
+                    elif "firstName" in source_pointer:
+                        field_name = "First Name"
+
+                    if traveler_index != -1:
+                        error_messages.append(f"Error for Traveler {traveler_index} (Field: {field_name}): {detail}")
+                    else:
+                        error_messages.append(f"Booking Error: {detail}")
+
+                # Display all formatted error messages
+                for msg in error_messages:
+                    st.error(msg)
             else:
-                st.error("Booking failed. Please try again.")
+                st.error("Booking failed. An unknown error occurred. Please try again.")
+             
     st.button("Back to Results", on_click=lambda: st.session_state.update(view_state='results'))
 
 # --- 4. CONFIRMATION VIEW & GOOGLE CALENDAR ---

@@ -112,5 +112,12 @@ def create_flight_order(access_token, priced_offer, travelers):
         return order_response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error creating flight order: {e}")
-        print(f"Response body: {e.response.text}")
-        return None
+        # Try to parse the JSON error response from the API and return it
+        try:
+            error_details = e.response.json()
+            print(f"Response body: {error_details}")
+            return error_details # Return the structured error
+        except json.JSONDecodeError:
+            # If the response isn't JSON, return a generic error structure
+            print(f"Response body (not JSON): {e.response.text}")
+            return {"errors": [{"detail": "An unknown error occurred during booking."}]}

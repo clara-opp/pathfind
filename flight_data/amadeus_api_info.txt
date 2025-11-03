@@ -1,0 +1,39 @@
+# Amadeus API Information
+
+## Link to overview on all amadeus apis
+https://developers.amadeus.com/self-service
+
+## Link to the flight offers search api
+* https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search/api-reference
+
+## Link to Tours and Activities API
+https://developers.amadeus.com/self-service/category/destination-experiences/api-doc/tours-and-activities
+
+## Google Cloud Api stuff
+Project-Home: https://console.cloud.google.com/welcome?project=smooth-splicer-474610-t8
+Project: https://console.cloud.google.com/iam-admin/settings?project=flightapp-474610
+oAuthClients: https://console.cloud.google.com/auth/clients?project=smooth-splicer-474610-t8
+
+## Short description of the main amadeus APIs
+1. Flight Offers Search: 
+You search for available flights and get a list of flight offers, 
+each with a unique id. This is the JSON file you have.
+
+2. Flight Offers Price: 
+Before booking, you must confirm the price and availability of a single, 
+chosen flight offer. You take the full flight offer object from the search 
+results and send it to this second API endpoint. This ensures the price hasn't 
+changed and the seats are still available.
+
+3. Flight Create Orders: This is the final booking step. 
+After the price is confirmed, you send the flight offer along with the traveler's 
+personal information (name, date of birth, contact info, etc.) to this third API 
+endpoint. If successful, this API call creates a PNR (Passenger Name Record), 
+which is the official booking in the airline's system.
+
+4. Payment cannot be implemented because:
+- amadeus payment products are enterprise products, i.e. they cost money and require
+onboarding + contracting
+- for using a payment provider (e.g. stripe) you need strong customer authentication
+(SCA)/PSD2 and would need to check regulatory requirements (you need to be a 
+registered company to be able to make transactions with customers)
