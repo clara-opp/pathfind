@@ -1,0 +1,15 @@
+Implement the following
+
+0. Fix multiday, next week calls from chatbot to API.
+
+1. Add the class to search (economy , business, first class etc.)
+- for manual search and chatbot
+- check whether direct flights only works for the chatbot search
+
+1.2 Add the class to filter in flight search result
+
+2 Fix the page rank for the airports. Or remove it cause little benefit and much work.
+
+3. Enable audio messages for chatbot (only input)
+
+4. Remove the debug statements in the streamlit app

@@ -24,7 +24,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 # This MUST match one of the "Authorized redirect URIs" in your Google Cloud Console
-REDIRECT_URI = "http://localhost:8501" 
+REDIRECT_URI = "http://localhost:8501/Flight_Booking_Assistant" 
 
 # Initialize session state variables
 if 'view_state' not in st.session_state:
