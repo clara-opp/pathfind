@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-*Generated: 2025-11-23 16:35:24*
+*Generated: 2025-11-25 15:07:42*
 
 ---
 
@@ -14,6 +14,8 @@
 - [tugo_laws](#tugo_laws) (2,048 rows)
 - [tugo_offices](#tugo_offices) (359 rows)
 - [tugo_safety](#tugo_safety) (1,757 rows)
+- [unesco_by_country](#unesco_by_country) (171 rows)
+- [unesco_heritage_sites](#unesco_heritage_sites) (1,248 rows)
 
 ---
 
@@ -264,4 +266,62 @@
 | country_name | TEXT | ✓ |  |  |
 | category | TEXT | ✓ |  |  |
 | description | TEXT | ✓ |  |  |
+
+## unesco_by_country
+
+**Row Count:** 171
+
+**Indexes:** idx_unesco_by_country_iso_code
+
+### Columns
+
+| Column | Type | Null | Key | Default |
+|--------|------|------|-----|---------|
+| country_name | TEXT | ✓ |  |  |
+| iso_code | TEXT | ✓ |  |  |
+| region | TEXT | ✓ |  |  |
+| total_sites | INTEGER | ✓ |  |  |
+| cultural_sites | INTEGER | ✓ |  |  |
+| natural_sites | INTEGER | ✓ |  |  |
+| mixed_sites | INTEGER | ✓ |  |  |
+| danger_sites | INTEGER | ✓ |  |  |
+| transboundary_sites | INTEGER | ✓ |  |  |
+| site_names | TEXT | ✓ |  |  |
+| site_ids | TEXT | ✓ |  |  |
+
+## unesco_heritage_sites
+
+**Row Count:** 1,248
+
+**Indexes:** idx_unesco_id, idx_unesco_country_iso
+
+### Columns
+
+| Column | Type | Null | Key | Default |
+|--------|------|------|-----|---------|
+| id | TEXT | ✓ |  |  |
+| name | TEXT | ✓ |  |  |
+| name_fr | TEXT | ✓ |  |  |
+| name_es | TEXT | ✓ |  |  |
+| country | TEXT | ✓ |  |  |
+| country_iso | TEXT | ✓ |  |  |
+| region | TEXT | ✓ |  |  |
+| category | TEXT | ✓ |  |  |
+| short_description | TEXT | ✓ |  |  |
+| description | TEXT | ✓ |  |  |
+| justification | TEXT | ✓ |  |  |
+| date_inscribed | TEXT | ✓ |  |  |
+| secondary_dates | TEXT | ✓ |  |  |
+| danger | TEXT | ✓ |  |  |
+| danger_list | INTEGER | ✓ |  |  |
+| area_hectares | REAL | ✓ |  |  |
+| criteria_txt | TEXT | ✓ |  |  |
+| cultural_criteria | TEXT | ✓ |  |  |
+| natural_criteria | TEXT | ✓ |  |  |
+| transboundary | TEXT | ✓ |  |  |
+| components_count | INTEGER | ✓ |  |  |
+| longitude | REAL | ✓ |  |  |
+| latitude | REAL | ✓ |  |  |
+| main_image_url | TEXT | ✓ |  |  |
+| images_urls | TEXT | ✓ |  |  |
 

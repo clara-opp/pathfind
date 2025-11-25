@@ -214,6 +214,22 @@
 
             </div>
 
+            <div class="table-card" onclick="showTable('unesco_by_country')">
+                <h3>unesco_by_country</h3>
+                <div class="row-count">171 rows • 11 columns</div>
+
+                <div class="indexes">📊 Indexes: idx_unesco_by_country_iso_code</div>
+
+            </div>
+
+            <div class="table-card" onclick="showTable('unesco_heritage_sites')">
+                <h3>unesco_heritage_sites</h3>
+                <div class="row-count">1,248 rows • 25 columns</div>
+
+                <div class="indexes">📊 Indexes: idx_unesco_id, idx_unesco_country_iso</div>
+
+            </div>
+
         </div>
 
         <div id="detail-climate_monthly" class="table-detail">
@@ -1503,6 +1519,302 @@
 
                     <tr>
                         <td><strong>description</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="detail-unesco_by_country" class="table-detail">
+            <button class="back-btn" onclick="showList()">← Back to Tables</button>
+            <h2>unesco_by_country</h2>
+            <p><strong>Rows:</strong> 171</p>
+
+            <p><strong>Indexes:</strong> idx_unesco_by_country_iso_code</p>
+
+            <table class="columns-table">
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>country_name</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>iso_code</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>region</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>total_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>cultural_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>natural_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>mixed_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>danger_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>transboundary_sites</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>site_names</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>site_ids</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="detail-unesco_heritage_sites" class="table-detail">
+            <button class="back-btn" onclick="showList()">← Back to Tables</button>
+            <h2>unesco_heritage_sites</h2>
+            <p><strong>Rows:</strong> 1,248</p>
+
+            <p><strong>Indexes:</strong> idx_unesco_id, idx_unesco_country_iso</p>
+
+            <table class="columns-table">
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>id</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>name</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>name_fr</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>name_es</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>country</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>country_iso</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>region</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>category</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>short_description</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>description</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>justification</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>date_inscribed</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>secondary_dates</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>danger</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>danger_list</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>area_hectares</strong></td>
+                        <td>REAL</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>criteria_txt</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>cultural_criteria</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>natural_criteria</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>transboundary</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>components_count</strong></td>
+                        <td>INTEGER</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>longitude</strong></td>
+                        <td>REAL</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>latitude</strong></td>
+                        <td>REAL</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>main_image_url</strong></td>
+                        <td>TEXT</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>images_urls</strong></td>
                         <td>TEXT</td>
                         <td>—</td>
                         <td>—</td>

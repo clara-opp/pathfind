@@ -53,4 +53,26 @@ website : TEXT}"];
 country_name : TEXT
 category : TEXT
 description : TEXT}"];
+    unesco_by_country [label="{<f0> unesco_by_country|country_name : TEXT
+iso_code : TEXT
+region : TEXT
+total_sites : INTEGER
+cultural_sites : INTEGER
+natural_sites : INTEGER
+mixed_sites : INTEGER
+danger_sites : INTEGER
+transboundary_sites : INTEGER
+site_names : TEXT
+... +1 more}"];
+    unesco_heritage_sites [label="{<f0> unesco_heritage_sites|id : TEXT
+name : TEXT
+name_fr : TEXT
+name_es : TEXT
+country : TEXT
+country_iso : TEXT
+region : TEXT
+category : TEXT
+short_description : TEXT
+description : TEXT
+... +15 more}"];
 }

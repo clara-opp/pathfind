@@ -1,6 +1,6 @@
 ================================================================================
 DATABASE SCHEMA DOCUMENTATION
-Generated: 2025-11-23 16:35:24
+Generated: 2025-11-25 15:07:42
 ================================================================================
 
 
@@ -258,4 +258,64 @@ iso2                           TEXT            NULL
 country_name                   TEXT            NULL          
 category                       TEXT            NULL          
 description                    TEXT            NULL          
+
+
+================================================================================
+TABLE: unesco_by_country
+================================================================================
+Row Count: 171
+Indexes: idx_unesco_by_country_iso_code
+
+Columns (11):
+--------------------------------------------------------------------------------
+Name                           Type            Null   Key    Default
+--------------------------------------------------------------------------------
+country_name                   TEXT            NULL          
+iso_code                       TEXT            NULL          
+region                         TEXT            NULL          
+total_sites                    INTEGER         NULL          
+cultural_sites                 INTEGER         NULL          
+natural_sites                  INTEGER         NULL          
+mixed_sites                    INTEGER         NULL          
+danger_sites                   INTEGER         NULL          
+transboundary_sites            INTEGER         NULL          
+site_names                     TEXT            NULL          
+site_ids                       TEXT            NULL          
+
+
+================================================================================
+TABLE: unesco_heritage_sites
+================================================================================
+Row Count: 1,248
+Indexes: idx_unesco_id, idx_unesco_country_iso
+
+Columns (25):
+--------------------------------------------------------------------------------
+Name                           Type            Null   Key    Default
+--------------------------------------------------------------------------------
+id                             TEXT            NULL          
+name                           TEXT            NULL          
+name_fr                        TEXT            NULL          
+name_es                        TEXT            NULL          
+country                        TEXT            NULL          
+country_iso                    TEXT            NULL          
+region                         TEXT            NULL          
+category                       TEXT            NULL          
+short_description              TEXT            NULL          
+description                    TEXT            NULL          
+justification                  TEXT            NULL          
+date_inscribed                 TEXT            NULL          
+secondary_dates                TEXT            NULL          
+danger                         TEXT            NULL          
+danger_list                    INTEGER         NULL          
+area_hectares                  REAL            NULL          
+criteria_txt                   TEXT            NULL          
+cultural_criteria              TEXT            NULL          
+natural_criteria               TEXT            NULL          
+transboundary                  TEXT            NULL          
+components_count               INTEGER         NULL          
+longitude                      REAL            NULL          
+latitude                       REAL            NULL          
+main_image_url                 TEXT            NULL          
+images_urls                    TEXT            NULL          
 
