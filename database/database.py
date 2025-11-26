@@ -304,6 +304,45 @@ def load_climate_data():
     df = pd.DataFrame(climate_records)
     return df
 
+# Code for loading all Unesco sites into database
+def load_unesco_heritage_data():
+    """Load UNESCO World Heritage Sites data."""
+    try:
+        filepath = get_data_path('unesco_sites_full.json')
+    except FileNotFoundError:
+        print("  WARNING: UNESCO heritage sites file not found, skipping...")
+        return pd.DataFrame()
+    
+    with open(filepath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    print(f"  Found {len(data)} UNESCO heritage sites")
+    df = pd.DataFrame(data)
+    return df
+
+
+def load_unesco_by_country_data():
+    """Load summary UNESCO World Heritage Sites by country."""
+    try:
+        filepath = get_data_path('unesco_by_country.json')
+    except FileNotFoundError:
+        print("  WARNING: UNESCO by country file not found, skipping...")
+        return pd.DataFrame()
+    
+    with open(filepath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    print(f"  Found {len(data)} UNESCO country summary records")
+    df = pd.DataFrame(data)
+    
+    # Convert list columns to JSON strings for SQLite compatibility
+    if 'site_names' in df.columns:
+        df['site_names'] = df['site_names'].apply(lambda x: json.dumps(x) if isinstance(x, list) else x)
+    if 'site_ids' in df.columns:
+        df['site_ids'] = df['site_ids'].apply(lambda x: json.dumps(x) if isinstance(x, list) else x)
+    
+    return df
+
 
 def create_unified_database(output_db='unified_country_database.db'):
     """Create a unified database from all data sources."""
@@ -330,6 +369,12 @@ def create_unified_database(output_db='unified_country_database.db'):
 
     print("  - Climate data")
     climate_df = load_climate_data()
+
+    print("  - UNESCO World Heritage Sites")
+    unesco_df = load_unesco_heritage_data()
+
+    print("  - UNESCO by country summary")
+    unesco_by_country_df = load_unesco_by_country_data()
 
     print("\nMerging datasets on ISO3 country codes...")
 
@@ -362,6 +407,20 @@ def create_unified_database(output_db='unified_country_database.db'):
     climate_df.to_sql('climate_monthly', conn, if_exists='replace', index=False)
     print(f"  ✓ 'climate_monthly' table: {len(climate_df)} rows")
 
+    # Save UNESCO heritage sites table
+    if not unesco_df.empty:
+        unesco_df.to_sql('unesco_heritage_sites', conn, if_exists='replace', index=False)
+        print(f"  * 'unesco_heritage_sites' table: {len(unesco_df)} rows")
+    else:
+        print("  * 'unesco_heritage_sites' table skipped (no data)")
+
+    # Save UNESCO summary by country table
+    if not unesco_by_country_df.empty:
+        unesco_by_country_df.to_sql('unesco_by_country', conn, if_exists='replace', index=False)
+        print(f"  * 'unesco_by_country' table: {len(unesco_by_country_df)} rows")
+    else:
+        print("  * 'unesco_by_country' table skipped (no data)")
+
     # CRITICAL: Save TuGo detail tables
     if tugo_detail_dfs:
         for table_name, df in tugo_detail_dfs.items():
@@ -382,6 +441,12 @@ def create_unified_database(output_db='unified_country_database.db'):
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_tugo_entry_iso2 ON tugo_entry(iso2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_tugo_offices_iso2 ON tugo_offices(iso2)')
 
+    # Indexes for UNESCO tables
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_unesco_country_iso ON unesco_heritage_sites(country_iso)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_unesco_id ON unesco_heritage_sites(id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_unesco_by_country_iso_code ON unesco_by_country(iso_code)')
+
+
     conn.commit()
     print(f"  ✓ Indexes created")
 
@@ -393,6 +458,8 @@ def create_unified_database(output_db='unified_country_database.db'):
     print(f"\nTables created:")
     print(f"  - countries ({len(unified_df)} rows)")
     print(f"  - climate_monthly ({len(climate_df)} rows)")
+    print(f"  - unesco_heritage_sites ({len(unesco_df)} rows)")
+    print(f"  - unesco_by_country ({len(unesco_by_country_df)} rows)")
     if tugo_detail_dfs:
         for table_name, df in tugo_detail_dfs.items():
             if not df.empty:
