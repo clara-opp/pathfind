@@ -343,6 +343,105 @@ def load_unesco_by_country_data():
     
     return df
 
+def load_numbeo_countries():
+    """
+    Load Numbeo country metadata: country_name, currency, iso3, country_param_used.
+    We rename country_name to numbeo_country_name to avoid conflicts with the main country_name.
+    """
+    try:
+        filepath = get_data_path('numbeo_countries.csv')
+    except FileNotFoundError:
+        print("  ⚠️ numbeo_countries.csv not found, skipping Numbeo country metadata...")
+        return pd.DataFrame()
+
+    df = pd.read_csv(filepath)
+
+    # Rename name and parameter columns to keep them clearly separated
+    df = df.rename(columns={
+        'country_name': 'numbeo_country_name',
+        'country_param_used': 'numbeo_country_param_used'
+    })
+
+    if 'iso3' not in df.columns:
+        print("  ⚠️ numbeo_countries.csv has no iso3 column, skipping...")
+        return pd.DataFrame()
+
+    df = df.set_index('iso3')
+    return df
+
+
+def load_numbeo_prices():
+    """
+    Load Numbeo country prices (large fact table).
+    Will be stored as a separate table in SQLite (numbeo_prices).
+    """
+    try:
+        filepath = get_data_path('numbeo_country_prices.csv')
+    except FileNotFoundError:
+        print("  ⚠️ numbeo_country_prices.csv not found, skipping Numbeo prices...")
+        return pd.DataFrame()
+
+    df = pd.read_csv(filepath)
+    return df
+
+
+def load_numbeo_exchange_rates():
+    """
+    Load Numbeo exchange rates.
+    These live on the currency_code level, not per country.
+    Will be stored as numbeo_exchange_rates.
+    """
+    try:
+        filepath = get_data_path('numbeo_exchange_rates.csv')
+    except FileNotFoundError:
+        print("  ⚠️ numbeo_exchange_rates.csv not found, skipping Numbeo exchange rates...")
+        return pd.DataFrame()
+
+    df = pd.read_csv(filepath)
+    # Optional: keep currency_code as index for convenience
+    if 'currency_code' in df.columns:
+        df = df.set_index('currency_code')
+    return df
+
+
+def load_numbeo_indices():
+    """
+    Load Numbeo country indices (cost of living, quality of life, etc.).
+    We:
+      - join via iso3
+      - prefix most columns with 'numbeo_'
+      - keep a separate table AND also join them into countries.
+    """
+    try:
+        filepath = get_data_path('numbeo_country_indices.csv')
+    except FileNotFoundError:
+        print("  ⚠️ numbeo_country_indices.csv not found, skipping Numbeo indices...")
+        return pd.DataFrame()
+
+    df = pd.read_csv(filepath)
+
+    if 'iso3' not in df.columns:
+        print("  ⚠️ numbeo_country_indices.csv has no iso3 column, skipping...")
+        return pd.DataFrame()
+
+    # Avoid conflict with main country_name
+    if 'country_name' in df.columns:
+        df = df.rename(columns={'country_name': 'numbeo_country_name_indices'})
+
+    # Prefix all metric columns with numbeo_
+    rename_map = {}
+    for col in df.columns:
+        if col in ('iso3', 'numbeo_country_name_indices'):
+            continue
+        rename_map[col] = f"numbeo_{col}"
+
+    df = df.rename(columns=rename_map)
+    df = df.set_index('iso3')
+
+    return df
+
+
+
 def load_pictures_data():
     """
     Load Unsplash pictures. 
@@ -465,6 +564,14 @@ def create_unified_database(output_db='unified_country_database.db'):
     print("  - UNESCO World Heritage Sites")
     unesco_df = load_unesco_heritage_data()
 
+    # 🔹 Numbeo data (countries, prices, exchange rates, indices)
+    print("  - Numbeo countries / prices / exchange rates / indices")
+    numbeo_countries_df = load_numbeo_countries()
+    numbeo_prices_df = load_numbeo_prices()
+    numbeo_exchange_df = load_numbeo_exchange_rates()
+    numbeo_indices_df = load_numbeo_indices()
+
+
     print("  - UNESCO by country summary")
     unesco_by_country_df = load_unesco_by_country_data()
 
@@ -492,6 +599,14 @@ def create_unified_database(output_db='unified_country_database.db'):
 
     if not pictures_df.empty:
         unified_df = unified_df.join(pictures_df, how='left')
+
+# 🔹 Numbeo: country metadata (currency, numbeo_country_name, etc.)
+    if not numbeo_countries_df.empty:
+        unified_df = unified_df.join(numbeo_countries_df, how='left')
+
+    # 🔹 Numbeo: indices (cost of living, quality of life, etc.)
+    if not numbeo_indices_df.empty:
+        unified_df = unified_df.join(numbeo_indices_df, how='left')
 
     unified_df = unified_df.reset_index()
 
@@ -540,6 +655,27 @@ def create_unified_database(output_db='unified_country_database.db'):
     else:
         print("  ⚠️ 'flight_costs' table skipped (no data)")
 
+    # 🔹 Save Numbeo prices table
+    if not numbeo_prices_df.empty:
+        numbeo_prices_df.to_sql('numbeo_prices', conn, if_exists='replace', index=False)
+        print(f"  ✓ 'numbeo_prices' table: {len(numbeo_prices_df)} rows")
+    else:
+        print("  ⚠️ 'numbeo_prices' table skipped (no data)")
+
+    # 🔹 Save Numbeo exchange rates table
+    if not numbeo_exchange_df.empty:
+        numbeo_exchange_df.reset_index().to_sql('numbeo_exchange_rates', conn, if_exists='replace', index=False)
+        print(f"  ✓ 'numbeo_exchange_rates' table: {len(numbeo_exchange_df)} rows")
+    else:
+        print("  ⚠️ 'numbeo_exchange_rates' table skipped (no data)")
+
+    # 🔹 Save Numbeo indices as a separate table as well
+    if not numbeo_indices_df.empty:
+        numbeo_indices_df.reset_index().to_sql('numbeo_indices', conn, if_exists='replace', index=False)
+        print(f"  ✓ 'numbeo_indices' table: {len(numbeo_indices_df)} rows")
+    else:
+        print("  ⚠️ 'numbeo_indices' table skipped (no data)")
+
     # CRITICAL: Save TuGo detail tables
     if tugo_detail_dfs:
         for table_name, df in tugo_detail_dfs.items():
@@ -568,6 +704,12 @@ def create_unified_database(output_db='unified_country_database.db'):
     # Indexes for Airports
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_airports_iata ON airports(iata_code)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_airports_iso2 ON airports(iso2)')
+    
+    # Indexes for Numbeo tables
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_numbeo_prices_iso3 ON numbeo_prices(iso3)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_numbeo_prices_item ON numbeo_prices(item_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_numbeo_exrates_currency ON numbeo_exchange_rates(currency_code)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_numbeo_indices_iso3 ON numbeo_indices(iso3)')
 
     # Indexes for Flight Costs
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_flights_origin ON flight_costs(origin)')
