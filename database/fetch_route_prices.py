@@ -118,6 +118,11 @@ def get_flight_network_data(airports_df):
 
         try:
             response = amadeus.search_flight_offers(token, params)
+
+            if response is None:
+                # Refresh token if it expired (401) or a rate limit (429) occurred
+                token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
+                response = amadeus.search_flight_offers(token, params)
             
             if response and 'data' in response and len(response['data']) > 0:
                 cheapest = response['data'][0]
@@ -137,7 +142,7 @@ def get_flight_network_data(airports_df):
         except Exception:
             pass # Skip errors/timeouts to keep moving
         
-        time.sleep(0.3) # Rate limit
+        time.sleep(5) # Rate limit
 
     print(f"  Fetch complete. Found prices for {len(results)} routes.")
 

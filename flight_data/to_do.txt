@@ -1,10 +1,4 @@
-0. As of now issues with the data in the flight_costs table
-    - error 400, 429 and 401
-    - relevant files: fetch_route_prices.py, amadeus_api_client.py, database.py
-
-1. Check airports table in the unified countries db for duplicates and delete one airport of each duplicate so that IATA is a unique identifier in that db
-
-2. Connect chatbot to google maps to plan day trips with a fixed budget
+1. Connect chatbot to google maps to plan day trips with a fixed budget
 - Google Places API: Filter places by price level
     The Feature: Price Level (Ranges from 0 to 4).
     0 = Free
@@ -14,6 +8,18 @@
     4 = Very Expensive
 - Google Routes API: Planning the route
 
-3. When making the api calls for the flights show pictures of the destination country while the api calls are loading (especially important for longer api calls i.e. all the flights in a week)
+2. When making the api calls for the flights show pictures of the destination country while the api calls are loading (especially important for longer api calls i.e. all the flights in a week)
 
-4. Remove the debug statements in the streamlit
+3. Add more images to the pictures.json
+
+
+Hab eben meine Änderungen gepusht. Flight search ist jetzt überarbeitet im travel_planner.py drin. Hab außerdem noch ein paar Bilder für die Länder hinzugefügt.
+
+Wenn ihr das dashboard laufen lasst braucht ihr glaub ich noch die folgenden beiden API keys von mir in eurem .env: 
+
+AMADEUS_API_KEY=YkEKUlD2ubtlzAJeBbAb0qkAAYn1UCYd
+AMADEUS_API_SECRET=eTOFHz3yRoLtOzKz
+
+GOOGLE_CLIENT_ID=24569898049-1g8l8uugipkl47hbrpah7g6vk083m4pi.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+

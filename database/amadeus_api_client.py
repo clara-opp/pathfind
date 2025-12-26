@@ -35,19 +35,21 @@ def search_flight_offers(access_token, flight_params):
         "originLocationCode": flight_params["originLocationCode"],
         "destinationLocationCode": flight_params["destinationLocationCode"],
         "departureDate": flight_params.get("departureDate"),
-        "adults": flight_params.get("adults", 1), # Default to 1 adult if not specified
-        "max": 5
+        "adults": flight_params.get("adults", 1) # Default to 1 adult if not specified
      }
     # Add optional parameters if they exist
-    for param in ["children", "infants", "nonStop", "travelClass", "returnDate"]:
+    for param in ["children", "infants", "nonStop", "travelClass", "returnDate", "currencyCode", "max"]:
         if param in flight_params:
             # Amadeus API expects booleans as lowercase strings ('true'/'false')
             if param == "nonStop":
-                params[param] = str(flight_params[param]).lower()
+                if str(flight_params[param]).lower() == "true":
+                    params[param] = "true"
             else:
                 params[param] = flight_params[param]
     try:
         search_response = requests.get(search_url, headers=headers, params=params)
+        if search_response.status_code == 400:
+            print(f"\n  [API Error 400] Details: {search_response.text}")
         search_response.raise_for_status()
         return search_response.json()
     except requests.exceptions.RequestException as e:

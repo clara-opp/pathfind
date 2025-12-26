@@ -651,6 +651,12 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
 
     print("  - Airports data")
     airports_df = load_airports_data()
+    if not airports_df.empty:
+        # 1. Sort so that rows with page_rank values come first (NaNs go to the bottom)
+        airports_df = airports_df.sort_values(by='page_rank', ascending=False)
+        
+        # 2. Now drop duplicates, keeping the first (the one with the rank)
+        airports_df = airports_df.drop_duplicates(subset=['iata_code'], keep='first')
 
     print("  - Flight network data")
     flight_costs_df = load_flight_network_data(airports_df)
@@ -838,7 +844,7 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
 
     # Airports / flights
     create_index_if_table_exists(
-        "CREATE INDEX IF NOT EXISTS idx_airports_iata ON airports(iata_code)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_airports_iata ON airports(iata_code)",
         "airports",
     )
     create_index_if_table_exists(

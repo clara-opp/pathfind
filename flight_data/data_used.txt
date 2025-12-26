@@ -5,8 +5,12 @@
 - Fligh Offers Price
 - Flight Create Orders
 
-# Others  #
+# Google APIs  #
 - Google Cloud API
+- Google Places API
+- Google Routes API
+
+# Other APIs #
 - OpenAI API
 
 ### Datasets ###
