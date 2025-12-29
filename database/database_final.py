@@ -505,6 +505,68 @@ def load_numbeo_indices() -> pd.DataFrame:
     df = df.set_index("iso3")
     return df
 
+# ======================================================================
+# Load Tarot Travel Database
+# ======================================================================
+def load_tarot_travel_database() -> pd.DataFrame:
+    """Load tarot cards with country associations."""
+    try:
+        filepath = get_data_path("complete_tarot_travel_database.json")
+    except FileNotFoundError:
+        print("  [INFO] complete_tarot_travel_database.json not found, skipping Tarot data.")
+        return pd.DataFrame()
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        tarot_data = json.load(f)
+
+    tarot_records = []
+
+    # Process Major Arcana
+    for card in tarot_data.get("major_arcana", []):
+        for orientation in ["upright", "reversed"]:
+            card_info = card.get(orientation, {})
+            countries = card_info.get("countries", [])
+            
+            for country in countries:
+                tarot_records.append({
+                    "card_id": card["id"],
+                    "card_name": card["name"],
+                    "arcana_type": "major",
+                    "orientation": orientation,
+                    "country_code": country["code"],
+                    "country_name": country["name"],
+                    "reason": country.get("reason", ""),
+                    "keywords": json.dumps(card_info.get("keywords", [])),
+                    "travel_meaning": card_info.get("travel_meaning", ""),
+                    "travel_style": card_info.get("travel_style", ""),
+                })
+
+    # Process Minor Arcana
+    for suit, cards in tarot_data.get("minor_arcana", {}).items():
+        for card in cards:
+            for orientation in ["upright", "reversed"]:
+                card_info = card.get(orientation, {})
+                countries = card_info.get("countries", [])
+                
+                for country in countries:
+                    tarot_records.append({
+                        "card_id": card["id"],
+                        "card_name": card["name"],
+                        "arcana_type": f"minor_{suit}",
+                        "orientation": orientation,
+                        "country_code": country["code"],
+                        "country_name": country["name"],
+                        "reason": country.get("reason", ""),
+                        "keywords": json.dumps(card_info.get("keywords", [])),
+                        "travel_meaning": card_info.get("travel_meaning", ""),
+                        "travel_style": card_info.get("travel_style", ""),
+                    })
+
+    df = pd.DataFrame(tarot_records)
+    print(f"  Loaded {len(df)} tarot-country associations")
+    return df
+
+
 
 # ======================================================================
 # Unsplash pictures
@@ -646,6 +708,9 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
     print("  - UNESCO by country summary")
     unesco_by_country_df = load_unesco_by_country_data()
 
+    print("  - Tarot Travel Database")
+    tarot_df = load_tarot_travel_database()
+
     print("  - Unsplash country pictures")
     pictures_df = load_pictures_data()
 
@@ -736,6 +801,15 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
         print(f"  [OK] 'flight_costs' table: {len(flight_costs_df)} rows")
     else:
         print("  [INFO] 'flight_costs' table skipped (no data).")
+
+    
+        # Tarot Travel Database
+    if not tarot_df.empty:
+        tarot_df.to_sql("tarot_countries", conn, if_exists="replace", index=False)
+        print(f"  [OK] 'tarot_countries' table: {len(tarot_df)} rows")
+    else:
+        print("  [INFO] 'tarot_countries' table skipped (no data).")
+
 
     # Numbeo tables
     if not numbeo_prices_df.empty:
@@ -882,6 +956,21 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
         "numbeo_indices",
     )
 
+        # Tarot
+    create_index_if_table_exists(
+        "CREATE INDEX IF NOT EXISTS idx_tarot_country_code ON tarot_countries(country_code)",
+        "tarot_countries",
+    )
+    create_index_if_table_exists(
+        "CREATE INDEX IF NOT EXISTS idx_tarot_card_name ON tarot_countries(card_name)",
+        "tarot_countries",
+    )
+    create_index_if_table_exists(
+        "CREATE INDEX IF NOT EXISTS idx_tarot_orientation ON tarot_countries(orientation)",
+        "tarot_countries",
+    )
+
+
     conn.commit()
     print("  [OK] Indexes created")
 
@@ -913,6 +1002,9 @@ def create_unified_database(output_db: str = "unified_country_database.db"):
         print(f"  - numbeo_exchange_rates ({len(numbeo_exchange_df)} rows)")
     if not numbeo_indices_df.empty:
         print(f"  - numbeo_indices ({len(numbeo_indices_df)} rows)")
+    if not tarot_df.empty:
+        print(f"  - tarot_countries ({len(tarot_df)} rows)")
+
 
     print("\nExample queries:")
     print("  -- Get all Numbeo items:")

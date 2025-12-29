@@ -1,0 +1,4188 @@
+{
+  "major_arcana": [
+    {
+      "id": 0,
+      "name": "The Fool",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "new beginnings",
+          "spontaneity",
+          "innocence",
+          "adventure",
+          "leap of faith"
+        ],
+        "travel_meaning": "Time for spontaneous adventure and taking risks. Embrace the unknown and trust your journey without overthinking.",
+        "travel_style": "Backpacking, spontaneous trips, solo travel, last-minute bookings",
+        "countries": [
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Birthplace of bungee jumping - ultimate leap of faith"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Untamed landscapes perfect for spontaneous exploration"
+          },
+          {
+            "name": "Peru",
+            "code": "PE",
+            "reason": "Spiritual journey into the unknown - Inca Trail"
+          },
+          {
+            "name": "Costa Rica",
+            "code": "CR",
+            "reason": "Pura Vida lifestyle embraces adventure"
+          },
+          {
+            "name": "Mongolia",
+            "code": "MN",
+            "reason": "Vast steppes with no fixed plans needed"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "recklessness",
+          "fear of commitment",
+          "naivety",
+          "poor judgment"
+        ],
+        "travel_meaning": "Be cautious of impulsive decisions. Plan more carefully and consider risks before jumping in.",
+        "travel_style": "Structured tours, travel insurance, guided experiences, backup plans",
+        "countries": [
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Safe, organized, well-structured travel"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "Highly organized and safe environment"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Efficient public transport reduces risk"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Structured planning culture"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Safe and predictable travel destination"
+          }
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "name": "The Magician",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "manifestation",
+          "resourcefulness",
+          "power",
+          "skill",
+          "concentration"
+        ],
+        "travel_meaning": "You have all resources needed to make your travel dreams reality. Use your skills to create magical experiences.",
+        "travel_style": "Tech-savvy travel, using apps/tools, DIY itineraries, leveraging resources",
+        "countries": [
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Technology meets tradition - manifestation of innovation"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "Smart city showcasing human resourcefulness"
+          },
+          {
+            "name": "South Korea",
+            "code": "KR",
+            "reason": "K-tech and digital mastery"
+          },
+          {
+            "name": "United Arab Emirates",
+            "code": "AE",
+            "reason": "Dubai - manifesting cities from desert"
+          },
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "Silicon Valley - center of innovation"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "manipulation",
+          "poor planning",
+          "untapped talent",
+          "wasted potential"
+        ],
+        "travel_meaning": "Resources are scattered. Focus and better planning needed. Avoid shortcuts and manipulation.",
+        "travel_style": "Back to basics, simplified travel, authentic experiences",
+        "countries": [
+          {
+            "name": "Bhutan",
+            "code": "BT",
+            "reason": "Simple living, focus on happiness over technology"
+          },
+          {
+            "name": "Laos",
+            "code": "LA",
+            "reason": "Slow travel, minimal tech dependence"
+          },
+          {
+            "name": "Nepal",
+            "code": "NP",
+            "reason": "Mountain simplicity, authentic experiences"
+          },
+          {
+            "name": "Myanmar",
+            "code": "MM",
+            "reason": "Untouched by mass tourism"
+          },
+          {
+            "name": "Cambodia",
+            "code": "KH",
+            "reason": "Focus on culture over convenience"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "The High Priestess",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "intuition",
+          "sacred knowledge",
+          "mystery",
+          "subconscious",
+          "inner voice"
+        ],
+        "travel_meaning": "Trust your intuition when choosing destinations. Seek sacred sites and inner wisdom through travel.",
+        "travel_style": "Spiritual retreats, meditation centers, sacred sites, mystical experiences",
+        "countries": [
+          {
+            "name": "India",
+            "code": "IN",
+            "reason": "Ancient wisdom, yoga ashrams, spiritual centers"
+          },
+          {
+            "name": "Egypt",
+            "code": "EG",
+            "reason": "Priestess mysteries, temples of Isis"
+          },
+          {
+            "name": "Greece",
+            "code": "GR",
+            "reason": "Oracle of Delphi, ancient mysteries"
+          },
+          {
+            "name": "Tibet",
+            "code": "CN",
+            "reason": "Buddhist monasteries, high-altitude spirituality"
+          },
+          {
+            "name": "Morocco",
+            "code": "MA",
+            "reason": "Sufi traditions, mystical medinas"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "secrets",
+          "disconnected from intuition",
+          "withdrawal",
+          "repressed feelings"
+        ],
+        "travel_meaning": "Reconnect with your inner voice. Avoid places that feel inauthentic. Listen to your gut feelings.",
+        "travel_style": "Solo reflection trips, journaling retreats, quiet spaces",
+        "countries": [
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Solitude in Lapland for reconnection"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Isolated landscapes for introspection"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Fjord silence, inner listening"
+          },
+          {
+            "name": "Scotland",
+            "code": "GB",
+            "reason": "Highland solitude"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Remote nature for self-discovery"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "The Empress",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "abundance",
+          "nature",
+          "nurturing",
+          "fertility",
+          "beauty",
+          "sensuality"
+        ],
+        "travel_meaning": "Indulge in natural beauty and sensory pleasures. Seek destinations of abundance and comfort.",
+        "travel_style": "Luxury nature resorts, wine tours, culinary trips, spa retreats",
+        "countries": [
+          {
+            "name": "Italy",
+            "code": "IT",
+            "reason": "Tuscany vineyards, abundant beauty and cuisine"
+          },
+          {
+            "name": "France",
+            "code": "FR",
+            "reason": "Provence lavender fields, sensory indulgence"
+          },
+          {
+            "name": "Indonesia",
+            "code": "ID",
+            "reason": "Bali - tropical abundance, rice terraces"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Lush green landscapes, natural fertility"
+          },
+          {
+            "name": "Costa Rica",
+            "code": "CR",
+            "reason": "Biodiversity paradise, rainforest abundance"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "creative block",
+          "dependence",
+          "emptiness",
+          "neglecting self-care"
+        ],
+        "travel_meaning": "Focus on self-care and rejuvenation. Avoid overindulgence. Reconnect with your needs.",
+        "travel_style": "Wellness retreats, detox programs, self-care focused travel",
+        "countries": [
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Alpine wellness and thermal baths"
+          },
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Healing retreats, detox programs"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Spa culture, mountain air therapy"
+          },
+          {
+            "name": "Sri Lanka",
+            "code": "LK",
+            "reason": "Ayurveda healing, self-care focus"
+          },
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Peaceful coastal wellness"
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "The Emperor",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "authority",
+          "structure",
+          "control",
+          "stability",
+          "leadership",
+          "fatherhood"
+        ],
+        "travel_meaning": "Well-organized, structured trips. Visit places of historical authority and power. Take control of your itinerary.",
+        "travel_style": "Structured itineraries, historical sites, business class, luxury hotels",
+        "countries": [
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Efficiency, order, strong organizational culture"
+          },
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Precision, structure, stability"
+          },
+          {
+            "name": "China",
+            "code": "CN",
+            "reason": "Great Wall, imperial history, authority"
+          },
+          {
+            "name": "United Kingdom",
+            "code": "GB",
+            "reason": "Royal heritage, parliamentary traditions"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Habsburg empire history, palatial grandeur"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "domination",
+          "rigidity",
+          "inflexibility",
+          "lack of discipline"
+        ],
+        "travel_meaning": "Let go of rigid planning. Be flexible and adapt. Avoid controlling every detail.",
+        "travel_style": "Flexible itineraries, spontaneous changes, go-with-the-flow",
+        "countries": [
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Mai pen rai attitude, flexibility"
+          },
+          {
+            "name": "Indonesia",
+            "code": "ID",
+            "reason": "Island time, relaxed structure"
+          },
+          {
+            "name": "Mexico",
+            "code": "MX",
+            "reason": "Mañana culture, spontaneity"
+          },
+          {
+            "name": "Philippines",
+            "code": "PH",
+            "reason": "Flexible Filipino time"
+          },
+          {
+            "name": "Brazil",
+            "code": "BR",
+            "reason": "Carnival spirit, improvisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "name": "The Hierophant",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "tradition",
+          "conformity",
+          "education",
+          "belief systems",
+          "institutions"
+        ],
+        "travel_meaning": "Explore traditional cultures and religious sites. Learn from established customs and local traditions.",
+        "travel_style": "Cultural immersion, religious pilgrimages, traditional ceremonies, educational tours",
+        "countries": [
+          {
+            "name": "Vatican City",
+            "code": "VA",
+            "reason": "Center of Catholic tradition"
+          },
+          {
+            "name": "Israel",
+            "code": "IL",
+            "reason": "Holy Land, religious traditions"
+          },
+          {
+            "name": "India",
+            "code": "IN",
+            "reason": "Ancient spiritual traditions, temples"
+          },
+          {
+            "name": "Turkey",
+            "code": "TR",
+            "reason": "Bridge of civilizations, religious heritage"
+          },
+          {
+            "name": "Greece",
+            "code": "GR",
+            "reason": "Orthodox monasteries, ancient philosophy"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "rebellion",
+          "unconventional",
+          "freedom",
+          "challenging norms"
+        ],
+        "travel_meaning": "Break from traditional travel. Seek alternative experiences and unconventional paths.",
+        "travel_style": "Off-the-beaten-path, alternative communities, counter-culture experiences",
+        "countries": [
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Progressive, liberal, unconventional"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Alternative energy, unique culture"
+          },
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Non-conformist digital nomad haven"
+          },
+          {
+            "name": "Uruguay",
+            "code": "UY",
+            "reason": "Progressive policies, unconventional South America"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Alternative lifestyles, eco-communities"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "name": "The Lovers",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "love",
+          "harmony",
+          "relationships",
+          "choices",
+          "union",
+          "values"
+        ],
+        "travel_meaning": "Romantic getaways and meaningful connections. Travel strengthens relationships and requires important choices.",
+        "travel_style": "Romantic destinations, honeymoons, couple's retreats, partner travel",
+        "countries": [
+          {
+            "name": "France",
+            "code": "FR",
+            "reason": "Paris - city of love, romance capital"
+          },
+          {
+            "name": "Italy",
+            "code": "IT",
+            "reason": "Venice gondolas, romantic atmosphere"
+          },
+          {
+            "name": "Greece",
+            "code": "GR",
+            "reason": "Santorini sunsets, honeymoon paradise"
+          },
+          {
+            "name": "Maldives",
+            "code": "MV",
+            "reason": "Overwater bungalows, ultimate romance"
+          },
+          {
+            "name": "Morocco",
+            "code": "MA",
+            "reason": "Romantic riads, exotic allure"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "disharmony",
+          "imbalance",
+          "misalignment",
+          "poor choices"
+        ],
+        "travel_meaning": "Solo travel for self-discovery. Make independent choices. Focus on self-love before partnership.",
+        "travel_style": "Solo travel, self-discovery journeys, independent exploration",
+        "countries": [
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Solitude in nature, self-reflection"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Solo travel friendly, self-discovery"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Independent exploration, solitude"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Solo hiking, personal space"
+          },
+          {
+            "name": "Canada",
+            "code": "CA",
+            "reason": "Wilderness solitude, find yourself"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "name": "The Chariot",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "control",
+          "willpower",
+          "determination",
+          "direction",
+          "victory",
+          "ambition"
+        ],
+        "travel_meaning": "Take control of your journey. Road trips and self-driven adventures. Move forward with confidence.",
+        "travel_style": "Road trips, self-drive tours, conquering distances, planned routes",
+        "countries": [
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "Route 66, classic American road trips"
+          },
+          {
+            "name": "Australia",
+            "code": "AU",
+            "reason": "Outback drives, vast distances"
+          },
+          {
+            "name": "Canada",
+            "code": "CA",
+            "reason": "Trans-Canada Highway, epic drives"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Ring Road, control your pace"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Atlantic Road, scenic driving"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "lack of control",
+          "lack of direction",
+          "aggression",
+          "opposition"
+        ],
+        "travel_meaning": "Let others drive. Surrender control. Use public transport or guided tours instead of forcing direction.",
+        "travel_style": "Group tours, public transport, letting others lead, guided experiences",
+        "countries": [
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Efficient trains, no driving needed"
+          },
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Perfect public transport system"
+          },
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Cycling and train culture"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Bike everywhere, no control battles"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "MRT system, surrender driving"
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "name": "Strength",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "courage",
+          "inner strength",
+          "patience",
+          "compassion",
+          "gentle control"
+        ],
+        "travel_meaning": "Face challenges with courage. Wildlife encounters and physical challenges. Inner strength conquers obstacles.",
+        "travel_style": "Adventure challenges, wildlife safaris, trekking, physical endurance",
+        "countries": [
+          {
+            "name": "South Africa",
+            "code": "ZA",
+            "reason": "Lion encounters, safari courage"
+          },
+          {
+            "name": "Tanzania",
+            "code": "TZ",
+            "reason": "Kilimanjaro climb, inner strength"
+          },
+          {
+            "name": "Nepal",
+            "code": "NP",
+            "reason": "Himalayan treks, mental fortitude"
+          },
+          {
+            "name": "Kenya",
+            "code": "KE",
+            "reason": "Wildlife, facing nature's power"
+          },
+          {
+            "name": "Chile",
+            "code": "CL",
+            "reason": "Patagonia endurance, strength needed"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "self-doubt",
+          "weakness",
+          "insecurity",
+          "vulnerability"
+        ],
+        "travel_meaning": "Build confidence gradually. Choose easier destinations first. Acknowledge vulnerabilities without judgment.",
+        "travel_style": "Comfort zones, familiar environments, supported travel, confidence building",
+        "countries": [
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Safe, easy to navigate, builds confidence"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "English-speaking, very safe"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Gentle introduction to travel"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Friendly, easy for beginners"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Organized, reduces travel anxiety"
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "name": "The Hermit",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "introspection",
+          "solitude",
+          "inner guidance",
+          "wisdom",
+          "soul-searching"
+        ],
+        "travel_meaning": "Seek solitude and quiet reflection. Travel alone to find inner wisdom. Retreat from crowds.",
+        "travel_style": "Solo retreats, meditation centers, remote locations, silent travel",
+        "countries": [
+          {
+            "name": "Bhutan",
+            "code": "BT",
+            "reason": "Buddhist kingdom, meditation, solitude"
+          },
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Lapland isolation, Northern silence"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Fjord solitude, mountain hermitages"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Remote landscapes, introspection"
+          },
+          {
+            "name": "Mongolia",
+            "code": "MN",
+            "reason": "Vast emptiness, soul-searching"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "isolation",
+          "loneliness",
+          "withdrawal",
+          "paranoia"
+        ],
+        "travel_meaning": "Re-emerge into social settings. Group travel recommended. Balance solitude with connection.",
+        "travel_style": "Group tours, hostels, social travel, making connections",
+        "countries": [
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Social backpacker scene, easy connections"
+          },
+          {
+            "name": "Spain",
+            "code": "ES",
+            "reason": "Gregarious culture, social atmosphere"
+          },
+          {
+            "name": "Italy",
+            "code": "IT",
+            "reason": "Communal dining, social warmth"
+          },
+          {
+            "name": "Mexico",
+            "code": "MX",
+            "reason": "Friendly culture, easy to meet people"
+          },
+          {
+            "name": "Colombia",
+            "code": "CO",
+            "reason": "Welcoming locals, social vibes"
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "name": "Wheel of Fortune",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "destiny",
+          "cycles",
+          "luck",
+          "change",
+          "karma",
+          "turning point"
+        ],
+        "travel_meaning": "Go with the flow of destiny. Unexpected opportunities arise. Lucky encounters and synchronicities.",
+        "travel_style": "Spontaneous decisions, following signs, trusting fate, serendipitous travel",
+        "countries": [
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "Las Vegas - fortune and chance"
+          },
+          {
+            "name": "Monaco",
+            "code": "MC",
+            "reason": "Monte Carlo, wheel of fortune"
+          },
+          {
+            "name": "China",
+            "code": "CN",
+            "reason": "Macau casinos, destiny and luck"
+          },
+          {
+            "name": "United Arab Emirates",
+            "code": "AE",
+            "reason": "Dubai - rapid transformation"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "Modern fortune, cycles of change"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "bad luck",
+          "negative external forces",
+          "lack of control",
+          "resistance"
+        ],
+        "travel_meaning": "Expect setbacks but don't resist change. Bad luck is temporary. Stay flexible when plans fall apart.",
+        "travel_style": "Flexible bookings, travel insurance, backup plans, acceptance",
+        "countries": [
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Resilience culture, adapting to change"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Kiwi can-do attitude despite setbacks"
+          },
+          {
+            "name": "Chile",
+            "code": "CL",
+            "reason": "Nation rebuilt after disasters"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Living with volcanic unpredictability"
+          },
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Adapting to water, managing change"
+          }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "name": "Justice",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "fairness",
+          "truth",
+          "law",
+          "balance",
+          "accountability"
+        ],
+        "travel_meaning": "Seek fair societies and balanced experiences. Choose ethical travel and just destinations.",
+        "travel_style": "Ethical tourism, fair trade tours, socially responsible travel",
+        "countries": [
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Social justice leader, equality"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Fairness in society, transparency"
+          },
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Progressive laws, justice system"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Fair society, Maori rights"
+          },
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Neutrality, balanced approach"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "unfairness",
+          "dishonesty",
+          "lack of accountability",
+          "bias"
+        ],
+        "travel_meaning": "Avoid destinations with injustice. Be aware of ethical issues. Stand up for what's right.",
+        "travel_style": "Research destinations, support local justice, ethical choices",
+        "countries": [
+          {
+            "name": "Rwanda",
+            "code": "RW",
+            "reason": "Reconciliation and justice efforts"
+          },
+          {
+            "name": "South Africa",
+            "code": "ZA",
+            "reason": "Post-apartheid truth and reconciliation"
+          },
+          {
+            "name": "Colombia",
+            "code": "CO",
+            "reason": "Peace process, working toward justice"
+          },
+          {
+            "name": "Cambodia",
+            "code": "KH",
+            "reason": "Facing past, seeking accountability"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Confronting history, modern justice"
+          }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "name": "The Hanged Man",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "pause",
+          "surrender",
+          "letting go",
+          "new perspective",
+          "sacrifice"
+        ],
+        "travel_meaning": "Slow down and see from a different angle. Surrender control and embrace waiting. Pause brings clarity.",
+        "travel_style": "Slow travel, meditation retreats, perspective-shifting experiences",
+        "countries": [
+          {
+            "name": "Indonesia",
+            "code": "ID",
+            "reason": "Bali yoga retreats, surrender to island time"
+          },
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Buddhist meditation, letting go"
+          },
+          {
+            "name": "Vietnam",
+            "code": "VN",
+            "reason": "Slow travel by motorbike, new perspectives"
+          },
+          {
+            "name": "Laos",
+            "code": "LA",
+            "reason": "Slowest pace in Southeast Asia"
+          },
+          {
+            "name": "Sri Lanka",
+            "code": "LK",
+            "reason": "Ayurveda, pause for healing"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "stalling",
+          "needless sacrifice",
+          "fear of sacrifice",
+          "resistance"
+        ],
+        "travel_meaning": "Stop waiting and take action. The pause is over. Move forward now.",
+        "travel_style": "Action-packed itineraries, fast-paced travel, getting things done",
+        "countries": [
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "Fast-paced cities, action orientation"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Efficient, fast bullet trains"
+          },
+          {
+            "name": "Singapore",
+            "code": "SG",
+            "reason": "Dynamic, fast-moving city"
+          },
+          {
+            "name": "United Arab Emirates",
+            "code": "AE",
+            "reason": "Rapid development, forward motion"
+          },
+          {
+            "name": "South Korea",
+            "code": "KR",
+            "reason": "Fast internet, dynamic culture"
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "name": "Death",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "endings",
+          "transformation",
+          "transition",
+          "letting go",
+          "metamorphosis"
+        ],
+        "travel_meaning": "Life-changing journeys and transformative experiences. End old patterns through travel. Embrace complete change.",
+        "travel_style": "Transformative travel, pilgrimage, life-changing experiences",
+        "countries": [
+          {
+            "name": "Egypt",
+            "code": "EG",
+            "reason": "Valley of Kings, death rituals, transformation"
+          },
+          {
+            "name": "Mexico",
+            "code": "MX",
+            "reason": "Día de los Muertos, honoring transformation"
+          },
+          {
+            "name": "Peru",
+            "code": "PE",
+            "reason": "Ayahuasca ceremonies, ego death"
+          },
+          {
+            "name": "Cambodia",
+            "code": "KH",
+            "reason": "Angkor Wat, impermanence"
+          },
+          {
+            "name": "Italy",
+            "code": "IT",
+            "reason": "Pompeii, catacombs, facing mortality"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "resistance to change",
+          "stagnation",
+          "inability to move on"
+        ],
+        "travel_meaning": "Forcing change won't work. Allow natural transitions. Don't rush transformation.",
+        "travel_style": "Gentle transitions, familiar places with small changes",
+        "countries": [
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Stability, gentle change"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Traditional with modern touches"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Gradual evolution, not revolution"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Honoring past while modernizing"
+          },
+          {
+            "name": "United Kingdom",
+            "code": "GB",
+            "reason": "Tradition with incremental change"
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "name": "Temperance",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "balance",
+          "moderation",
+          "patience",
+          "purpose",
+          "meaning"
+        ],
+        "travel_meaning": "Find balance between adventure and rest. Practice moderation. Blend different experiences harmoniously.",
+        "travel_style": "Balanced itineraries, wellness focus, moderate pace",
+        "countries": [
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Balanced lifestyle, moderation"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Work-life balance, natural harmony"
+          },
+          {
+            "name": "Canada",
+            "code": "CA",
+            "reason": "Balanced society, nature and cities"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Alpine balance, wellness culture"
+          },
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Balance in all things, sauna wisdom"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "imbalance",
+          "excess",
+          "lack of long-term vision",
+          "self-indulgence"
+        ],
+        "travel_meaning": "Too much or too little of everything. Need to recalibrate and find center again.",
+        "travel_style": "Detox travel, wellness reset, finding equilibrium",
+        "countries": [
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Wellness retreats, rebalancing"
+          },
+          {
+            "name": "Indonesia",
+            "code": "ID",
+            "reason": "Bali healing, restore balance"
+          },
+          {
+            "name": "Sri Lanka",
+            "code": "LK",
+            "reason": "Ayurveda, rebalancing doshas"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Nature therapy, reset"
+          },
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Coastal calm, recalibrate"
+          }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "name": "The Devil",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "bondage",
+          "materialism",
+          "playfulness",
+          "sexuality",
+          "temptation"
+        ],
+        "travel_meaning": "Indulge your senses but be aware of attachments. Party destinations and hedonistic experiences.",
+        "travel_style": "Nightlife, party destinations, indulgent experiences",
+        "countries": [
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Amsterdam - freedom and temptation"
+          },
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Full moon parties, indulgence"
+          },
+          {
+            "name": "Spain",
+            "code": "ES",
+            "reason": "Ibiza - ultimate party island"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Berlin techno scene, underground"
+          },
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "Las Vegas - sin city"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "release",
+          "detachment",
+          "breaking free",
+          "power reclaimed"
+        ],
+        "travel_meaning": "Break free from addictions and unhealthy patterns. Detox and liberation through travel.",
+        "travel_style": "Detox retreats, digital detox, breaking habits",
+        "countries": [
+          {
+            "name": "Bhutan",
+            "code": "BT",
+            "reason": "Digital detox, simple living"
+          },
+          {
+            "name": "Nepal",
+            "code": "NP",
+            "reason": "Mountain detox, break patterns"
+          },
+          {
+            "name": "Myanmar",
+            "code": "MM",
+            "reason": "Monk lifestyle, detachment"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Nature purification, break free"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Clean living, fresh start"
+          }
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "name": "The Tower",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "sudden change",
+          "upheaval",
+          "chaos",
+          "revelation",
+          "awakening"
+        ],
+        "travel_meaning": "Expect the unexpected. Intense, life-altering experiences. Travel that shakes your foundations.",
+        "travel_style": "Intense cities, culture shock, overwhelming experiences",
+        "countries": [
+          {
+            "name": "India",
+            "code": "IN",
+            "reason": "Overwhelming chaos, perspective shift"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Tokyo sensory overload"
+          },
+          {
+            "name": "United States",
+            "code": "US",
+            "reason": "New York City intensity"
+          },
+          {
+            "name": "Brazil",
+            "code": "BR",
+            "reason": "Rio contrasts, favelas and beaches"
+          },
+          {
+            "name": "China",
+            "code": "CN",
+            "reason": "Shanghai rapid change, intensity"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "avoiding disaster",
+          "fear of change",
+          "delaying the inevitable"
+        ],
+        "travel_meaning": "The crisis is passing. Rebuild after chaos. Gentle recovery from intense experiences.",
+        "travel_style": "Recovery travel, gentle destinations, rebuilding confidence",
+        "countries": [
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Gentle recovery, peaceful"
+          },
+          {
+            "name": "Greece",
+            "code": "GR",
+            "reason": "Island calm after storm"
+          },
+          {
+            "name": "Croatia",
+            "code": "HR",
+            "reason": "Peaceful Adriatic, rebuild"
+          },
+          {
+            "name": "Slovenia",
+            "code": "SI",
+            "reason": "Quiet recovery destination"
+          },
+          {
+            "name": "Estonia",
+            "code": "EE",
+            "reason": "Calm Baltic, fresh start"
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "name": "The Star",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "hope",
+          "faith",
+          "renewal",
+          "spirituality",
+          "inspiration"
+        ],
+        "travel_meaning": "Healing journeys and renewed hope. Stargazing and inspiring landscapes. Feel renewed and inspired.",
+        "travel_style": "Stargazing tours, healing destinations, inspirational travel",
+        "countries": [
+          {
+            "name": "Chile",
+            "code": "CL",
+            "reason": "Atacama - best stargazing on Earth"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Dark Sky Reserves, Milky Way"
+          },
+          {
+            "name": "Namibia",
+            "code": "NA",
+            "reason": "Desert stars, clear skies"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Northern Lights, celestial hope"
+          },
+          {
+            "name": "Maldives",
+            "code": "MV",
+            "reason": "Stars over ocean, renewal"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "lack of faith",
+          "despair",
+          "disconnection",
+          "insecurity"
+        ],
+        "travel_meaning": "Restore faith through grounding experiences. Reconnect with earth before seeking stars.",
+        "travel_style": "Grounding travel, nature connection, faith restoration",
+        "countries": [
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Grounding fjords, solid ground"
+          },
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Mountain stability, solid faith"
+          },
+          {
+            "name": "Canada",
+            "code": "CA",
+            "reason": "Wilderness grounding"
+          },
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Forest therapy, reconnection"
+          },
+          {
+            "name": "Austria",
+            "code": "AT",
+            "reason": "Alpine grounding, renewed faith"
+          }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "name": "The Moon",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "illusion",
+          "fear",
+          "anxiety",
+          "subconscious",
+          "intuition"
+        ],
+        "travel_meaning": "Navigate through uncertainty with intuition. Mysterious destinations and night experiences. Face your fears.",
+        "travel_style": "Mysterious places, night tours, facing fears, intuitive travel",
+        "countries": [
+          {
+            "name": "Romania",
+            "code": "RO",
+            "reason": "Transylvania, Dracula, mystery"
+          },
+          {
+            "name": "Scotland",
+            "code": "GB",
+            "reason": "Misty Highlands, Celtic myths"
+          },
+          {
+            "name": "Ireland",
+            "code": "IE",
+            "reason": "Fairy tales, mystical landscapes"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Midnight sun and polar night"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Northern myths, dark winters"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "release of fear",
+          "inner confusion",
+          "repressed emotion"
+        ],
+        "travel_meaning": "Clarity emerging from confusion. Face what was hidden. Truth revealed through travel.",
+        "travel_style": "Clear destinations, honest experiences, truth-seeking",
+        "countries": [
+          {
+            "name": "Netherlands",
+            "code": "NL",
+            "reason": "Honest culture, clear communication"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Transparent society, truth"
+          },
+          {
+            "name": "Germany",
+            "code": "DE",
+            "reason": "Direct culture, no illusions"
+          },
+          {
+            "name": "Switzerland",
+            "code": "CH",
+            "reason": "Clarity and precision"
+          },
+          {
+            "name": "Sweden",
+            "code": "SE",
+            "reason": "Straightforward, honest"
+          }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "name": "The Sun",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "joy",
+          "success",
+          "celebration",
+          "positivity",
+          "vitality"
+        ],
+        "travel_meaning": "Pure joy and celebration. Sunny destinations and positive vibes. Success in your travels.",
+        "travel_style": "Beach holidays, sunny destinations, celebrations",
+        "countries": [
+          {
+            "name": "Spain",
+            "code": "ES",
+            "reason": "Mediterranean sun, joy of life"
+          },
+          {
+            "name": "Greece",
+            "code": "GR",
+            "reason": "Island sunshine, celebration"
+          },
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Algarve sun, 300 sunny days"
+          },
+          {
+            "name": "Australia",
+            "code": "AU",
+            "reason": "Sunshine coast, surf culture"
+          },
+          {
+            "name": "Cyprus",
+            "code": "CY",
+            "reason": "Aphrodite's sunny island"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "temporary depression",
+          "lack of enthusiasm",
+          "sadness"
+        ],
+        "travel_meaning": "Even sunny places can't fix inner sadness. Find joy within first, then travel.",
+        "travel_style": "Meaningful travel, inner work destinations, therapeutic",
+        "countries": [
+          {
+            "name": "Bhutan",
+            "code": "BT",
+            "reason": "Happiness from within, not sun"
+          },
+          {
+            "name": "Finland",
+            "code": "FI",
+            "reason": "Happy despite dark winters"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Winter hygge, inner warmth"
+          },
+          {
+            "name": "Denmark",
+            "code": "DK",
+            "reason": "Happiness culture, not weather"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Joy in darkness, resilience"
+          }
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "name": "Judgement",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "reflection",
+          "reckoning",
+          "inner calling",
+          "absolution",
+          "awakening"
+        ],
+        "travel_meaning": "Answer your travel calling. Pilgrimage and spiritual awakening. Judgment-free self-reflection.",
+        "travel_style": "Pilgrimages, calling-driven travel, spiritual journeys",
+        "countries": [
+          {
+            "name": "Spain",
+            "code": "ES",
+            "reason": "Camino de Santiago pilgrimage"
+          },
+          {
+            "name": "Israel",
+            "code": "IL",
+            "reason": "Jerusalem, holy land calling"
+          },
+          {
+            "name": "India",
+            "code": "IN",
+            "reason": "Varanasi, spiritual reckoning"
+          },
+          {
+            "name": "Vatican City",
+            "code": "VA",
+            "reason": "Catholic pilgrimage center"
+          },
+          {
+            "name": "Saudi Arabia",
+            "code": "SA",
+            "reason": "Mecca, ultimate spiritual calling"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "self-doubt",
+          "inner critic",
+          "lack of self-awareness"
+        ],
+        "travel_meaning": "Too much self-judgment blocking your journey. Practice self-compassion while traveling.",
+        "travel_style": "Self-compassion retreats, gentle travel, healing",
+        "countries": [
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Loving-kindness meditation"
+          },
+          {
+            "name": "Indonesia",
+            "code": "ID",
+            "reason": "Bali self-love practices"
+          },
+          {
+            "name": "Costa Rica",
+            "code": "CR",
+            "reason": "Pura vida, self-acceptance"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Gentle Kiwi acceptance"
+          },
+          {
+            "name": "Portugal",
+            "code": "PT",
+            "reason": "Soft culture, no judgment"
+          }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "name": "The World",
+      "arcana_type": "major",
+      "upright": {
+        "keywords": [
+          "completion",
+          "accomplishment",
+          "travel",
+          "integration",
+          "fulfillment"
+        ],
+        "travel_meaning": "World travel and major journeys complete. Integration of all experiences. Travel culmination.",
+        "travel_style": "World tours, multi-continent trips, bucket list completion",
+        "countries": [
+          {
+            "name": "Thailand",
+            "code": "TH",
+            "reason": "Backpacker hub, world travel gateway"
+          },
+          {
+            "name": "Australia",
+            "code": "AU",
+            "reason": "Gap year classic destination"
+          },
+          {
+            "name": "Japan",
+            "code": "JP",
+            "reason": "Cultural completion experience"
+          },
+          {
+            "name": "Brazil",
+            "code": "BR",
+            "reason": "South America culmination"
+          },
+          {
+            "name": "South Africa",
+            "code": "ZA",
+            "reason": "African continent gateway"
+          }
+        ]
+      },
+      "reversed": {
+        "keywords": [
+          "seeking closure",
+          "incomplete",
+          "short-cuts",
+          "delays"
+        ],
+        "travel_meaning": "Journey not complete yet. Avoid rushing to finish. One more lesson remains.",
+        "travel_style": "Open-ended travel, no finish line, continuous journey",
+        "countries": [
+          {
+            "name": "Mongolia",
+            "code": "MN",
+            "reason": "Endless steppe, no completion"
+          },
+          {
+            "name": "Iceland",
+            "code": "IS",
+            "reason": "Always more to discover"
+          },
+          {
+            "name": "New Zealand",
+            "code": "NZ",
+            "reason": "Never-ending beauty"
+          },
+          {
+            "name": "Norway",
+            "code": "NO",
+            "reason": "Infinite fjords to explore"
+          },
+          {
+            "name": "Canada",
+            "code": "CA",
+            "reason": "Vast lands, never fully seen"
+          }
+        ]
+      }
+    }
+  ],
+  "minor_arcana": {
+    "cups": [
+      {
+        "id": 1,
+        "name": "Ace of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "new love",
+            "emotional beginnings"
+          ],
+          "travel_meaning": "Open heart to new experiences",
+          "countries": [
+            {
+              "name": "Greece",
+              "code": "GR"
+            },
+            {
+              "name": "Maldives",
+              "code": "MV"
+            },
+            {
+              "name": "Indonesia",
+              "code": "ID"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "blocked emotions"
+          ],
+          "travel_meaning": "Emotional healing needed",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "India",
+              "code": "IN"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Two of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "partnership",
+            "romance"
+          ],
+          "travel_meaning": "Couple's travel, deep connections",
+          "countries": [
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "imbalance",
+            "tension"
+          ],
+          "travel_meaning": "Solo travel for healing",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Three of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "celebration",
+            "friendship"
+          ],
+          "travel_meaning": "Group travel and celebrations",
+          "countries": [
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "Brazil",
+              "code": "BR"
+            },
+            {
+              "name": "Thailand",
+              "code": "TH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "overindulgence",
+            "gossip"
+          ],
+          "travel_meaning": "Moderate celebrations, avoid excess",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "name": "Four of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "contemplation",
+            "apathy"
+          ],
+          "travel_meaning": "Need inspiration, seeing new perspectives",
+          "countries": [
+            {
+              "name": "Bhutan",
+              "code": "BT"
+            },
+            {
+              "name": "Nepal",
+              "code": "NP"
+            },
+            {
+              "name": "Peru",
+              "code": "PE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "new opportunities"
+          ],
+          "travel_meaning": "Awakening to travel possibilities",
+          "countries": [
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "name": "Five of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "loss",
+            "regret"
+          ],
+          "travel_meaning": "Healing travel after disappointment",
+          "countries": [
+            {
+              "name": "Ireland",
+              "code": "IE"
+            },
+            {
+              "name": "Scotland",
+              "code": "GB"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "acceptance",
+            "moving on"
+          ],
+          "travel_meaning": "Ready for new adventures",
+          "countries": [
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            }
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "name": "Six of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "nostalgia",
+            "childhood"
+          ],
+          "travel_meaning": "Return to meaningful places, family travel",
+          "countries": [
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            },
+            {
+              "name": "Portugal",
+              "code": "PT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "stuck in past"
+          ],
+          "travel_meaning": "Explore new places, break nostalgia",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "South Korea",
+              "code": "KR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "name": "Seven of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "choices",
+            "illusion"
+          ],
+          "travel_meaning": "Too many destination options, choose wisely",
+          "countries": [
+            {
+              "name": "United States",
+              "code": "US"
+            },
+            {
+              "name": "China",
+              "code": "CN"
+            },
+            {
+              "name": "India",
+              "code": "IN"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "clarity",
+            "determination"
+          ],
+          "travel_meaning": "Clear destination choice made",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "name": "Eight of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "walking away",
+            "transition"
+          ],
+          "travel_meaning": "Leaving comfort zone, solo soul journey",
+          "countries": [
+            {
+              "name": "Nepal",
+              "code": "NP"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Peru",
+              "code": "PE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "avoidance",
+            "fear of change"
+          ],
+          "travel_meaning": "Stay and appreciate current location",
+          "countries": [
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "name": "Nine of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "contentment",
+            "satisfaction"
+          ],
+          "travel_meaning": "Dream destination achieved, pure joy",
+          "countries": [
+            {
+              "name": "Maldives",
+              "code": "MV"
+            },
+            {
+              "name": "French Polynesia",
+              "code": "PF"
+            },
+            {
+              "name": "Seychelles",
+              "code": "SC"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "greed",
+            "dissatisfaction"
+          ],
+          "travel_meaning": "Appreciate simple travels, not luxury",
+          "countries": [
+            {
+              "name": "Laos",
+              "code": "LA"
+            },
+            {
+              "name": "Cambodia",
+              "code": "KH"
+            }
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "name": "Ten of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "harmony",
+            "family"
+          ],
+          "travel_meaning": "Perfect family vacations, lasting memories",
+          "countries": [
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "family conflict"
+          ],
+          "travel_meaning": "Avoid family travel now, solo better",
+          "countries": [
+            {
+              "name": "Finland",
+              "code": "FI"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "name": "Page of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "creativity",
+            "curiosity"
+          ],
+          "travel_meaning": "Creative exploration, artistic destinations",
+          "countries": [
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "emotional immaturity"
+          ],
+          "travel_meaning": "Grow emotionally before traveling",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "name": "Knight of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "romance",
+            "charm"
+          ],
+          "travel_meaning": "Romantic adventures, following heart",
+          "countries": [
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "unrealistic"
+          ],
+          "travel_meaning": "Beware of travel scams, stay grounded",
+          "countries": [
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "name": "Queen of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "compassion",
+            "intuition"
+          ],
+          "travel_meaning": "Nurturing travel, wellness retreats",
+          "countries": [
+            {
+              "name": "Bali, Indonesia",
+              "code": "ID"
+            },
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "India",
+              "code": "IN"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "emotional instability"
+          ],
+          "travel_meaning": "Stabilize emotions before traveling",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "name": "King of Cups",
+        "suit": "cups",
+        "element": "water",
+        "upright": {
+          "keywords": [
+            "emotional balance",
+            "diplomacy"
+          ],
+          "travel_meaning": "Balanced trips, diplomatic destinations",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Sweden",
+              "code": "SE"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "emotional manipulation"
+          ],
+          "travel_meaning": "Avoid emotionally draining travel companions",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      }
+    ],
+    "wands": [
+      {
+        "id": 1,
+        "name": "Ace of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "inspiration",
+            "new opportunities"
+          ],
+          "travel_meaning": "New adventure calls, take the leap",
+          "countries": [
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "delays",
+            "lack of direction"
+          ],
+          "travel_meaning": "Wait for better timing",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Two of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "planning",
+            "future decisions"
+          ],
+          "travel_meaning": "Research and plan next adventures",
+          "countries": [
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "United States",
+              "code": "US"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "poor planning"
+          ],
+          "travel_meaning": "Revise travel plans carefully",
+          "countries": [
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Three of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "expansion",
+            "foresight"
+          ],
+          "travel_meaning": "International travel, expanding horizons",
+          "countries": [
+            {
+              "name": "United States",
+              "code": "US"
+            },
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "Brazil",
+              "code": "BR"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "delays"
+          ],
+          "travel_meaning": "Travel delays, be patient",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "name": "Four of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "celebration",
+            "homecoming"
+          ],
+          "travel_meaning": "Joyful travel, celebrations abroad",
+          "countries": [
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "lack of support"
+          ],
+          "travel_meaning": "Solo travel, no celebrations",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "name": "Five of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "competition",
+            "conflict"
+          ],
+          "travel_meaning": "Crowded destinations, navigate conflicts",
+          "countries": [
+            {
+              "name": "India",
+              "code": "IN"
+            },
+            {
+              "name": "China",
+              "code": "CN"
+            },
+            {
+              "name": "Egypt",
+              "code": "EG"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "avoiding conflict"
+          ],
+          "travel_meaning": "Choose peaceful destinations",
+          "countries": [
+            {
+              "name": "Bhutan",
+              "code": "BT"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "name": "Six of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "victory",
+            "success"
+          ],
+          "travel_meaning": "Triumphant journeys, achieving goals",
+          "countries": [
+            {
+              "name": "Nepal",
+              "code": "NP"
+            },
+            {
+              "name": "Tanzania",
+              "code": "TZ"
+            },
+            {
+              "name": "Peru",
+              "code": "PE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "failure"
+          ],
+          "travel_meaning": "Learn from travel mistakes",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "name": "Seven of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "perseverance",
+            "defense"
+          ],
+          "travel_meaning": "Challenging destinations, stay strong",
+          "countries": [
+            {
+              "name": "Nepal",
+              "code": "NP"
+            },
+            {
+              "name": "Chile",
+              "code": "CL"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "overwhelmed"
+          ],
+          "travel_meaning": "Choose easier destinations",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "name": "Eight of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "swift action",
+            "travel"
+          ],
+          "travel_meaning": "Fast-paced travel, quick trips",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            },
+            {
+              "name": "United Arab Emirates",
+              "code": "AE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "delays"
+          ],
+          "travel_meaning": "Expect travel delays",
+          "countries": [
+            {
+              "name": "India",
+              "code": "IN"
+            },
+            {
+              "name": "Brazil",
+              "code": "BR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "name": "Nine of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "resilience",
+            "persistence"
+          ],
+          "travel_meaning": "Continue despite challenges",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "exhaustion"
+          ],
+          "travel_meaning": "Rest before more travel",
+          "countries": [
+            {
+              "name": "Maldives",
+              "code": "MV"
+            },
+            {
+              "name": "Seychelles",
+              "code": "SC"
+            }
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "name": "Ten of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "burden",
+            "responsibility"
+          ],
+          "travel_meaning": "Overpacked, simplify luggage",
+          "countries": [
+            {
+              "name": "India",
+              "code": "IN"
+            },
+            {
+              "name": "China",
+              "code": "CN"
+            },
+            {
+              "name": "Indonesia",
+              "code": "ID"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "letting go"
+          ],
+          "travel_meaning": "Travel light, minimal packing",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            }
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "name": "Page of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "enthusiasm",
+            "exploration"
+          ],
+          "travel_meaning": "Youthful adventure, explore freely",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Vietnam",
+              "code": "VN"
+            },
+            {
+              "name": "Colombia",
+              "code": "CO"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "lack of direction"
+          ],
+          "travel_meaning": "Plan before departing",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            }
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "name": "Knight of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "adventure",
+            "passion"
+          ],
+          "travel_meaning": "Spontaneous adventures, high energy",
+          "countries": [
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "recklessness"
+          ],
+          "travel_meaning": "Slow down, plan better",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "name": "Queen of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "confidence",
+            "independence"
+          ],
+          "travel_meaning": "Solo female travel, confidence",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "selfish"
+          ],
+          "travel_meaning": "Consider others in group travel",
+          "countries": [
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "name": "King of Wands",
+        "suit": "wands",
+        "element": "fire",
+        "upright": {
+          "keywords": [
+            "leadership",
+            "vision"
+          ],
+          "travel_meaning": "Lead group trips, inspire others",
+          "countries": [
+            {
+              "name": "United States",
+              "code": "US"
+            },
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "South Africa",
+              "code": "ZA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "tyranny"
+          ],
+          "travel_meaning": "Don't control others' travel",
+          "countries": [
+            {
+              "name": "Netherlands",
+              "code": "NL"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      }
+    ],
+    "swords": [
+      {
+        "id": 1,
+        "name": "Ace of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "clarity",
+            "breakthrough"
+          ],
+          "travel_meaning": "Clear travel decisions, mental clarity",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "confusion"
+          ],
+          "travel_meaning": "Unclear destinations, rethink",
+          "countries": [
+            {
+              "name": "India",
+              "code": "IN"
+            },
+            {
+              "name": "Morocco",
+              "code": "MA"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Two of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "difficult decisions"
+          ],
+          "travel_meaning": "Can't decide between destinations",
+          "countries": [
+            {
+              "name": "Portugal",
+              "code": "PT"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "decision made"
+          ],
+          "travel_meaning": "Finally chose destination",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Three of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "heartbreak",
+            "sorrow"
+          ],
+          "travel_meaning": "Healing travel after heartbreak",
+          "countries": [
+            {
+              "name": "Bali, Indonesia",
+              "code": "ID"
+            },
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "India",
+              "code": "IN"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "recovery"
+          ],
+          "travel_meaning": "Ready for joyful travel again",
+          "countries": [
+            {
+              "name": "Greece",
+              "code": "GR"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "name": "Four of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "rest",
+            "recovery"
+          ],
+          "travel_meaning": "Restorative travel, wellness focus",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            },
+            {
+              "name": "Iceland",
+              "code": "IS"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "restlessness"
+          ],
+          "travel_meaning": "Can't relax, active travel",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            }
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "name": "Five of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "conflict",
+            "defeat"
+          ],
+          "travel_meaning": "Travel conflicts, choose peace",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "reconciliation"
+          ],
+          "travel_meaning": "Resolve travel disputes",
+          "countries": [
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "Sweden",
+              "code": "SE"
+            }
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "name": "Six of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "transition",
+            "moving on"
+          ],
+          "travel_meaning": "Necessary journey, new chapters",
+          "countries": [
+            {
+              "name": "Greece",
+              "code": "GR"
+            },
+            {
+              "name": "Croatia",
+              "code": "HR"
+            },
+            {
+              "name": "Portugal",
+              "code": "PT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "resistance to change"
+          ],
+          "travel_meaning": "Stuck, not ready to travel",
+          "countries": [
+            {
+              "name": "Finland",
+              "code": "FI"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "name": "Seven of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "strategy",
+            "deception"
+          ],
+          "travel_meaning": "Be vigilant of scams, smart travel",
+          "countries": [
+            {
+              "name": "Morocco",
+              "code": "MA"
+            },
+            {
+              "name": "Egypt",
+              "code": "EG"
+            },
+            {
+              "name": "India",
+              "code": "IN"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "coming clean"
+          ],
+          "travel_meaning": "Honest travel, no shortcuts",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "name": "Eight of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "restriction",
+            "trapped"
+          ],
+          "travel_meaning": "Feeling trapped, need to escape",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "freedom"
+          ],
+          "travel_meaning": "Breaking free, liberation",
+          "countries": [
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "name": "Nine of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "anxiety",
+            "worry"
+          ],
+          "travel_meaning": "Travel anxiety, address fears",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "recovery"
+          ],
+          "travel_meaning": "Overcoming travel fears",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "name": "Ten of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "rock bottom",
+            "ending"
+          ],
+          "travel_meaning": "Travel plans failed, start fresh",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "recovery"
+          ],
+          "travel_meaning": "Rising from travel disaster",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            }
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "name": "Page of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "curiosity",
+            "communication"
+          ],
+          "travel_meaning": "Learn languages, communicate",
+          "countries": [
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Italy",
+              "code": "IT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "all talk"
+          ],
+          "travel_meaning": "Stop planning, start traveling",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Vietnam",
+              "code": "VN"
+            }
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "name": "Knight of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "action",
+            "ambition"
+          ],
+          "travel_meaning": "Fast travel, direct routes",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "impulsive"
+          ],
+          "travel_meaning": "Think before booking",
+          "countries": [
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "name": "Queen of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "independence",
+            "honesty"
+          ],
+          "travel_meaning": "Independent travel, honest experiences",
+          "countries": [
+            {
+              "name": "United Kingdom",
+              "code": "GB"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Netherlands",
+              "code": "NL"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "cold"
+          ],
+          "travel_meaning": "Open heart while traveling",
+          "countries": [
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            }
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "name": "King of Swords",
+        "suit": "swords",
+        "element": "air",
+        "upright": {
+          "keywords": [
+            "authority",
+            "truth"
+          ],
+          "travel_meaning": "Intellectual travel, museums",
+          "countries": [
+            {
+              "name": "United Kingdom",
+              "code": "GB"
+            },
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "manipulative"
+          ],
+          "travel_meaning": "Avoid travel manipulation",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        }
+      }
+    ],
+    "pentacles": [
+      {
+        "id": 1,
+        "name": "Ace of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "opportunity",
+            "prosperity"
+          ],
+          "travel_meaning": "Invest in travel, new opportunities",
+          "countries": [
+            {
+              "name": "United Arab Emirates",
+              "code": "AE"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "missed opportunity"
+          ],
+          "travel_meaning": "Lost travel chances, try again",
+          "countries": [
+            {
+              "name": "Portugal",
+              "code": "PT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Two of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "balance",
+            "adaptability"
+          ],
+          "travel_meaning": "Balance work and travel",
+          "countries": [
+            {
+              "name": "Portugal",
+              "code": "PT"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "Thailand",
+              "code": "TH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "imbalance"
+          ],
+          "travel_meaning": "Choose work or travel",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Three of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "teamwork",
+            "collaboration"
+          ],
+          "travel_meaning": "Group travel, shared experiences",
+          "countries": [
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            },
+            {
+              "name": "France",
+              "code": "FR"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "disorganization"
+          ],
+          "travel_meaning": "Poor group coordination",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "name": "Four of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "control",
+            "security"
+          ],
+          "travel_meaning": "Budget travel, saving money",
+          "countries": [
+            {
+              "name": "Vietnam",
+              "code": "VN"
+            },
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Cambodia",
+              "code": "KH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "generosity"
+          ],
+          "travel_meaning": "Spend on experiences",
+          "countries": [
+            {
+              "name": "Maldives",
+              "code": "MV"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "name": "Five of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "hardship",
+            "loss"
+          ],
+          "travel_meaning": "Budget constraints, cheap travel",
+          "countries": [
+            {
+              "name": "India",
+              "code": "IN"
+            },
+            {
+              "name": "Nepal",
+              "code": "NP"
+            },
+            {
+              "name": "Bolivia",
+              "code": "BO"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "recovery"
+          ],
+          "travel_meaning": "Finances improving, upgrade",
+          "countries": [
+            {
+              "name": "Greece",
+              "code": "GR"
+            },
+            {
+              "name": "Portugal",
+              "code": "PT"
+            }
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "name": "Six of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "generosity",
+            "charity"
+          ],
+          "travel_meaning": "Volunteer travel, give back",
+          "countries": [
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            },
+            {
+              "name": "Kenya",
+              "code": "KE"
+            },
+            {
+              "name": "Nepal",
+              "code": "NP"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "debt"
+          ],
+          "travel_meaning": "Don't overspend on travel",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Vietnam",
+              "code": "VN"
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "name": "Seven of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "perseverance",
+            "investment"
+          ],
+          "travel_meaning": "Long-term travel planning",
+          "countries": [
+            {
+              "name": "New Zealand",
+              "code": "NZ"
+            },
+            {
+              "name": "Australia",
+              "code": "AU"
+            },
+            {
+              "name": "Canada",
+              "code": "CA"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "lack of growth"
+          ],
+          "travel_meaning": "Change travel approach",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Norway",
+              "code": "NO"
+            }
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "name": "Eight of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "skill",
+            "diligence"
+          ],
+          "travel_meaning": "Learn through travel, skills",
+          "countries": [
+            {
+              "name": "Japan",
+              "code": "JP"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "lack of focus"
+          ],
+          "travel_meaning": "Aimless travel, find purpose",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Indonesia",
+              "code": "ID"
+            }
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "name": "Nine of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "luxury",
+            "self-sufficiency"
+          ],
+          "travel_meaning": "Luxury solo travel, enjoy",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "United Arab Emirates",
+              "code": "AE"
+            },
+            {
+              "name": "Monaco",
+              "code": "MC"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "overspending"
+          ],
+          "travel_meaning": "Reduce luxury, spend wisely",
+          "countries": [
+            {
+              "name": "Portugal",
+              "code": "PT"
+            },
+            {
+              "name": "Greece",
+              "code": "GR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "name": "Ten of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "wealth",
+            "family"
+          ],
+          "travel_meaning": "Multigenerational travel, legacy",
+          "countries": [
+            {
+              "name": "Italy",
+              "code": "IT"
+            },
+            {
+              "name": "France",
+              "code": "FR"
+            },
+            {
+              "name": "Spain",
+              "code": "ES"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "financial loss"
+          ],
+          "travel_meaning": "Travel setbacks, stay home",
+          "countries": [
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "Finland",
+              "code": "FI"
+            }
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "name": "Page of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "ambition",
+            "study"
+          ],
+          "travel_meaning": "Educational travel, study abroad",
+          "countries": [
+            {
+              "name": "United Kingdom",
+              "code": "GB"
+            },
+            {
+              "name": "United States",
+              "code": "US"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "procrastination"
+          ],
+          "travel_meaning": "Stop dreaming, book trip",
+          "countries": [
+            {
+              "name": "Thailand",
+              "code": "TH"
+            },
+            {
+              "name": "Bali, Indonesia",
+              "code": "ID"
+            }
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "name": "Knight of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "responsibility",
+            "routine"
+          ],
+          "travel_meaning": "Planned travel, no surprises",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Germany",
+              "code": "DE"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "boredom"
+          ],
+          "travel_meaning": "Add spontaneity to travel",
+          "countries": [
+            {
+              "name": "Iceland",
+              "code": "IS"
+            },
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            }
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "name": "Queen of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "nurturing",
+            "practicality"
+          ],
+          "travel_meaning": "Comfortable travel, practical",
+          "countries": [
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            },
+            {
+              "name": "Denmark",
+              "code": "DK"
+            },
+            {
+              "name": "Austria",
+              "code": "AT"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "materialism"
+          ],
+          "travel_meaning": "Focus on experiences not things",
+          "countries": [
+            {
+              "name": "Bhutan",
+              "code": "BT"
+            },
+            {
+              "name": "Nepal",
+              "code": "NP"
+            }
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "name": "King of Pentacles",
+        "suit": "pentacles",
+        "element": "earth",
+        "upright": {
+          "keywords": [
+            "wealth",
+            "business"
+          ],
+          "travel_meaning": "Business class travel, luxury",
+          "countries": [
+            {
+              "name": "United Arab Emirates",
+              "code": "AE"
+            },
+            {
+              "name": "Singapore",
+              "code": "SG"
+            },
+            {
+              "name": "Switzerland",
+              "code": "CH"
+            }
+          ]
+        },
+        "reversed": {
+          "keywords": [
+            "greed"
+          ],
+          "travel_meaning": "Money isn't everything in travel",
+          "countries": [
+            {
+              "name": "Bhutan",
+              "code": "BT"
+            },
+            {
+              "name": "Costa Rica",
+              "code": "CR"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

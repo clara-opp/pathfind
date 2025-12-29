@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import amadeus_api_client as amadeus
 import google_calendar_client as calendar_client
+import requests
 
 # ==========================================
 # 1. CONFIGURATION & SETUP
@@ -415,17 +416,72 @@ def show_swiping_step():
 def show_astro_step():
     st.markdown("### Step 4: A Final Touch of Destiny? ✨")
     
-    use_astro = st.toggle("Include Horoscope Match")
-    if use_astro:
-        st.selectbox("Your Zodiac Sign", ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"], key="zodiac_sign")
-        st.session_state.weights['astro'] = 0.15 
-        st.info("A bit of cosmic dust will be added to your match scores!")
+    st.markdown("#### 🃏 Draw Your Mystical Travel Card")
+    
+    if st.button("Draw Tarot Card", use_container_width=True, key="draw_tarot"):
+        try:
+            # API Call für Tarot-Karte
+            api_key = os.getenv("ROXY_API_KEY")
+            tarot_url = "https://roxyapi.com/api/v1/data/astro/tarot"
+            url = f"{tarot_url}/single-card-draw?token={api_key}&reversed_probability=0.3"
+            
+            response = requests.get(url)
+            
+            if response.status_code == 200:
+                card_data = response.json()
+                card_name = card_data.get("name", "Unknown Card")
+                is_reversed = card_data.get("is_reversed", False)
+                card_image = card_data.get("image", "")
+                
+                # Länder aus Datenbank holen
+                conn = sqlite3.connect("unified_country_database.db")
+                cursor = conn.cursor()
+                
+                orientation = "reversed" if is_reversed else "upright"
+                cursor.execute("""
+                    SELECT DISTINCT country_code, country_name, reason 
+                    FROM tarot_countries 
+                    WHERE card_name = ? AND orientation = ?
+                """, (card_name, orientation))
+                
+                results = cursor.fetchall()
+                conn.close()
+                
+                if results:
+                    # Länder speichern
+                    tarot_countries = [row[0] for row in results]
+                    st.session_state["tarot_countries"] = tarot_countries
+                    st.session_state["weights"]["astro"] = 0.2
+                    
+                    # UI: Karte anzeigen
+                    orientation_text = "🔄 Reversed" if is_reversed else "⬆️ Upright"
+                    st.success(f"✨ **{card_name}** ({orientation_text})")
+                    
+                    if card_image:
+                        col1, col2, col3 = st.columns([1, 2, 1])
+                        with col2:
+                            st.image(card_image, width=200)
+                    
+                    # Empfohlene Länder anzeigen
+                    st.markdown("#### 🌍 Recommended Destinations:")
+                    for country_code, country_name, reason in results:
+                        st.write(f"**{country_name}** ({country_code})")
+                        st.caption(f"_{reason}_")
+                else:
+                    st.warning(f"Card '{card_name}' found but no countries in tarot database.")
+                    st.session_state["tarot_countries"] = []
+            else:
+                st.error(f"API Error: {response.status_code}")
+                
+        except Exception as e:
+            st.error(f"Error drawing tarot card: {str(e)}")
     
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
     if st.button("Calculate My Matches! 🚀", use_container_width=True):
         st.session_state.step = 4
         st.rerun()
+
 
 def show_results_step():
     st.markdown("### Step 5: Your Top Destinations!")
