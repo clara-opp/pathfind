@@ -347,10 +347,26 @@ def show_profile_step():
     col1, _ = st.columns([2, 1])
     with col1:
         persona = st.selectbox("Select a persona:", list(personas.keys()), label_visibility="collapsed")
+
+    st.markdown("### Step 3: 📅 When is your vacation?")
+    today = datetime.date.today()
+    vacation_dates = st.date_input(
+        "Select your travel window:",
+        value=[today + datetime.timedelta(days=30), today + datetime.timedelta(days=40)],
+        min_value=today,
+        help="This helps us find the best flights and weather for your trip."
+    )
     
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True) 
 
     if st.button("Next: Personalize Your Trip →"):
+        if isinstance(vacation_dates, (list, tuple)) and len(vacation_dates) == 2:
+            st.session_state.start_date = vacation_dates[0]
+            st.session_state.end_date = vacation_dates[1]
+        else:
+            st.error("Please select both a start and end date for your vacation.")
+            st.stop()
+            
         st.session_state.weights = personas[persona]
         st.session_state.prefs = {'target_temp': 25} 
 
@@ -383,7 +399,7 @@ def show_swiping_step():
     # Ensure progress is always between 0.0 and 1.0
     progress_val = min((card_index + 1) / len(SWIPE_CARDS), 1.0)
     
-    st.markdown(f"### Step 3: Swipe to Refine Your Choices ({card_index + 1}/{len(SWIPE_CARDS)})")
+    st.markdown(f"### Step 5: Swipe to Refine Your Choices ({card_index + 1}/{len(SWIPE_CARDS)})")
     st.progress(progress_val)
     
     card = SWIPE_CARDS[card_index]
@@ -484,7 +500,7 @@ def show_astro_step():
 
 
 def show_results_step():
-    st.markdown("### Step 5: Your Top Destinations!")
+    st.markdown("### Step 6: Your Top Destinations!")
     with st.spinner("Analyzing the globe to find your perfect spot..."):
         df_base = data_manager.load_base_data(st.session_state.get('origin_iata', 'FRA'))
         matcher = TravelMatcher(df_base)
@@ -544,7 +560,10 @@ def show_dashboard_step():
     with tab4:
         st.metric("Price Level Index (Lower is Cheaper)", f"{country['pli_ppp']:.2f}")
     with tab5:
-        mode = st.radio("Search Mode", ["Manual Search", "AI Flight Chatbot"], horizontal=True)
+        c_mode, c_type = st.columns([2, 1])
+        mode = c_mode.radio("Search Mode", ["Manual Search", "AI Flight Chatbot"], horizontal=True)
+        trip_type = c_type.selectbox("Trip Type", ["Round Trip", "One Way"])
+
         all_airports = data_manager.get_airports()
         dest_airports = data_manager.get_airports(country['iso2'])
         
@@ -554,7 +573,15 @@ def show_dashboard_step():
             origin_index = all_airports[all_airports['iata_code'] == default_origin].index[0] if not all_airports[all_airports['iata_code'] == default_origin].empty else 0
             orig = c1.selectbox("Flying from:", all_airports['display'], index=int(origin_index))
             dest = col2.selectbox("Flying to:", dest_airports['display'])
-            dates = col3.date_input("Dates:", [datetime.date.today() + datetime.timedelta(days=14), datetime.date.today() + datetime.timedelta(days=17)])
+            
+            # Pre-fill dates from session state
+            s_date = st.session_state.get('start_date', datetime.date.today() + datetime.timedelta(days=14))
+            e_date = st.session_state.get('end_date', datetime.date.today() + datetime.timedelta(days=17))
+            
+            if trip_type == "Round Trip":
+                dates = col3.date_input("Vacation Dates:", [s_date, e_date])
+            else:
+                dates = col3.date_input("Departure Date:", s_date)
 
             c4, c5, c6, c7, c8 = st.columns([2, 1, 1, 1, 1])
             t_class = c4.selectbox("Class", ["ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST"])
@@ -565,11 +592,14 @@ def show_dashboard_step():
             st.session_state.traveler_counts = {"ADULT": ad, "CHILD": ch, "INFANT": inf}
             non_stop = c8.checkbox("Non-stop")
 
-            if st.button("Search Flights 🚀", use_container_width=True, key="manual_search_btn"):
+            if st.button("Search Flights 🚀", width='stretch', key="manual_search_btn"):
                 imgs = [country.get('img_1'), country.get('img_2'), country.get('img_3')]
                 imgs = [img for img in imgs if img]
                 img_placeholder = st.empty()
-                if isinstance(dates, (list, tuple)):
+                if trip_type == "Round Trip":
+                    # Only search once for the specific round trip dates
+                    start_d = end_d = dates[0]
+                elif isinstance(dates, (list, tuple)):
                     start_d = dates[0]
                     end_d = dates[1] if len(dates) > 1 else start_d
                 else:
@@ -604,7 +634,8 @@ def show_dashboard_step():
                     params = {
                         "originLocationCode": orig[-4:-1], 
                         "destinationLocationCode": dest[-4:-1], 
-                        "departureDate": curr.strftime("%Y-%m-%d"), 
+                        "departureDate": curr.strftime("%Y-%m-%d"),
+                        "returnDate": dates[1].strftime("%Y-%m-%d") if trip_type == "Round Trip" and len(dates) > 1 else None,
                         "adults": ad,
                         "children": ch,
                         "infants": inf,
@@ -613,7 +644,7 @@ def show_dashboard_step():
                         "currencyCode": "USD" if st.session_state.origin_iata == "ATL" else "EUR"
                     }
                     res = amadeus.search_flight_offers(token, params)
-                    if res.get('data'):
+                    if res and res.get('data'):
                         all_res['data'].extend(res['data'])
                         all_res['dictionaries']['carriers'].update(res.get('dictionaries', {}).get('carriers', {}))
                     time.sleep(0.1) # Prevent API Rate Limiting
@@ -621,10 +652,14 @@ def show_dashboard_step():
                 img_placeholder.empty()
                 st.session_state.flight_results = all_res
         else:
-            if prompt := st.chat_input("Flights from Berlin next Tuesday"):
+            st.info(f"Currently searching for a **{trip_type}** during your vacation: **{st.session_state.start_date}** to **{st.session_state.end_date}**.")
+            if prompt := st.chat_input("e.g. Find me the cheapest business class options"):
                 st.session_state.conversation.append({"role": "user", "content": prompt})
                 with st.spinner("AI is analyzing your request..."):
-                    params = extract_flight_info_with_gpt(st.session_state.conversation)
+                    # Inject vacation context into the conversation for GPT
+                    context_msg = {"role": "system", "content": f"The user is planning a {trip_type} vacation from {st.session_state.start_date} to {st.session_state.end_date}."}
+                    temp_history = [context_msg] + st.session_state.conversation
+                    params = extract_flight_info_with_gpt(temp_history)
                     if "followUpQuestion" in params:
                         st.session_state.conversation.append({"role": "assistant", "content": params["followUpQuestion"]})
                         st.rerun()
@@ -643,8 +678,14 @@ def show_dashboard_step():
                     token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
                     params["destinationLocationCode"] = dest_airports.iloc[0]['iata_code']
                     params["currencyCode"] = "USD" if st.session_state.origin_iata == "ATL" else "EUR"
-                    start_d = datetime.datetime.strptime(params.get('departureDate') or params.get('startDate'), "%Y-%m-%d").date()
-                    end_d = datetime.datetime.strptime(params.get('endDate', start_d.strftime("%Y-%m-%d")), "%Y-%m-%d").date()
+                    if trip_type == "Round Trip":
+                        params["departureDate"] = st.session_state.start_date.strftime("%Y-%m-%d")
+                        params["returnDate"] = st.session_state.end_date.strftime("%Y-%m-%d")
+                    # For Round Trip, we only need to call the API once, not loop through the whole vacation
+                        start_d = end_d = st.session_state.start_date 
+                    else:
+                        start_d = datetime.datetime.strptime(params.get('departureDate') or params.get('startDate'), "%Y-%m-%d").date()
+                        end_d = datetime.datetime.strptime(params.get('endDate', start_d.strftime("%Y-%m-%d")), "%Y-%m-%d").date()
                     all_res = {"data": [], "dictionaries": {"carriers": {}}}
                     curr = start_d
                     img_idx = 0
@@ -688,15 +729,16 @@ def show_dashboard_step():
             # Process to DF for filtering/sorting
             processed_data = []
             for idx, offer in enumerate(st.session_state.flight_results['data']):
-                itinerary = offer['itineraries'][0]
+                outbound = offer['itineraries'][0]
+                # For sorting/displaying, we use the outbound departure time
                 processed_data.append({
                     'idx': idx,
                     'Price': float(offer['price']['total']),
                     'Currency': offer['price']['currency'],
-                    'Duration': parse_duration_to_td(itinerary['duration']),
-                    'Carrier': carriers.get(itinerary['segments'][0]['carrierCode'], "N/A"),
-                    'Layovers': len(itinerary['segments']) - 1,
-                    'Departure': pd.to_datetime(itinerary['segments'][0]['departure']['at'])
+                    'Duration': parse_duration_to_td(outbound['duration']),
+                    'Carrier': carriers.get(outbound['segments'][0]['carrierCode'], "N/A"),
+                    'Layovers': len(outbound['segments']) - 1,
+                    'Departure': pd.to_datetime(outbound['segments'][0]['departure']['at'])
                 })
             df = pd.DataFrame(processed_data)
 
@@ -717,57 +759,61 @@ def show_dashboard_step():
 
             for _, row in df.iterrows():
                 offer = st.session_state.flight_results['data'][row['idx']]
-                segments = offer['itineraries'][0]['segments']
+                itineraries = offer['itineraries']
+
                 with st.container(border=True):
-                    c1, c2 = st.columns([3, 1])
-                    with c1:
-                        st.markdown(f"<span class='carrier-text'>{row['Departure'].strftime('%a, %d %b %Y')}</span>", unsafe_allow_html=True)
-                        st.markdown(f"<span class='route-text'>{row['Carrier']} | {maps['city'].get(segments[0]['departure']['iataCode'])} ({segments[0]['departure']['iataCode']}) → {maps['city'].get(segments[-1]['arrival']['iataCode'])} ({segments[-1]['arrival']['iataCode']})</span>", unsafe_allow_html=True)
-                        st.markdown(f"⏱️ {format_duration(row['Duration'])} | 🔄 {row['Layovers']} Layovers")
-                    
-                    with c2:
-                        # Display raw API price/currency for accuracy
-                        curr_map = {"EUR": "€", "USD": "$"}
-                        symbol = curr_map.get(row['Currency'], row['Currency'])
-                        st.markdown(f"<div class='price-text'>{symbol}{row['Price']:.2f}</div>", unsafe_allow_html=True)
-                        if st.button("Book Flight", key=f"bk_{row['idx']}"):
-                            token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
-                            price_res = amadeus.get_flight_price(token, offer)
-                            if price_res and 'data' in price_res:
-                                st.session_state.priced_offer = price_res['data']['flightOffers'][0]
-                                st.session_state.step = 6
-                                st.rerun()
-                            else:
-                                st.error("Could not confirm price. This flight may no longer be available.")
+                    for i, itin in enumerate(itineraries):
+                        if i == 1: st.markdown("---")
+                        
+                        c1, c2 = st.columns([3, 1])
+                        with c1:
+                            label = "🛫 Outbound" if len(itineraries) > 1 and i == 0 else ("🛬 Return" if i == 1 else "✈️ Flight")
+                            segs = itin['segments']
+                            dep_time = pd.to_datetime(segs[0]['departure']['at'])
+                            st.markdown(f"**{label}** <span class='carrier-text'>{dep_time.strftime('%a, %d %b %Y')}</span>", unsafe_allow_html=True)
+                            st.markdown(f"<span class='route-text'>{carriers.get(segs[0]['carrierCode'], 'N/A')} | {maps['city'].get(segs[0]['departure']['iataCode'])} → {maps['city'].get(segs[-1]['arrival']['iataCode'])}</span>", unsafe_allow_html=True)
+                            st.markdown(f"⏱️ {format_duration(itin['duration'])} | 🔄 {len(segs)-1} Layovers", unsafe_allow_html=True)
 
-                    with st.expander("View Full Timeline"):
-                        for i, seg in enumerate(segments):
-                            st.markdown(f"""
-                            <div class='timeline-row'>
-                                <span class='time-badge'>{seg['departure']['at'][-8:-3]}</span>
-                                <span>departing from <span class='city-name'>{maps['city'].get(seg['departure']['iataCode'])}</span> <span class='iata-code'>({seg['departure']['iataCode']})</span></span>
-                             </div>
-                             <div class='duration-info'>↓ Flight duration: {format_duration(seg['duration'])}</div>
-                            <div class='timeline-row'>
-                                <span class='time-badge'>{seg['arrival']['at'][-8:-3]}</span>
-                                <span>arrival at <span class='city-name'>{maps['city'].get(seg['arrival']['iataCode'])}</span> <span class='iata-code'>({seg['arrival']['iataCode']})</span></span>
-                            </div>
-                            """, unsafe_allow_html=True)
+                        if i == 0:
+                            with c2:
+                                curr_map = {"EUR": "€", "USD": "$"}
+                                symbol = curr_map.get(row['Currency'], row['Currency'])
+                                st.markdown(f"<div class='price-text'>{symbol}{row['Price']:.2f}</div>", unsafe_allow_html=True)
+                                if st.button("Book Flight", key=f"bk_{row['idx']}"):
+                                    token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
+                                    price_res = amadeus.get_flight_price(token, offer)
+                                    if price_res and 'data' in price_res:
+                                        st.session_state.priced_offer = price_res['data']['flightOffers'][0]
+                                        st.session_state.step = 6
+                                        st.rerun()
+                                    else:
+                                        st.error("Could not confirm price.")
 
-                            # Calculate Layover if there is a next segment
-                            if i < len(segments) - 1:
-                                next_seg = segments[i+1]
-                                arr_time = datetime.datetime.fromisoformat(seg['arrival']['at'].replace('Z', ''))
-                                dep_time = datetime.datetime.fromisoformat(next_seg['departure']['at'].replace('Z', ''))
-                                layover_td = dep_time - arr_time
-                                
-                                # Format layover duration
-                                hours, remainder = divmod(int(layover_td.total_seconds()), 3600)
-                                minutes, _ = divmod(remainder, 60)
-                                layover_str = f"{hours}h {minutes}m"
-                                
-                                st.markdown(f"<div class='layover-info'>Layover: {layover_str}</div>", unsafe_allow_html=True)
+                        exp_label = "View Outbound Timeline" if len(itineraries) > 1 and i == 0 else \
+                                    ("View Return Timeline" if i == 1 else "View Full Timeline")
+                        with st.expander(exp_label):
+                            segments = itin['segments']
+                            for seg_idx, seg in enumerate(segments):
+                                st.markdown(f"""
+                                <div class='timeline-row'>
+                                    <span class='time-badge'>{seg['departure']['at'][-8:-3]}</span>
+                                    <span>departing from <span class='city-name'>{maps['city'].get(seg['departure']['iataCode'])}</span> <span class='iata-code'>({seg['departure']['iataCode']})</span></span>
+                                 </div>
+                                 <div class='duration-info'>↓ Flight duration: {format_duration(seg['duration'])}</div>
+                                <div class='timeline-row'>
+                                    <span class='time-badge'>{seg['arrival']['at'][-8:-3]}</span>
+                                    <span>arrival at <span class='city-name'>{maps['city'].get(seg['arrival']['iataCode'])}</span> <span class='iata-code'>({seg['arrival']['iataCode']})</span></span>
+                                </div>
+                                """, unsafe_allow_html=True)
 
+                                if seg_idx < len(segments) - 1:
+                                    next_seg = segments[seg_idx+1]
+                                    arr_time = datetime.datetime.fromisoformat(seg['arrival']['at'].replace('Z', ''))
+                                    dep_time = datetime.datetime.fromisoformat(next_seg['departure']['at'].replace('Z', ''))
+                                    layover_td = dep_time - arr_time
+                                    hours, remainder = divmod(int(layover_td.total_seconds()), 3600)
+                                    minutes, _ = divmod(remainder, 60)
+                                    st.markdown(f"<div class='layover-info'>Layover: {hours}h {minutes}m</div>", unsafe_allow_html=True)
     if st.button("← Back to Results"):
         st.session_state.step = 4
         st.rerun()
@@ -876,7 +922,7 @@ def show_confirmation_step():
 def run_app():
         # Handle Google OAuth Redirect
     q = st.query_params
-    if "code" in q:
+    if "code" in q and 'google_creds' not in st.session_state:
         flow = calendar_client.get_google_flow(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI)
         st.session_state.google_creds = calendar_client.get_credentials_from_code(flow, q.get("state"), q.get("code"))
         
@@ -891,14 +937,16 @@ def run_app():
         maps = data_manager.get_iata_mappings()
         service = calendar_client.get_calendar_service(st.session_state.google_creds)
         
-        seg = offer['itineraries'][0]['segments']
-        calendar_client.create_calendar_event(
-            service, f"Flight to {maps['city'].get(seg[-1]['arrival']['iataCode'])}",
-            datetime.datetime.fromisoformat(seg[0]['departure']['at'].replace('Z', '')),
-            datetime.datetime.fromisoformat(seg[-1]['arrival']['at'].replace('Z', '')),
-            maps['city'].get(seg[0]['departure']['iataCode']), maps['city'].get(seg[-1]['arrival']['iataCode']),
-            maps['tz'].get(seg[0]['departure']['iataCode'], "UTC"), maps['tz'].get(seg[-1]['arrival']['iataCode'], "UTC")
-        )
+        for itin in offer['itineraries']:
+            seg = itin['segments']
+            calendar_client.create_calendar_event(
+                service, f"Flight: {maps['city'].get(seg[0]['departure']['iataCode'])} to {maps['city'].get(seg[-1]['arrival']['iataCode'])}",
+                datetime.datetime.fromisoformat(seg[0]['departure']['at'].replace('Z', '')),
+                datetime.datetime.fromisoformat(seg[-1]['arrival']['at'].replace('Z', '')),
+                maps['city'].get(seg[0]['departure']['iataCode']), maps['city'].get(seg[-1]['arrival']['iataCode']),
+                maps['tz'].get(seg[0]['departure']['iataCode'], "UTC"), maps['tz'].get(seg[-1]['arrival']['iataCode'], "UTC")
+            )
+
         st.query_params.clear()
         st.session_state.step = 7
     st.markdown('<div class="main-header">Your Next Adventure Awaits</div>', unsafe_allow_html=True)
