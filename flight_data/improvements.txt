@@ -1,0 +1,7 @@
+# Added batching to add flights faster to google calendar
+- without batching: avg 1.76sec
+- with batching: avg 1.29sec
+The old version functioned by sending a separate HTTP request to Google for every single flight segment, forcing the application to wait for a server response before sending the next one. The new version instead prepares all event data locally and packages them into a single "batch" request that is sent to Google at once. 
+
+# Use @st.cache_data and @st.cache_resource
+These decorators prevent Streamlit from re-running expensive operations, such as querying the SQLite database for thousands of airports or initializing the OpenAI client, every time you click a button, storing the results in memory instead. By skipping these redundant data fetches, they reduced the reload time of each interaction from a sluggish ~5 seconds down to milliseconds. This ensures the interface feels snappy and responsive rather than lagging on every user input.

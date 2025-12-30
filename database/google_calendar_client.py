@@ -73,3 +73,34 @@ def create_calendar_event(service, summary, start_time, end_time, origin, destin
     except HttpError as error:
         print(f"An error occurred creating the calendar event: {error}")
         return False
+    
+def create_calendar_events_batch(service, event_list):
+    """
+    Creates multiple events in a single HTTP request using Google Batch API.
+    """
+    batch = service.new_batch_http_request()
+
+    def callback(request_id, response, exception):
+        if exception:
+            print(f"Error adding event {request_id}: {exception}")
+        else:
+            print(f"Event {request_id} created: {response.get('htmlLink')}")
+
+    print(f"DEBUG: Batching {len(event_list)} events...")
+
+    for data in event_list:
+        event_body = {
+            "summary": data['summary'],
+            "location": data['origin'],
+            "description": f"Flight from {data['origin']} to {data['destination']}",
+            "start": {"dateTime": data['start_time'].isoformat(), "timeZone": data['start_tz']},
+            "end": {"dateTime": data['end_time'].isoformat(), "timeZone": data['end_tz']},
+        }
+        batch.add(service.events().insert(calendarId="primary", body=event_body), callback=callback)
+
+    try:
+        batch.execute()
+        return True
+    except Exception as error:
+        print(f"An error occurred executing batch: {error}")
+        return False

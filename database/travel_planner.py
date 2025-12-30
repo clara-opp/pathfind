@@ -937,15 +937,22 @@ def run_app():
         maps = data_manager.get_iata_mappings()
         service = calendar_client.get_calendar_service(st.session_state.google_creds)
         
+        # Step A: Prepare data locally (Fast CPU operation)
+        events_to_create = []
         for itin in offer['itineraries']:
             seg = itin['segments']
-            calendar_client.create_calendar_event(
-                service, f"Flight: {maps['city'].get(seg[0]['departure']['iataCode'])} to {maps['city'].get(seg[-1]['arrival']['iataCode'])}",
-                datetime.datetime.fromisoformat(seg[0]['departure']['at'].replace('Z', '')),
-                datetime.datetime.fromisoformat(seg[-1]['arrival']['at'].replace('Z', '')),
-                maps['city'].get(seg[0]['departure']['iataCode']), maps['city'].get(seg[-1]['arrival']['iataCode']),
-                maps['tz'].get(seg[0]['departure']['iataCode'], "UTC"), maps['tz'].get(seg[-1]['arrival']['iataCode'], "UTC")
-            )
+            events_to_create.append({
+                "summary": f"Flight: {maps['city'].get(seg[0]['departure']['iataCode'])} to {maps['city'].get(seg[-1]['arrival']['iataCode'])}",
+                "start_time": datetime.datetime.fromisoformat(seg[0]['departure']['at'].replace('Z', '')),
+                "end_time": datetime.datetime.fromisoformat(seg[-1]['arrival']['at'].replace('Z', '')),
+                "origin": maps['city'].get(seg[0]['departure']['iataCode']),
+                "destination": maps['city'].get(seg[-1]['arrival']['iataCode']),
+                "start_tz": maps['tz'].get(seg[0]['departure']['iataCode'], "UTC"),
+                "end_tz": maps['tz'].get(seg[-1]['arrival']['iataCode'], "UTC")
+            })
+
+        # Step B: Execute Batch (Single HTTP request)
+        calendar_client.create_calendar_events_batch(service, events_to_create)
 
         st.query_params.clear()
         st.session_state.step = 7
