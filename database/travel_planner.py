@@ -441,7 +441,6 @@ def show_astro_step():
                 tarot_url = "https://roxyapi.com/api/v1/data/astro/tarot"
                 url = f"{tarot_url}/single-card-draw?token={api_key}&reversed_probability=0.3"
                 
-                # Schneller: Timeout auf 15s, Connection Pooling
                 response = requests.get(url, timeout=15)
             
             if response.status_code == 200:
@@ -452,7 +451,7 @@ def show_astro_step():
                 meaning = card_data.get("meaning", "")
                 reversed_meaning = card_data.get("reversed_meaning", "")
                 
-                # ⚡ Parallel: DB-Query während UI wird gebaut
+                # ⚡ DB-Query
                 travel_data = None
                 try:
                     conn = sqlite3.connect("unified_country_database.db")
@@ -467,26 +466,24 @@ def show_astro_step():
                     travel_data = cursor.fetchone()
                     conn.close()
                 except:
-                    pass  # Fallback wenn DB leer
+                    pass
                 
                 # ✅ Set astro weight to 0.2 (20%)
                 st.session_state["weights"]["astro"] = 0.2
                 st.session_state["tarot_drawn"] = True
                 st.session_state["tarot_card"] = card_name
                 
-                # 🎨 Schnellere UI ohne komplexe Spalten
+                # 🎨 UI
                 with st.container(border=True):
                     st.markdown(f"## ✨ {card_name}")
                     
-                    # Zwei-Spalten statt drei
                     col1, col2 = st.columns([1, 1.5])
                     
                     with col1:
                         if card_image:
-                            st.image(card_image, width=180, width='stretch')
+                            st.image(card_image, width=180)
                     
                     with col2:
-                        # Orientation
                         if is_reversed:
                             st.markdown("🔄 **REVERSED** – Inverted energy")
                         else:
@@ -494,11 +491,9 @@ def show_astro_step():
                         
                         st.divider()
                         
-                        # Meaning
                         st.markdown("**📖 Meaning**")
                         st.caption(reversed_meaning if is_reversed else meaning)
                         
-                        # Travel
                         if travel_data and travel_data[0]:
                             st.divider()
                             st.markdown("**✈️ Travel Significance**")
@@ -507,7 +502,7 @@ def show_astro_step():
                 st.error(f"API Error: {response.status_code}")
                 
         except requests.exceptions.Timeout:
-            st.error("⏱️ API Timeout (15s) - Try again or wait a moment.")
+            st.error("⏱️ API Timeout (15s) - Try again.")
         except Exception as e:
             st.error(f"Error: {str(e)}")
     
@@ -516,6 +511,7 @@ def show_astro_step():
     if st.button("Calculate My Matches! 🚀", width='stretch'):
         st.session_state.step = 4
         st.rerun()
+
 
 
 def show_dashboard_step():
