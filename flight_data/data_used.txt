@@ -12,6 +12,7 @@
 
 # Other APIs #
 - OpenAI API
+- unsplash API
 
 ### Datasets ###
 - OpenTravelData (Github)
