@@ -517,7 +517,26 @@ def load_tarot_travel_database() -> pd.DataFrame:
         return pd.DataFrame()
 
     with open(filepath, "r", encoding="utf-8") as f:
-        tarot_data = json.load(f)
+        raw_data = json.load(f)
+    
+    # Handle both list and dict formats
+    if isinstance(raw_data, list):
+        # If it's a flat list, convert to dict structure
+        tarot_data = {
+            "major_arcana": [card for card in raw_data if card.get("sequence", 999) <= 21],
+            "minor_arcana": {}
+        }
+        # Build minor arcana by suit
+        for card in raw_data:
+            if card.get("sequence", 999) > 21:
+                suit = infer_suit_from_name(card.get("name", "").lower())
+                if suit:
+                    if suit not in tarot_data["minor_arcana"]:
+                        tarot_data["minor_arcana"][suit] = []
+                    tarot_data["minor_arcana"][suit].append(card)
+    else:
+        # Already in dict format
+        tarot_data = raw_data
 
     tarot_records = []
 
@@ -529,7 +548,7 @@ def load_tarot_travel_database() -> pd.DataFrame:
             
             for country in countries:
                 tarot_records.append({
-                    "card_id": card["id"],
+                    "card_id": card.get("id") or card.get("sequence"),
                     "card_name": card["name"],
                     "arcana_type": "major",
                     "orientation": orientation,
@@ -544,7 +563,6 @@ def load_tarot_travel_database() -> pd.DataFrame:
     # Process Minor Arcana
     for suit, cards in tarot_data.get("minor_arcana", {}).items():
         for card in cards:
-            # Handle missing 'id' field - use sequence as fallback
             card_id = card.get("id") or card.get("sequence")
             
             for orientation in ["upright", "reversed"]:
@@ -565,10 +583,23 @@ def load_tarot_travel_database() -> pd.DataFrame:
                         "travel_style": card_info.get("travel_style", ""),
                     })
 
-
     df = pd.DataFrame(tarot_records)
     print(f"  Loaded {len(df)} tarot-country associations")
     return df
+
+
+def infer_suit_from_name(name_lower: str) -> str:
+    """Extract suit from card name for minor arcana."""
+    if any(word in name_lower for word in ["wands", "clubs", "fire"]):
+        return "wands"
+    elif any(word in name_lower for word in ["cups", "hearts", "water"]):
+        return "cups"
+    elif any(word in name_lower for word in ["swords", "air"]):
+        return "swords"
+    elif any(word in name_lower for word in ["coins", "pentacles", "earth", "discs"]):
+        return "coins"
+    return None
+
 
 
 
