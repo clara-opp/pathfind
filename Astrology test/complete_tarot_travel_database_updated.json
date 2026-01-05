@@ -1,0 +1,2220 @@
+{
+  "major_arcana": [
+    {
+      "id": 0,
+      "name": "The Fool",
+      "image": "https://cdn.roxyapi.com/img/tarot/00.jpeg",
+      "slug": "the_fool",
+      "sequence": 0,
+      "upright": {
+        "travel_meaning": "New adventures, spontaneity, and trusting the journey. Embracing the unknown and taking bold first steps.",
+        "travel_style": "Spontaneous backpacker, gap year explorer, adventure seeker",
+        "keywords": ["adventure", "spontaneity", "freedom", "new beginnings"],
+        "countries": [
+          { "code": "NZ", "name": "New Zealand", "reason": "Ultimate adventure playground for spontaneous travelers" },
+          { "code": "TH", "name": "Thailand", "reason": "Classic starting point for open-ended backpacking" },
+          { "code": "PE", "name": "Peru", "reason": "Sacred adventures and unpredictable discoveries" },
+          { "code": "PT", "name": "Portugal", "reason": "Laid-back, budget-friendly hub for wandering souls" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Wisdom through preparation—thoughtful planning reveals even deeper adventures.",
+        "travel_style": "Mindful explorer, prepared adventurer, strategic traveler",
+        "keywords": ["preparation", "mindfulness", "strategy", "informed adventure"],
+        "countries": [
+          { "code": "CH", "name": "Switzerland", "reason": "Precision planning unlocks Swiss Alps magic" },
+          { "code": "JP", "name": "Japan", "reason": "Strategic preparation enhances discovery" },
+          { "code": "DE", "name": "Germany", "reason": "Prepared minds find hidden cultural gems" },
+          { "code": "SG", "name": "Singapore", "reason": "Smart logistics amplify urban exploration" }
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "name": "The Magician",
+      "image": "https://cdn.roxyapi.com/img/tarot/01.jpeg",
+      "slug": "the_magician",
+      "sequence": 1,
+      "upright": {
+        "travel_meaning": "Using skills, talents, and resources to create opportunities while traveling. Networking, pitching, and making things happen.",
+        "travel_style": "Digital nomad, entrepreneur, business traveler, connector",
+        "keywords": ["power", "resourcefulness", "manifestation", "skill"],
+        "countries": [
+          { "code": "SG", "name": "Singapore", "reason": "High-tech, high-opportunity environment for ambitious travelers" },
+          { "code": "US", "name": "United States", "reason": "Mythos of self-made success and big opportunities" },
+          { "code": "DE", "name": "Germany", "reason": "Engineering, startups, and practical innovation" },
+          { "code": "JP", "name": "Japan", "reason": "Mastery, perfectionism, and technological innovation" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Adaptive problem-solving unlocks creative breakthroughs on the road.",
+        "travel_style": "Innovative navigator, resourceful improviser, flexible explorer",
+        "keywords": ["innovation", "adaptability", "creativity", "breakthrough"],
+        "countries": [
+          { "code": "IL", "name": "Israel", "reason": "Startup nation turns obstacles into innovations" },
+          { "code": "EE", "name": "Estonia", "reason": "Digital pioneers find clever workarounds" },
+          { "code": "KR", "name": "South Korea", "reason": "Tech creativity blooms through adaptation" },
+          { "code": "NL", "name": "Netherlands", "reason": "Practical genius within compact constraints" }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "The Popess",
+      "image": "https://cdn.roxyapi.com/img/tarot/02.jpeg",
+      "slug": "the_popess",
+      "sequence": 2,
+      "upright": {
+        "travel_meaning": "Inner guidance, spiritual retreats, contemplative journeys, and sacred knowledge.",
+        "travel_style": "Meditation retreats, ashrams, monasteries, silent stays",
+        "keywords": ["intuition", "spirituality", "wisdom", "mystery"],
+        "countries": [
+          { "code": "IN", "name": "India", "reason": "Yoga ashrams, spiritual teachers, and ancient wisdom" },
+          { "code": "BT", "name": "Bhutan", "reason": "Deeply Buddhist culture focused on inner happiness" },
+          { "code": "NP", "name": "Nepal", "reason": "Monasteries in the Himalayas and introspective trekking" },
+          { "code": "KH", "name": "Cambodia", "reason": "Temple complexes that invite contemplation" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "External wisdom enriches inner journey—learn from living teachers and cultures.",
+        "travel_style": "Community learner, guided explorer, culturally connected seeker",
+        "keywords": ["guidance", "learning", "connection", "shared wisdom"],
+        "countries": [
+          { "code": "TR", "name": "Turkey", "reason": "Sufi teachers share profound spiritual insights" },
+          { "code": "MA", "name": "Morocco", "reason": "Elders offer centuries of cultural wisdom" },
+          { "code": "MX", "name": "Mexico", "reason": "Indigenous wisdom traditions welcome curious hearts" },
+          { "code": "BR", "name": "Brazil", "reason": "Spiritual guides offer transformative knowledge" }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "The Empress",
+      "image": "https://cdn.roxyapi.com/img/tarot/03.jpeg",
+      "slug": "the_empress",
+      "sequence": 3,
+      "upright": {
+        "travel_meaning": "Sensual enjoyment, beauty, comfort, food, nature, and creative inspiration.",
+        "travel_style": "Slow travel, spa retreats, wine tours, eco-lodges",
+        "keywords": ["abundance", "comfort", "beauty", "nurture"],
+        "countries": [
+          { "code": "FR", "name": "France", "reason": "Gastronomy, vineyards, and refined aesthetics" },
+          { "code": "IT", "name": "Italy", "reason": "Design, cuisine, and natural beauty combined" },
+          { "code": "CR", "name": "Costa Rica", "reason": "Lush biodiversity and eco-luxury" },
+          { "code": "NZ", "name": "New Zealand", "reason": "Green landscapes, wellness and nature connection" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Authentic simplicity reveals true abundance—raw experiences create deepest joy.",
+        "travel_style": "Minimalist explorer, authentic connector, nature immersed traveler",
+        "keywords": ["simplicity", "authenticity", "essence", "genuine connection"],
+        "countries": [
+          { "code": "LA", "name": "Laos", "reason": "Simple beauty reveals infinite richness" },
+          { "code": "VN", "name": "Vietnam", "reason": "Authentic countryside offers purest sensory delights" },
+          { "code": "BO", "name": "Bolivia", "reason": "Raw landscapes unlock unfiltered joy" },
+          { "code": "MN", "name": "Mongolia", "reason": "Minimal living teaches profound abundance" }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "The Emperor",
+      "image": "https://cdn.roxyapi.com/img/tarot/04.jpeg",
+      "slug": "the_emperor",
+      "sequence": 4,
+      "upright": {
+        "travel_meaning": "Structure, leadership, taking charge of logistics, and mastering difficult environments.",
+        "travel_style": "Organised expeditions, high-altitude trekking, business-class efficiency",
+        "keywords": ["authority", "order", "stability", "leadership"],
+        "countries": [
+          { "code": "CH", "name": "Switzerland", "reason": "Orderly, precise and highly structured" },
+          { "code": "NO", "name": "Norway", "reason": "Well-governed with strong institutions" },
+          { "code": "AE", "name": "United Arab Emirates", "reason": "Top-down planned mega-urbanism" },
+          { "code": "NP", "name": "Nepal", "reason": "Requires leadership on serious mountain expeditions" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Flexible leadership flows—adaptability and intuition create harmonious journeys.",
+        "travel_style": "Flow-focused leader, intuitive navigator, adaptive guide",
+        "keywords": ["flexibility", "flow", "intuitive decision-making", "harmony"],
+        "countries": [
+          { "code": "PT", "name": "Portugal", "reason": "Loose planning creates serendipitous magic" },
+          { "code": "CR", "name": "Costa Rica", "reason": "Pura Vida flow embraces beautiful uncertainty" },
+          { "code": "ID", "name": "Indonesia", "reason": "Island rhythm teaches perfect adaptability" },
+          { "code": "MX", "name": "Mexico", "reason": "Creative improvisation through vibrant chaos" }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "name": "The Pope",
+      "image": "https://cdn.roxyapi.com/img/tarot/05.jpeg",
+      "slug": "the_pope",
+      "sequence": 5,
+      "upright": {
+        "travel_meaning": "Pilgrimage, tradition, religious institutions, and guided spiritual frameworks.",
+        "travel_style": "Faith-based pilgrim, tradition-respecting cultural traveler",
+        "keywords": ["faith", "tradition", "orthodoxy", "spiritual authority"],
+        "countries": [
+          { "code": "VA", "name": "Vatican City", "reason": "Symbol of institutional religious authority" },
+          { "code": "SA", "name": "Saudi Arabia", "reason": "Center of the Hajj pilgrimage" },
+          { "code": "IL", "name": "Israel", "reason": "Sacred land for multiple religions" },
+          { "code": "EG", "name": "Egypt", "reason": "Ancient religious symbolism and heritage" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Personal spirituality flourishes—honor your own sacred path while traveling.",
+        "travel_style": "Independent spiritual explorer, authentic seeker, free-spirited pilgrim",
+        "keywords": ["personal faith", "authenticity", "spiritual freedom", "individual path"],
+        "countries": [
+          { "code": "US", "name": "United States", "reason": "Spiritual diversity and personal choice thrive" },
+          { "code": "NL", "name": "Netherlands", "reason": "Liberal approach to spiritual exploration" },
+          { "code": "AU", "name": "Australia", "reason": "Open-minded spiritual experimentation" },
+          { "code": "CA", "name": "Canada", "reason": "Pluralistic spirituality widely embraced" }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "name": "The Lover",
+      "image": "https://cdn.roxyapi.com/img/tarot/06.jpeg",
+      "slug": "the_lover",
+      "sequence": 6,
+      "upright": {
+        "travel_meaning": "Romantic trips, emotional bonds, aligned values, and meaningful choices.",
+        "travel_style": "Couples travel, honeymoons, romantic city escapes",
+        "keywords": ["love", "union", "harmony", "choice"],
+        "countries": [
+          { "code": "FR", "name": "France", "reason": "Classic romance in Paris and beyond" },
+          { "code": "IT", "name": "Italy", "reason": "Quaint towns and candlelit dinners" },
+          { "code": "GR", "name": "Greece", "reason": "Sunset islands perfect for couples" },
+          { "code": "AR", "name": "Argentina", "reason": "Tango and intense passion" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Solo journeys of self-discovery—independence deepens personal growth and joy.",
+        "travel_style": "Solo explorer, self-focused traveler, independent adventurer",
+        "keywords": ["independence", "self-discovery", "personal growth", "freedom"],
+        "countries": [
+          { "code": "NZ", "name": "New Zealand", "reason": "Solo adventure capital for personal discovery" },
+          { "code": "JP", "name": "Japan", "reason": "Solo travel culture celebrates independence" },
+          { "code": "PT", "name": "Portugal", "reason": "Solo-friendly, empowering experiences" },
+          { "code": "CA", "name": "Canada", "reason": "Wide spaces perfect for self-reflection" }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "name": "The Chariot",
+      "image": "https://cdn.roxyapi.com/img/tarot/07.jpeg",
+      "slug": "the_chariot",
+      "sequence": 7,
+      "upright": {
+        "travel_meaning": "Momentum, victory, successful logistics, and conquering distances.",
+        "travel_style": "Road-tripper, long-distance cyclist, train nomad",
+        "keywords": ["willpower", "direction", "victory", "movement"],
+        "countries": [
+          { "code": "US", "name": "United States", "reason": "Iconic road trips and big drives" },
+          { "code": "CA", "name": "Canada", "reason": "Transcontinental journeys through vast landscapes" },
+          { "code": "AU", "name": "Australia", "reason": "Outback road adventures" },
+          { "code": "IS", "name": "Iceland", "reason": "Ring Road and rugged driving challenges" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Embracing the pause—slow travel reveals hidden magic you'd miss rushing.",
+        "travel_style": "Mindful explorer, quality-over-speed traveler, savoring wanderer",
+        "keywords": ["pause", "mindfulness", "slowness", "presence"],
+        "countries": [
+          { "code": "IT", "name": "Italy", "reason": "Dolce vita teaches the power of slowing down" },
+          { "code": "LA", "name": "Laos", "reason": "Slow pace reveals depth and wonder" },
+          { "code": "PT", "name": "Portugal", "reason": "Leisurely exploration uncovers soul" },
+          { "code": "JP", "name": "Japan", "reason": "Mindful travel becomes meditation" }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "name": "Justice",
+      "image": "https://cdn.roxyapi.com/img/tarot/08.jpeg",
+      "slug": "justice",
+      "sequence": 8,
+      "upright": {
+        "travel_meaning": "Fair treatment, visas processed smoothly, transparent rules, and karmic balance.",
+        "travel_style": "Ethical tourist, responsible traveler",
+        "keywords": ["fairness", "truth", "balance", "law"],
+        "countries": [
+          { "code": "DK", "name": "Denmark", "reason": "High levels of rule of law and fairness" },
+          { "code": "SE", "name": "Sweden", "reason": "Strong social justice systems" },
+          { "code": "FI", "name": "Finland", "reason": "Transparent institutions and low corruption" },
+          { "code": "NL", "name": "Netherlands", "reason": "International legal hubs and liberal values" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Navigating complexity teaches wisdom—grey areas teach nuanced understanding.",
+        "travel_style": "Cultural learner, nuanced explorer, systems-understanding traveler",
+        "keywords": ["nuance", "learning systems", "cultural understanding", "adaptation"],
+        "countries": [
+          { "code": "IN", "name": "India", "reason": "Complex systems teach profound lessons" },
+          { "code": "BR", "name": "Brazil", "reason": "Navigating bureaucracy builds wisdom" },
+          { "code": "TR", "name": "Turkey", "reason": "Political nuance deepens understanding" },
+          { "code": "MX", "name": "Mexico", "reason": "Learning local systems brings connection" }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "name": "The Hermit",
+      "image": "https://cdn.roxyapi.com/img/tarot/09.jpeg",
+      "slug": "the_hermit",
+      "sequence": 9,
+      "upright": {
+        "travel_meaning": "Solitude, introspection, and remote retreats far from crowds.",
+        "travel_style": "Solo hiking, silent retreats, off-grid cabins",
+        "keywords": ["solitude", "inner guidance", "wisdom", "reflection"],
+        "countries": [
+          { "code": "FO", "name": "Faroe Islands", "reason": "Remote windswept landscapes with few people" },
+          { "code": "IS", "name": "Iceland", "reason": "Vast empty spaces for introspection" },
+          { "code": "BT", "name": "Bhutan", "reason": "Monasteries and high mountain solitude" },
+          { "code": "NO", "name": "Norway", "reason": "Cabins in the wilderness and quiet fjords" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Community connection nourishes—shared experiences and friendships enrich the soul.",
+        "travel_style": "Social connector, community builder, relationship-focused traveler",
+        "keywords": ["connection", "community", "belonging", "friendship"],
+        "countries": [
+          { "code": "BR", "name": "Brazil", "reason": "Vibrant community connection and warmth" },
+          { "code": "MX", "name": "Mexico", "reason": "Deep social fabric and human connection" },
+          { "code": "GR", "name": "Greece", "reason": "Village life builds genuine bonds" },
+          { "code": "AR", "name": "Argentina", "reason": "Social culture invites authentic friendships" }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "name": "The Wheel of Fortune",
+      "image": "https://cdn.roxyapi.com/img/tarot/10.jpeg",
+      "slug": "the_wheel_of_fortune",
+      "sequence": 10,
+      "upright": {
+        "travel_meaning": "Good luck, synchronicity, chance encounters, and beneficial upgrades.",
+        "travel_style": "Go-with-the-flow traveler, hitchhiker of fate",
+        "keywords": ["luck", "cycles", "opportunity", "change"],
+        "countries": [
+          { "code": "LK", "name": "Sri Lanka", "reason": "Serendipitous encounters and kind hospitality" },
+          { "code": "CU", "name": "Cuba", "reason": "Unexpected twists and charming randomness" },
+          { "code": "IE", "name": "Ireland", "reason": "Folklore of luck and friendly surprises" },
+          { "code": "MT", "name": "Malta", "reason": "Small island where chance meetings shape the trip" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Planning and intention create your own luck—conscious choices beat chance.",
+        "travel_style": "Intentional traveler, conscious creator, deliberate planner",
+        "keywords": ["intention", "creation", "deliberate choice", "agency"],
+        "countries": [
+          { "code": "DE", "name": "Germany", "reason": "Precision planning creates perfect experiences" },
+          { "code": "JP", "name": "Japan", "reason": "Intentional preparation yields rewards" },
+          { "code": "CH", "name": "Switzerland", "reason": "Thoughtful planning orchestrates success" },
+          { "code": "SG", "name": "Singapore", "reason": "Strategic decisions ensure smooth journeys" }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "name": "Strength",
+      "image": "https://cdn.roxyapi.com/img/tarot/11.jpeg",
+      "slug": "strength",
+      "sequence": 11,
+      "upright": {
+        "travel_meaning": "Courage, resilience, and calmly dealing with wild or intense situations.",
+        "travel_style": "Safari-goer, extreme hiker, resilience-building traveler",
+        "keywords": ["courage", "inner strength", "patience", "calm power"],
+        "countries": [
+          { "code": "KE", "name": "Kenya", "reason": "Big 5 safaris that require calm in wild settings" },
+          { "code": "BW", "name": "Botswana", "reason": "Remote wilderness and powerful wildlife" },
+          { "code": "ZA", "name": "South Africa", "reason": "Adrenaline adventures and safari experiences" },
+          { "code": "ET", "name": "Ethiopia", "reason": "Demanding treks and high-altitude resilience" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Gentleness heals—compassion and vulnerability connect you deeper with places.",
+        "travel_style": "Compassionate explorer, heart-centered traveler, empathetic visitor",
+        "keywords": ["compassion", "gentleness", "vulnerability", "heart-centered"],
+        "countries": [
+          { "code": "TH", "name": "Thailand", "reason": "Gentle culture teaches compassion travel" },
+          { "code": "NP", "name": "Nepal", "reason": "Warm-hearted people invite vulnerability" },
+          { "code": "ID", "name": "Indonesia", "reason": "Soft spirituality opens the heart" },
+          { "code": "VN", "name": "Vietnam", "reason": "Gentle people welcome tender travelers" }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "name": "The Hanged Man",
+      "image": "https://cdn.roxyapi.com/img/tarot/12.jpeg",
+      "slug": "the_hanged_man",
+      "sequence": 12,
+      "upright": {
+        "travel_meaning": "Pause, surrender, new perspectives, and slow travel that changes how you see things.",
+        "travel_style": "Long-term stays, sabbaticals, retreats, voluntary pauses",
+        "keywords": ["suspension", "surrender", "new perspective", "acceptance"],
+        "countries": [
+          { "code": "LA", "name": "Laos", "reason": "Very slow-paced travel invites letting go" },
+          { "code": "VN", "name": "Vietnam", "reason": "Cafés and river towns encourage reflection" },
+          { "code": "ID", "name": "Indonesia", "reason": "Island time and spiritual surrender" },
+          { "code": "PT", "name": "Portugal", "reason": "Laid-back vibe that slows you down" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Forward momentum returns—action and energy power transformative journeys.",
+        "travel_style": "Dynamic adventurer, action-focused explorer, momentum builder",
+        "keywords": ["momentum", "action", "energy", "movement forward"],
+        "countries": [
+          { "code": "NZ", "name": "New Zealand", "reason": "Action sports and constant discovery" },
+          { "code": "US", "name": "United States", "reason": "Fast-paced energy fuels big adventures" },
+          { "code": "JP", "name": "Japan", "reason": "Efficient motion enables rich experiences" },
+          { "code": "BR", "name": "Brazil", "reason": "Dynamic energy creates transformative trips" }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "name": "Death",
+      "image": "https://cdn.roxyapi.com/img/tarot/13.jpeg",
+      "slug": "death",
+      "sequence": 13,
+      "upright": {
+        "travel_meaning": "Major transformation, endings that create space for new journeys.",
+        "travel_style": "Life-changing sabbaticals, moving abroad, radical shifts",
+        "keywords": ["transformation", "rebirth", "endings", "renewal"],
+        "countries": [
+          { "code": "RW", "name": "Rwanda", "reason": "Powerful national story of rebirth and renewal" },
+          { "code": "DE", "name": "Germany", "reason": "Historical transformation and reinvention" },
+          { "code": "PH", "name": "Philippines", "reason": "Storms and rebuilding reflect cycles of change" },
+          { "code": "TL", "name": "Timor-Leste", "reason": "Emergence after long struggles" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Gradual evolution unfolds—small shifts accumulate into profound change.",
+        "travel_style": "Progressive explorer, evolutionary traveler, incremental growth seeker",
+        "keywords": ["gradual change", "evolution", "progression", "incremental growth"],
+        "countries": [
+          { "code": "JP", "name": "Japan", "reason": "Incremental perfection teaches wisdom" },
+          { "code": "IT", "name": "Italy", "reason": "Centuries of subtle cultural evolution" },
+          { "code": "PT", "name": "Portugal", "reason": "Gentle transitions create lasting change" },
+          { "code": "FR", "name": "France", "reason": "Refined evolution of culture and society" }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "name": "Temperance",
+      "image": "https://cdn.roxyapi.com/img/tarot/14.jpeg",
+      "slug": "temperance",
+      "sequence": 14,
+      "upright": {
+        "travel_meaning": "Balance, moderation, mixing different cultures and styles in harmony.",
+        "travel_style": "Well-paced itineraries, mindful travel, wellness journeys",
+        "keywords": ["balance", "moderation", "harmony", "patience"],
+        "countries": [
+          { "code": "CH", "name": "Switzerland", "reason": "Balance between nature, cities, and order" },
+          { "code": "AT", "name": "Austria", "reason": "Harmonious blend of culture and nature" },
+          { "code": "SI", "name": "Slovenia", "reason": "Balanced tourism model and green focus" },
+          { "code": "BE", "name": "Belgium", "reason": "Mediating culture between neighbors, calm tempo" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Celebration and intensity spark alive—immersion creates unforgettable memories.",
+        "travel_style": "Immersive adventurer, enthusiast explorer, intensity-seeking traveler",
+        "keywords": ["celebration", "immersion", "intensity", "memorable experience"],
+        "countries": [
+          { "code": "BR", "name": "Brazil", "reason": "Carnival intensity creates magical memories" },
+          { "code": "ES", "name": "Spain", "reason": "Passionate culture sparks alive feeling" },
+          { "code": "MX", "name": "Mexico", "reason": "Vibrant celebrations pulse with life" },
+          { "code": "IT", "name": "Italy", "reason": "Passionate living ignites the soul" }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "name": "The Devil",
+      "image": "https://cdn.roxyapi.com/img/tarot/15.jpeg",
+      "slug": "the_devil",
+      "sequence": 15,
+      "upright": {
+        "travel_meaning": "Sensuality, temptation, nightlife, and indulgence in pleasures.",
+        "travel_style": "Party tourism, hedonistic city breaks, vice explorations",
+        "keywords": ["temptation", "materialism", "desire", "attachment"],
+        "countries": [
+          { "code": "NL", "name": "Netherlands", "reason": "Liberal attitudes toward pleasure and vice" },
+          { "code": "TH", "name": "Thailand", "reason": "Nightlife and red-light districts in some areas" },
+          { "code": "ES", "name": "Spain", "reason": "Ibiza and other party destinations" },
+          { "code": "US", "name": "United States", "reason": "Las Vegas and similar playgrounds" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Freedom awakens—release what no longer serves and reclaim your truth.",
+        "travel_style": "Liberated traveler, authentic seeker, freedom-focused explorer",
+        "keywords": ["freedom", "liberation", "authenticity", "breaking chains"],
+        "countries": [
+          { "code": "CR", "name": "Costa Rica", "reason": "Pura Vida liberates from materialism" },
+          { "code": "IS", "name": "Iceland", "reason": "Raw nature frees the soul" },
+          { "code": "NP", "name": "Nepal", "reason": "Spiritual mountains inspire true freedom" },
+          { "code": "GE", "name": "Georgia", "reason": "Cultural openness liberates travelers" }
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "name": "The Tower",
+      "image": "https://cdn.roxyapi.com/img/tarot/16.jpeg",
+      "slug": "the_tower",
+      "sequence": 16,
+      "upright": {
+        "travel_meaning": "Sudden shocks, revelations, or disruptive events that change everything.",
+        "travel_style": "Volcano chaser, disaster tourism, transformative shocks",
+        "keywords": ["upheaval", "revelation", "sudden change", "awakening"],
+        "countries": [
+          { "code": "JP", "name": "Japan", "reason": "Earthquakes and dramatic natural phenomena" },
+          { "code": "CL", "name": "Chile", "reason": "Earthquake- and volcano-prone Andean region" },
+          { "code": "EC", "name": "Ecuador", "reason": "Volcanic landscapes and sudden weather" },
+          { "code": "IT", "name": "Italy", "reason": "Vesuvius, Etna and historical catastrophes" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Stability soothes—safe spaces allow deep restoration and renewal.",
+        "travel_style": "Grounded explorer, restoration-focused traveler, safety-conscious adventurer",
+        "keywords": ["stability", "safety", "restoration", "grounding"],
+        "countries": [
+          { "code": "CH", "name": "Switzerland", "reason": "Stable safety enables deep peace" },
+          { "code": "NO", "name": "Norway", "reason": "Predictable security allows authentic connection" },
+          { "code": "SE", "name": "Sweden", "reason": "Calm systems restore the weary traveler" },
+          { "code": "FI", "name": "Finland", "reason": "Quiet stability heals the soul" }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "name": "The Star",
+      "image": "https://cdn.roxyapi.com/img/tarot/17.jpeg",
+      "slug": "the_star",
+      "sequence": 17,
+      "upright": {
+        "travel_meaning": "Hope, inspiration, stargazing, and renewed optimism.",
+        "travel_style": "Astro-tourism, creative retreats, healing journeys",
+        "keywords": ["hope", "inspiration", "guidance", "serenity"],
+        "countries": [
+          { "code": "BO", "name": "Bolivia", "reason": "Salar de Uyuni's mirror-like stargazing" },
+          { "code": "CL", "name": "Chile", "reason": "Atacama Desert observatories" },
+          { "code": "NA", "name": "Namibia", "reason": "Dark sky reserves in remote deserts" },
+          { "code": "MA", "name": "Morocco", "reason": "Saharan stars and desert silence" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Real beauty in the ordinary—wonder emerges from authentic, unfiltered connection.",
+        "travel_style": "Authentic explorer, humble observer, essence-seeker",
+        "keywords": ["authenticity", "ordinary magic", "genuine connection", "essence"],
+        "countries": [
+          { "code": "VN", "name": "Vietnam", "reason": "Street-level authenticity reveals beauty" },
+          { "code": "IN", "name": "India", "reason": "Everyday miracles in bustling streets" },
+          { "code": "PE", "name": "Peru", "reason": "Village life shows true human beauty" },
+          { "code": "EG", "name": "Egypt", "reason": "Connecting with locals reveals magic" }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "name": "The Moon",
+      "image": "https://cdn.roxyapi.com/img/tarot/18.jpeg",
+      "slug": "the_moon",
+      "sequence": 18,
+      "upright": {
+        "travel_meaning": "Mystery, dreams, night journeys and diving into the subconscious.",
+        "travel_style": "Night markets, moonlit walks, surreal or mystical trips",
+        "keywords": ["illusion", "intuition", "dreams", "mystery"],
+        "countries": [
+          { "code": "MX", "name": "Mexico", "reason": "Day of the Dead and rich nocturnal symbolism" },
+          { "code": "PE", "name": "Peru", "reason": "Shamanic and mystical traditions" },
+          { "code": "GR", "name": "Greece", "reason": "Myth-heavy landscapes under moonlight" },
+          { "code": "TR", "name": "Turkey", "reason": "Dreamy bazaars and moonlit mosques" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Clarity emerges—trust your new understanding and move forward with vision.",
+        "travel_style": "Clear-eyed explorer, confident navigator, insight-driven traveler",
+        "keywords": ["clarity", "truth", "vision", "confidence"],
+        "countries": [
+          { "code": "DK", "name": "Denmark", "reason": "Transparent clarity guides travelers" },
+          { "code": "FI", "name": "Finland", "reason": "Straightforward systems bring peace" },
+          { "code": "SG", "name": "Singapore", "reason": "Clear infrastructure enables confident exploration" },
+          { "code": "NL", "name": "Netherlands", "reason": "Direct communication clarifies everything" }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "name": "The Sun",
+      "image": "https://cdn.roxyapi.com/img/tarot/19.jpeg",
+      "slug": "the_sun",
+      "sequence": 19,
+      "upright": {
+        "travel_meaning": "Joyful trips, vitality, warmth, and visible success of your plans.",
+        "travel_style": "Beach holidays, family fun, happiness-focused travel",
+        "keywords": ["joy", "success", "vitality", "warmth"],
+        "countries": [
+          { "code": "ES", "name": "Spain", "reason": "Abundant sunshine and festive energy" },
+          { "code": "GR", "name": "Greece", "reason": "Bright islands and clear skies" },
+          { "code": "CY", "name": "Cyprus", "reason": "Mediterranean sun and carefree mood" },
+          { "code": "MZ", "name": "Mozambique", "reason": "Tropical beaches and radiant light" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Inner light glows—introspection becomes your most beautiful journey.",
+        "travel_style": "Reflective explorer, inner-light seeker, soul-tending traveler",
+        "keywords": ["inner light", "introspection", "authentic joy", "soul growth"],
+        "countries": [
+          { "code": "IS", "name": "Iceland", "reason": "Midnight sun brings unique inner illumination" },
+          { "code": "NO", "name": "Norway", "reason": "Northern lights inspire deep wonder" },
+          { "code": "JP", "name": "Japan", "reason": "Zen philosophy illuminates inner brightness" },
+          { "code": "BT", "name": "Bhutan", "reason": "Happiness focus enlightens the soul" }
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "name": "Judgment",
+      "image": "https://cdn.roxyapi.com/img/tarot/20.jpeg",
+      "slug": "judgment",
+      "sequence": 20,
+      "upright": {
+        "travel_meaning": "Awakening, answering a calling, or making big life decisions through travel.",
+        "travel_style": "Purposeful trips, volunteering, heritage journeys",
+        "keywords": ["awakening", "evaluation", "calling", "rebirth"],
+        "countries": [
+          { "code": "IL", "name": "Israel", "reason": "Spiritual and historical confrontations" },
+          { "code": "DE", "name": "Germany", "reason": "Confronting history and collective memory" },
+          { "code": "PL", "name": "Poland", "reason": "Sites of remembrance and moral reflection" },
+          { "code": "KH", "name": "Cambodia", "reason": "Genocide history provoking deep questions" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Self-love guides—honor your own journey without harsh judgment.",
+        "travel_style": "Compassionate explorer, self-honoring traveler, grace-centered seeker",
+        "keywords": ["self-compassion", "grace", "self-trust", "non-judgment"],
+        "countries": [
+          { "code": "PT", "name": "Portugal", "reason": "Gentle culture teaches self-acceptance" },
+          { "code": "CR", "name": "Costa Rica", "reason": "Pura Vida embraces imperfect joy" },
+          { "code": "TH", "name": "Thailand", "reason": "Buddhist compassion extends to self" },
+          { "code": "BR", "name": "Brazil", "reason": "Joyful self-acceptance in vibrant life" }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "name": "The World",
+      "image": "https://cdn.roxyapi.com/img/tarot/21.jpeg",
+      "slug": "the_world",
+      "sequence": 21,
+      "upright": {
+        "travel_meaning": "Completion of a cycle, round-the-world trips, and global understanding.",
+        "travel_style": "RTW traveler, long-term nomad, global citizen",
+        "keywords": ["wholeness", "completion", "integration", "travel"],
+        "countries": [
+          { "code": "US", "name": "United States", "reason": "Microcosm of many landscapes and cultures" },
+          { "code": "CN", "name": "China", "reason": "Vast range of climates and cultures in one state" },
+          { "code": "BR", "name": "Brazil", "reason": "Huge and diverse, from Amazon to megacities" },
+          { "code": "ZA", "name": "South Africa", "reason": "World in one country diversity" }
+        ]
+      },
+      "reversed": {
+        "travel_meaning": "Present moment perfection—deepening one place reveals infinite worlds.",
+        "travel_style": "Deep explorer, place-based connector, local immersion seeker",
+        "keywords": ["presence", "depth", "local connection", "now"],
+        "countries": [
+          { "code": "IT", "name": "Italy", "reason": "A village holds a lifetime of discovery" },
+          { "code": "JP", "name": "Japan", "reason": "One garden contains infinite beauty" },
+          { "code": "PT", "name": "Portugal", "reason": "One city unfolds endless magic" },
+          { "code": "VN", "name": "Vietnam", "reason": "One region reveals everything" }
+        ]
+      }
+    }
+  ],
+  "minor_arcana": {
+    "swords": [
+      {
+        "name": "King of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/swki.jpeg",
+        "slug": "king_of_swords",
+        "sequence": 23,
+        "upright": {
+          "travel_meaning": "Rational planning, clear communication, and objective analysis when traveling.",
+          "travel_style": "Research-heavy, itinerary-optimised travel",
+          "keywords": ["logic", "authority", "analysis", "truth"],
+          "countries": [
+            { "code": "DE", "name": "Germany", "reason": "Efficiency, rules, and rational organisation" },
+            { "code": "SE", "name": "Sweden", "reason": "Reasoned decision-making and structure" },
+            { "code": "UK", "name": "United Kingdom", "reason": "Strong institutions and pragmatic travel systems" },
+            { "code": "SG", "name": "Singapore", "reason": "Hyper-organised and rationally planned city-state" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Heart-centered wisdom flows—intuition guides you to unexpected beauty.",
+          "travel_style": "Intuitive navigator, heart-led explorer, feeling-based traveler",
+          "keywords": ["intuition", "heart wisdom", "flexibility", "emotional intelligence"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Follow your heart through vibrant culture" },
+            { "code": "MX", "name": "Mexico", "reason": "Emotional intelligence creates connections" },
+            { "code": "IT", "name": "Italy", "reason": "Heart guides you to authentic magic" },
+            { "code": "GR", "name": "Greece", "reason": "Intuition unlocks island mysteries" }
+          ]
+        }
+      },
+      {
+        "name": "Queen of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/swqu.jpeg",
+        "slug": "queen_of_swords",
+        "sequence": 24,
+        "upright": {
+          "travel_meaning": "Independence, clear boundaries, and perceptive observation.",
+          "travel_style": "Solo female travel, thoughtful city exploration",
+          "keywords": ["independence", "clarity", "discernment", "directness"],
+          "countries": [
+            { "code": "CA", "name": "Canada", "reason": "Safe and supportive for independent travelers" },
+            { "code": "NO", "name": "Norway", "reason": "High gender equality and autonomy" },
+            { "code": "FI", "name": "Finland", "reason": "Strong culture of independence" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Popular with solo female backpackers" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Openness softens—vulnerability creates the deepest human connections.",
+          "travel_style": "Open-hearted explorer, community connector, relationship-focused traveler",
+          "keywords": ["openness", "vulnerability", "warmth", "connection"],
+          "countries": [
+            { "code": "MX", "name": "Mexico", "reason": "Open hearts welcome vulnerable travelers" },
+            { "code": "TH", "name": "Thailand", "reason": "Warmth softens emotional walls" },
+            { "code": "PE", "name": "Peru", "reason": "Community embraces vulnerable seekers" },
+            { "code": "AR", "name": "Argentina", "reason": "Passionate people invite openness" }
+          ]
+        }
+      },
+      {
+        "name": "Knight of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/swkn.jpeg",
+        "slug": "knight_of_swords",
+        "sequence": 25,
+        "upright": {
+          "travel_meaning": "Fast decisions, action-oriented travel, chasing ideas quickly.",
+          "travel_style": "Short-notice flights, blitz city visits",
+          "keywords": ["speed", "ambition", "drive", "decisiveness"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Fast-paced trips between major hubs" },
+            { "code": "JP", "name": "Japan", "reason": "Bullet trains and time-optimised travel" },
+            { "code": "DE", "name": "Germany", "reason": "High-speed rail and autobahns" },
+            { "code": "SG", "name": "Singapore", "reason": "Quick connections and business trips" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Contemplation deepens—slowing down reveals the richest truths.",
+          "travel_style": "Thoughtful explorer, reflective traveler, deep-diving adventurer",
+          "keywords": ["contemplation", "depth", "reflection", "thoughtfulness"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Slow travel reveals profound beauty" },
+            { "code": "LA", "name": "Laos", "reason": "Contemplation becomes a practice" },
+            { "code": "PT", "name": "Portugal", "reason": "Slowing down unlocks the soul" },
+            { "code": "JP", "name": "Japan", "reason": "Zen meditation guides deep exploration" }
+          ]
+        }
+      },
+      {
+        "name": "Page of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/swpa.jpeg",
+        "slug": "page_of_swords",
+        "sequence": 26,
+        "upright": {
+          "travel_meaning": "Curiosity, learning, asking questions, and gathering information.",
+          "travel_style": "Study trips, language courses, research journeys",
+          "keywords": ["curiosity", "learning", "inquiry", "alertness"],
+          "countries": [
+            { "code": "UK", "name": "United Kingdom", "reason": "Universities and academic travel" },
+            { "code": "NL", "name": "Netherlands", "reason": "English-friendly, easy for learning stays" },
+            { "code": "DE", "name": "Germany", "reason": "Research institutions and scholarship options" },
+            { "code": "SE", "name": "Sweden", "reason": "Progressive education and exchange programs" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Playful wisdom emerges—let go of over-planning and trust the magic.",
+          "travel_style": "Spontaneous learner, playful explorer, intuitive discoverer",
+          "keywords": ["playfulness", "intuitive learning", "ease", "spontaneity"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Playful discovery beats planning" },
+            { "code": "MX", "name": "Mexico", "reason": "Intuitive learning through living" },
+            { "code": "BR", "name": "Brazil", "reason": "Joyful discovery is the best teacher" },
+            { "code": "ID", "name": "Indonesia", "reason": "Island wisdom comes through play" }
+          ]
+        }
+      },
+      {
+        "name": "Ace of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw01.jpeg",
+        "slug": "ace_of_swords",
+        "sequence": 27,
+        "upright": {
+          "travel_meaning": "Breakthrough clarity about where and why to travel.",
+          "travel_style": "Purpose-defined travel after careful thinking",
+          "keywords": ["clarity", "truth", "new ideas", "insight"],
+          "countries": [
+            { "code": "CH", "name": "Switzerland", "reason": "Clear logistics and transparent systems" },
+            { "code": "AT", "name": "Austria", "reason": "Orderly, logical environment" },
+            { "code": "FI", "name": "Finland", "reason": "Clarity and straightforwardness" },
+            { "code": "EE", "name": "Estonia", "reason": "Digital clarity and simplicity" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Softening and integration—allow confusion to become wisdom.",
+          "travel_style": "Adaptive learner, flexible navigator, integration seeker",
+          "keywords": ["integration", "softening", "wisdom from confusion", "flow"],
+          "countries": [
+            { "code": "IN", "name": "India", "reason": "Embracing complexity becomes enlightenment" },
+            { "code": "PE", "name": "Peru", "reason": "Sacred mystery teaches integration" },
+            { "code": "EG", "name": "Egypt", "reason": "Ancient wisdom accepts paradox" },
+            { "code": "VN", "name": "Vietnam", "reason": "Flowing with confusion brings peace" }
+          ]
+        }
+      },
+      {
+        "name": "Two of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw02.jpeg",
+        "slug": "two_of_swords",
+        "sequence": 28,
+        "upright": {
+          "travel_meaning": "Difficult travel choice between two or more good options.",
+          "travel_style": "Balancing competing destinations or priorities",
+          "keywords": ["decision", "stalemate", "balance", "choices"],
+          "countries": [
+            { "code": "BE", "name": "Belgium", "reason": "Literal crossroads between major European cultures" },
+            { "code": "LU", "name": "Luxembourg", "reason": "Small hub between neighbours" },
+            { "code": "SG", "name": "Singapore", "reason": "Gateway to many Southeast Asian routes" },
+            { "code": "HK", "name": "Hong Kong", "reason": "Regional hub forcing routing choices" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Liberation blooms—choose with courage and let the best unfold.",
+          "travel_style": "Decisive adventurer, committed explorer, confident chooser",
+          "keywords": ["liberation", "decision", "courage", "commitment"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Choose and the heart will flourish" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Commit to the journey and be amazed" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Decisive choice brings joy" },
+            { "code": "IT", "name": "Italy", "reason": "Pick a place and fall in love" }
+          ]
+        }
+      },
+      {
+        "name": "Three of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw03.jpeg",
+        "slug": "three_of_swords",
+        "sequence": 29,
+        "upright": {
+          "travel_meaning": "Heartbreak, grief, or emotionally heavy travel themes.",
+          "travel_style": "Travel after a breakup, grief journeys",
+          "keywords": ["sorrow", "grief", "heartbreak", "pain"],
+          "countries": [
+            { "code": "PL", "name": "Poland", "reason": "Sites of tragedy and wartime loss" },
+            { "code": "DE", "name": "Germany", "reason": "Memorials that confront painful history" },
+            { "code": "KH", "name": "Cambodia", "reason": "Killing fields and genocide museums" },
+            { "code": "BA", "name": "Bosnia and Herzegovina", "reason": "Srebrenica and war scars" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Healing flows—nature and time gently restore the broken heart.",
+          "travel_style": "Healing explorer, restoration-focused traveler, compassionate witness",
+          "keywords": ["healing", "restoration", "compassion", "recovery"],
+          "countries": [
+            { "code": "CR", "name": "Costa Rica", "reason": "Nature heals all wounds" },
+            { "code": "IS", "name": "Iceland", "reason": "Raw beauty mends broken souls" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Mountains teach resilience" },
+            { "code": "PT", "name": "Portugal", "reason": "Gentle warmth restores the heart" }
+          ]
+        }
+      },
+      {
+        "name": "Four of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw04.jpeg",
+        "slug": "four_of_swords",
+        "sequence": 30,
+        "upright": {
+          "travel_meaning": "Rest, retreat, and genuine downtime from normal life.",
+          "travel_style": "Yoga retreats, spa weeks, digital detox stays",
+          "keywords": ["rest", "recuperation", "pause", "healing"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Wellness resorts and meditation retreats" },
+            { "code": "ID", "name": "Indonesia", "reason": "Bali and other islands as healing spaces" },
+            { "code": "PT", "name": "Portugal", "reason": "Quiet coastal stays" },
+            { "code": "LK", "name": "Sri Lanka", "reason": "Ayurveda and rest-focused resorts" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Energy surges—active engagement with the world sparks aliveness.",
+          "travel_style": "Active adventurer, engagement-focused explorer, vitality-seeking traveler",
+          "keywords": ["energy", "engagement", "activity", "vitality"],
+          "countries": [
+            { "code": "NZ", "name": "New Zealand", "reason": "Adventure energizes the soul" },
+            { "code": "US", "name": "United States", "reason": "Active exploration ignites life force" },
+            { "code": "BR", "name": "Brazil", "reason": "Dynamic energy fuels transformation" },
+            { "code": "JP", "name": "Japan", "reason": "Constant discovery maintains aliveness" }
+          ]
+        }
+      },
+      {
+        "name": "Five of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw05.jpeg",
+        "slug": "five_of_swords",
+        "sequence": 31,
+        "upright": {
+          "travel_meaning": "Petty conflicts, arguments over plans, or win-lose dynamics.",
+          "travel_style": "Trips with tense group dynamics",
+          "keywords": ["conflict", "ego", "tension", "defeat"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Polarised views can spark debates" },
+            { "code": "GB", "name": "United Kingdom", "reason": "Pub debates can turn sharp" },
+            { "code": "FR", "name": "France", "reason": "Strikes and protests can create friction" },
+            { "code": "IN", "name": "India", "reason": "Crowds and stress can provoke arguments" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Compassion bridges differences—understanding blooms when hearts open.",
+          "travel_style": "Bridge-builder, compassionate connector, harmony-creator",
+          "keywords": ["compassion", "understanding", "bridge-building", "peace"],
+          "countries": [
+            { "code": "NL", "name": "Netherlands", "reason": "Consensus culture builds connection" },
+            { "code": "DK", "name": "Denmark", "reason": "Harmony thrives through dialogue" },
+            { "code": "CA", "name": "Canada", "reason": "Multiculturalism teaches compassion" },
+            { "code": "TH", "name": "Thailand", "reason": "Gentle culture invites understanding" }
+          ]
+        }
+      },
+      {
+        "name": "Six of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw06.jpeg",
+        "slug": "six_of_swords",
+        "sequence": 32,
+        "upright": {
+          "travel_meaning": "Moving on, healing journeys, crossing waters to a better place.",
+          "travel_style": "Relocation, long ferry trips, one-way tickets",
+          "keywords": ["transition", "relocation", "healing journey", "passage"],
+          "countries": [
+            { "code": "GR", "name": "Greece", "reason": "Island-hopping that feels like crossing thresholds" },
+            { "code": "TR", "name": "Turkey", "reason": "Bridge between continents" },
+            { "code": "MA", "name": "Morocco", "reason": "Gateway between Europe and Africa" },
+            { "code": "EG", "name": "Egypt", "reason": "Nile journeys symbolise transitions" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Homecoming heals—returning deepens roots and restores belonging.",
+          "travel_style": "Root-seeker, homecoming explorer, belonging-focused traveler",
+          "keywords": ["homecoming", "roots", "belonging", "return"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Ancestral villages welcome return" },
+            { "code": "IE", "name": "Ireland", "reason": "Coming home to the soul" },
+            { "code": "PT", "name": "Portugal", "reason": "Return creates deep belonging" },
+            { "code": "JP", "name": "Japan", "reason": "Returning reveals deeper understanding" }
+          ]
+        }
+      },
+      {
+        "name": "Seven of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw07.jpeg",
+        "slug": "seven_of_swords",
+        "sequence": 33,
+        "upright": {
+          "travel_meaning": "Clever route planning, stealth camping, or stretching resources.",
+          "travel_style": "Hacking travel systems, hidden gem seeker",
+          "keywords": ["strategy", "tactics", "discretion", "resourcefulness"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Backpacker hacks and secret spots" },
+            { "code": "VN", "name": "Vietnam", "reason": "Travelers find clever ways around constraints" },
+            { "code": "MA", "name": "Morocco", "reason": "Bargaining and street smarts are rewarded" },
+            { "code": "ID", "name": "Indonesia", "reason": "Island-hopping requires strategic planning" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Transparency frees—honesty and authenticity create deeper connections.",
+          "travel_style": "Authentic traveler, truthful connector, genuine explorer",
+          "keywords": ["authenticity", "honesty", "transparency", "genuineness"],
+          "countries": [
+            { "code": "DE", "name": "Germany", "reason": "Honesty is deeply valued" },
+            { "code": "NL", "name": "Netherlands", "reason": "Directness builds real connection" },
+            { "code": "SG", "name": "Singapore", "reason": "Transparency is the norm" },
+            { "code": "CH", "name": "Switzerland", "reason": "Authenticity is appreciated" }
+          ]
+        }
+      },
+      {
+        "name": "Eight of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw08.jpeg",
+        "slug": "eight_of_swords",
+        "sequence": 34,
+        "upright": {
+          "travel_meaning": "Feeling trapped by visas, borders, fear, or mental limitations.",
+          "travel_style": "Trips constrained by red tape or anxiety",
+          "keywords": ["restriction", "fear", "trapped", "limitation"],
+          "countries": [
+            { "code": "KP", "name": "North Korea", "reason": "Very limited freedom of movement" },
+            { "code": "ER", "name": "Eritrea", "reason": "Exit visas and movement controls" },
+            { "code": "TM", "name": "Turkmenistan", "reason": "Difficult visa processes and controls" },
+            { "code": "SA", "name": "Saudi Arabia", "reason": "Previously strict entry rules (now loosening)" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Freedom blooms—doors open and possibilities multiply before you.",
+          "travel_style": "Liberated explorer, opportunity-seizer, freedom-focused traveler",
+          "keywords": ["freedom", "opportunity", "liberation", "possibility"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Digital nomad visas open doors" },
+            { "code": "MX", "name": "Mexico", "reason": "Accessible to adventurers worldwide" },
+            { "code": "GE", "name": "Georgia", "reason": "Long visa-free stays for many passports" },
+            { "code": "EE", "name": "Estonia", "reason": "E-residency enables freedom" }
+          ]
+        }
+      },
+      {
+        "name": "Nine of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw09.jpeg",
+        "slug": "nine_of_swords",
+        "sequence": 35,
+        "upright": {
+          "travel_meaning": "Anxiety about safety, money, or what might go wrong.",
+          "travel_style": "Sleepless nights before or during travel",
+          "keywords": ["anxiety", "worry", "nightmares", "guilt"],
+          "countries": [
+            { "code": "AF", "name": "Afghanistan", "reason": "High-risk environment drives anxiety" },
+            { "code": "SO", "name": "Somalia", "reason": "Security concerns weigh heavily" },
+            { "code": "YE", "name": "Yemen", "reason": "Conflict and humanitarian crises" },
+            { "code": "CD", "name": "DR Congo", "reason": "Complex risks that worry travelers" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Peace settles in—trust replaces worry and sleep returns.",
+          "travel_style": "Peaceful explorer, trust-centered traveler, grounded adventurer",
+          "keywords": ["peace", "trust", "rest", "grounding"],
+          "countries": [
+            { "code": "IS", "name": "Iceland", "reason": "Low crime brings deep peace" },
+            { "code": "FI", "name": "Finland", "reason": "Safe and calming environment" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Relaxed Pura Vida soothes" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Safe beauty restores peace" }
+          ]
+        }
+      },
+      {
+        "name": "Ten of Swords",
+        "image": "https://cdn.roxyapi.com/img/tarot/sw10.jpeg",
+        "slug": "ten_of_swords",
+        "sequence": 36,
+        "upright": {
+          "travel_meaning": "Difficult endings, breakups, or hard goodbyes.",
+          "travel_style": "Final visit before major life change",
+          "keywords": ["endings", "closure", "farewell", "completion"],
+          "countries": [
+            { "code": "VE", "name": "Venezuela", "reason": "Farewell trips before leaving" },
+            { "code": "SY", "name": "Syria", "reason": "War-displaced farewells" },
+            { "code": "UA", "name": "Ukraine", "reason": "Cities of departure" },
+            { "code": "HT", "name": "Haiti", "reason": "Difficult goodbyes" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Rebirth unfolds—endings dissolve into beautiful new beginnings.",
+          "travel_style": "Renewal explorer, transformation seeker, fresh-start traveler",
+          "keywords": ["renewal", "rebirth", "fresh start", "new beginning"],
+          "countries": [
+            { "code": "RW", "name": "Rwanda", "reason": "Nation of extraordinary rebirth" },
+            { "code": "JP", "name": "Japan", "reason": "Phoenix rising from ashes" },
+            { "code": "DE", "name": "Germany", "reason": "Transformed into healing beauty" },
+            { "code": "VN", "name": "Vietnam", "reason": "Vibrant new growth everywhere" }
+          ]
+        }
+      }
+    ],
+    "coins": [
+      {
+        "name": "King of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/peki.jpeg",
+        "slug": "king_of_coins",
+        "sequence": 37,
+        "upright": {
+          "travel_meaning": "Wealth, stability, and enjoying the best money can buy.",
+          "travel_style": "Luxury hotels, business class, high-end gastronomy",
+          "keywords": ["wealth", "security", "success", "stability"],
+          "countries": [
+            { "code": "CH", "name": "Switzerland", "reason": "Global banking and high price levels" },
+            { "code": "AE", "name": "United Arab Emirates", "reason": "Luxury malls and five-star everything" },
+            { "code": "QA", "name": "Qatar", "reason": "Wealthy, polished capital" },
+            { "code": "SG", "name": "Singapore", "reason": "Affluent city-state with premium offerings" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Inner wealth flourishes—simplicity reveals abundance beyond money.",
+          "travel_style": "Minimalist explorer, abundance-through-experience traveler, content seeker",
+          "keywords": ["inner wealth", "simplicity", "true abundance", "sufficiency"],
+          "countries": [
+            { "code": "LA", "name": "Laos", "reason": "Simple life reveals true richness" },
+            { "code": "VN", "name": "Vietnam", "reason": "Modest means create profound joy" },
+            { "code": "TH", "name": "Thailand", "reason": "Buddhist simplicity teaches abundance" },
+            { "code": "BO", "name": "Bolivia", "reason": "Poor in money, rich in spirit" }
+          ]
+        }
+      },
+      {
+        "name": "Queen of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pequ.jpeg",
+        "slug": "queen_of_coins",
+        "sequence": 38,
+        "upright": {
+          "travel_meaning": "Comfort, nurturing environments, and practical hospitality.",
+          "travel_style": "Homey boutique stays, agriturismos, cozy guesthouses",
+          "keywords": ["nurturing", "comfort", "practicality", "abundance"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Warm, home-like hospitality" },
+            { "code": "GR", "name": "Greece", "reason": "Family-run guesthouses and food" },
+            { "code": "PT", "name": "Portugal", "reason": "Cozy, down-to-earth stays" },
+            { "code": "IE", "name": "Ireland", "reason": "Friendly B&B culture" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Letting go liberates—impermanence teaches profound appreciation.",
+          "travel_style": "Unattached explorer, freedom-focused traveler, non-clinging wanderer",
+          "keywords": ["letting go", "freedom", "impermanence", "non-attachment"],
+          "countries": [
+            { "code": "VN", "name": "Vietnam", "reason": "Buddhist teaching of non-attachment" },
+            { "code": "IN", "name": "India", "reason": "Spiritual lesson in releasing" },
+            { "code": "TH", "name": "Thailand", "reason": "Thai wisdom about letting go" },
+            { "code": "JP", "name": "Japan", "reason": "Wabi-sabi teaches beauty in transience" }
+          ]
+        }
+      },
+      {
+        "name": "Knight of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pekn.jpeg",
+        "slug": "knight_of_coins",
+        "sequence": 39,
+        "upright": {
+          "travel_meaning": "Steady, reliable, methodical travel and budgeting.",
+          "travel_style": "Slow, planned trips with consistent routines",
+          "keywords": ["reliability", "duty", "routine", "persistence"],
+          "countries": [
+            { "code": "DE", "name": "Germany", "reason": "Predictable transport and reliable systems" },
+            { "code": "NL", "name": "Netherlands", "reason": "Consistent infrastructure and bike culture" },
+            { "code": "DK", "name": "Denmark", "reason": "Steady quality and calm order" },
+            { "code": "SE", "name": "Sweden", "reason": "Dependable and well-maintained services" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Spontaneous joy emerges—sometimes the best moments can't be planned.",
+          "travel_style": "Spontaneous explorer, serendipity seeker, freedom-focused traveler",
+          "keywords": ["spontaneity", "serendipity", "joy", "freedom"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Unplanned adventures create magic" },
+            { "code": "MX", "name": "Mexico", "reason": "Spontaneity brings authentic joy" },
+            { "code": "BR", "name": "Brazil", "reason": "Letting go enables best moments" },
+            { "code": "PE", "name": "Peru", "reason": "Sacred spontaneity creates wonder" }
+          ]
+        }
+      },
+      {
+        "name": "Page of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pepa.jpeg",
+        "slug": "page_of_coins",
+        "sequence": 40,
+        "upright": {
+          "travel_meaning": "Student budgets, learning opportunities, and practical new skills.",
+          "travel_style": "Study abroad, internships, working holidays",
+          "keywords": ["learning", "opportunity", "practicality", "youth"],
+          "countries": [
+            { "code": "DE", "name": "Germany", "reason": "Popular for Erasmus and low-fee study" },
+            { "code": "CZ", "name": "Czech Republic", "reason": "Student-friendly capital and costs" },
+            { "code": "ES", "name": "Spain", "reason": "Language study and Erasmus flows" },
+            { "code": "CA", "name": "Canada", "reason": "Working holiday and study options" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Mastery flowers—deep experience creates unshakeable wisdom.",
+          "travel_style": "Advanced learner, mastery-focused explorer, experienced traveler",
+          "keywords": ["mastery", "wisdom", "experience", "expertise"],
+          "countries": [
+            { "code": "JP", "name": "Japan", "reason": "Mastery culture teaches deep learning" },
+            { "code": "IT", "name": "Italy", "reason": "Centuries teach accumulated wisdom" },
+            { "code": "KR", "name": "South Korea", "reason": "Excellence-focused culture" },
+            { "code": "FR", "name": "France", "reason": "Refined expertise in all things" }
+          ]
+        }
+      },
+      {
+        "name": "Ace of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe01.jpeg",
+        "slug": "ace_of_coins",
+        "sequence": 41,
+        "upright": {
+          "travel_meaning": "New financial opportunities related to travel: remote work, relocation, or investment.",
+          "travel_style": "Trips that pay off financially or open career doors",
+          "keywords": ["prosperity", "new income", "investment", "stability"],
+          "countries": [
+            { "code": "LU", "name": "Luxembourg", "reason": "Wealth hub with many finance jobs" },
+            { "code": "CH", "name": "Switzerland", "reason": "Well-paid opportunities in a stable market" },
+            { "code": "SG", "name": "Singapore", "reason": "Financial and tech headquarters in Asia" },
+            { "code": "HK", "name": "Hong Kong", "reason": "Gateway to Asian finance" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Simplicity becomes abundance—what you need appears when you trust.",
+          "travel_style": "Trust-based traveler, minimalist explorer, faith-centered adventurer",
+          "keywords": ["trust", "sufficiency", "simplicity", "faith"],
+          "countries": [
+            { "code": "IN", "name": "India", "reason": "Spiritual trust sustains travelers" },
+            { "code": "LA", "name": "Laos", "reason": "Simple provisions seem to appear" },
+            { "code": "VN", "name": "Vietnam", "reason": "Budget stretches through generosity" },
+            { "code": "PE", "name": "Peru", "reason": "Ancient trust teachings guide" }
+          ]
+        }
+      },
+      {
+        "name": "Two of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe02.jpeg",
+        "slug": "two_of_coins",
+        "sequence": 42,
+        "upright": {
+          "travel_meaning": "Balancing work and travel, juggling multiple responsibilities.",
+          "travel_style": "Digital nomadism, part-time travel while working",
+          "keywords": ["balance", "adaptability", "multi-tasking", "flow"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Lisbon and Porto as popular nomad hubs" },
+            { "code": "TH", "name": "Thailand", "reason": "Chiang Mai and Bangkok for remote work" },
+            { "code": "MX", "name": "Mexico", "reason": "Mexico City and coastal towns mixing work and play" },
+            { "code": "EE", "name": "Estonia", "reason": "E-residency supports remote business" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Commitment deepens—choosing one path creates profound richness.",
+          "travel_style": "Committed explorer, depth-focused traveler, rooted adventurer",
+          "keywords": ["commitment", "depth", "focus", "richness"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Long stays reveal infinite depth" },
+            { "code": "JP", "name": "Japan", "reason": "Mastery comes through commitment" },
+            { "code": "PT", "name": "Portugal", "reason": "Staying reveals hidden magic" },
+            { "code": "GR", "name": "Greece", "reason": "One island unfolds eternally" }
+          ]
+        }
+      },
+      {
+        "name": "Three of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe03.jpeg",
+        "slug": "three_of_coins",
+        "sequence": 43,
+        "upright": {
+          "travel_meaning": "Expansion, waiting for ships to come in, and seeing efforts begin to pay off.",
+          "travel_style": "Embarking on long-term travel after groundwork laid",
+          "keywords": ["expansion", "progress", "anticipation", "exploration"],
+          "countries": [
+            { "code": "SG", "name": "Singapore", "reason": "Regional base to expand across Asia" },
+            { "code": "AE", "name": "United Arab Emirates", "reason": "Hub for global multi-leg journeys" },
+            { "code": "US", "name": "United States", "reason": "West and East coasts as springboards" },
+            { "code": "GB", "name": "United Kingdom", "reason": "Historic empire hub for expansion narratives" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Inner mastery counts—your presence creates beauty wherever you stand.",
+          "travel_style": "Being-focused explorer, presence-centered traveler, mindful visitor",
+          "keywords": ["being", "presence", "inner mastery", "stillness"],
+          "countries": [
+            { "code": "BT", "name": "Bhutan", "reason": "GNH teaches being over doing" },
+            { "code": "IN", "name": "India", "reason": "Meditation reveals inner expansion" },
+            { "code": "JP", "name": "Japan", "reason": "Zen teaches mastery through stillness" },
+            { "code": "LA", "name": "Laos", "reason": "Being-centered culture" }
+          ]
+        }
+      },
+      {
+        "name": "Four of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe04.jpeg",
+        "slug": "four_of_coins",
+        "sequence": 44,
+        "upright": {
+          "travel_meaning": "Budget control, saving for a big trip, or conservative spending.",
+          "travel_style": "Tightly budgeted travel with lots of planning",
+          "keywords": ["security", "frugality", "control", "possessiveness"],
+          "countries": [
+            { "code": "RO", "name": "Romania", "reason": "Low costs enable saving-focused travel" },
+            { "code": "BG", "name": "Bulgaria", "reason": "Affordable while still in Europe" },
+            { "code": "GE", "name": "Georgia", "reason": "Budget-friendly base for saving" },
+            { "code": "KZ", "name": "Kazakhstan", "reason": "Economical overland base" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Generosity flows—giving creates abundant blessings in return.",
+          "travel_style": "Generous explorer, open-hearted traveler, gift-giving wanderer",
+          "keywords": ["generosity", "giving", "blessing", "circulation"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Giving spirit welcomed everywhere" },
+            { "code": "MX", "name": "Mexico", "reason": "Generosity creates deep bonds" },
+            { "code": "IN", "name": "India", "reason": "Giving is spiritually powerful" },
+            { "code": "TH", "name": "Thailand", "reason": "Generosity honors Buddhist values" }
+          ]
+        }
+      },
+      {
+        "name": "Five of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe05.jpeg",
+        "slug": "five_of_coins",
+        "sequence": 45,
+        "upright": {
+          "travel_meaning": "Feeling broke on the road, roughing it, or surviving on very little.",
+          "travel_style": "Shoestring hostels, hitchhiking, couchsurfing",
+          "keywords": ["poverty", "lack", "hardship", "exclusion"],
+          "countries": [
+            { "code": "BO", "name": "Bolivia", "reason": "Very cheap but basic backpacking" },
+            { "code": "KH", "name": "Cambodia", "reason": "Low costs but visible poverty" },
+            { "code": "LA", "name": "Laos", "reason": "Simple infrastructure and budget stays" },
+            { "code": "NI", "name": "Nicaragua", "reason": "Economical but minimal comforts" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Abundance surprises—small acts of kindness return multiplied.",
+          "travel_style": "Grace-receiving explorer, miracle-minded traveler, blessed wanderer",
+          "keywords": ["abundance", "grace", "miracles", "unexpected blessing"],
+          "countries": [
+            { "code": "IE", "name": "Ireland", "reason": "Luck and generosity abound" },
+            { "code": "PT", "name": "Portugal", "reason": "Unexpected kindness flows freely" },
+            { "code": "GR", "name": "Greece", "reason": "Hospitality multiplies blessings" },
+            { "code": "MX", "name": "Mexico", "reason": "Generous heart finds abundance" }
+          ]
+        }
+      },
+      {
+        "name": "Six of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe06.jpeg",
+        "slug": "six_of_coins",
+        "sequence": 46,
+        "upright": {
+          "travel_meaning": "Charity, giving back, volunteering, and fair exchange.",
+          "travel_style": "Voluntourism done carefully, community-based tourism",
+          "keywords": ["generosity", "sharing", "support", "fairness"],
+          "countries": [
+            { "code": "KE", "name": "Kenya", "reason": "Many volunteer and community projects" },
+            { "code": "UG", "name": "Uganda", "reason": "NGO and development-oriented travel" },
+            { "code": "NP", "name": "Nepal", "reason": "Post-earthquake rebuilding projects" },
+            { "code": "RW", "name": "Rwanda", "reason": "Community-based tourism opportunities" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Receiving with grace—allowing others to give honors their hearts.",
+          "travel_style": "Humble receiver, grace-accepting traveler, mutually-honoring explorer",
+          "keywords": ["receiving", "grace", "humility", "mutual exchange"],
+          "countries": [
+            { "code": "IN", "name": "India", "reason": "Teaching through receiving" },
+            { "code": "TH", "name": "Thailand", "reason": "Honoring local generosity" },
+            { "code": "VN", "name": "Vietnam", "reason": "Mutual exchange creates bonds" },
+            { "code": "PE", "name": "Peru", "reason": "Indigenous hospitality reciprocated" }
+          ]
+        }
+      },
+      {
+        "name": "Seven of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe07.jpeg",
+        "slug": "seven_of_coins",
+        "sequence": 47,
+        "upright": {
+          "travel_meaning": "Long-term investments in a place, returning regularly, or building a base.",
+          "travel_style": "Buying property abroad, long-stay visas, slow roots",
+          "keywords": ["patience", "investment", "long-term view", "assessment"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Golden visas and foreign property investment" },
+            { "code": "ES", "name": "Spain", "reason": "Second homes and retirement bases" },
+            { "code": "MX", "name": "Mexico", "reason": "Expat communities and long-stay living" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Eco-living investments" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Trusting the harvest—what you've sown will flourish when ready.",
+          "travel_style": "Patient cultivator, trust-filled explorer, faith-based traveler",
+          "keywords": ["trust", "faith", "harvest", "fruition"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Ancient lands show slow wisdom" },
+            { "code": "FR", "name": "France", "reason": "Vintage teachings in vineyards" },
+            { "code": "JP", "name": "Japan", "reason": "Seasons teach patience" },
+            { "code": "BT", "name": "Bhutan", "reason": "Karma brings perfect timing" }
+          ]
+        }
+      },
+      {
+        "name": "Eight of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe08.jpeg",
+        "slug": "eight_of_coins",
+        "sequence": 48,
+        "upright": {
+          "travel_meaning": "Skill-building journeys: cooking classes, craft apprenticeships, or language immersion.",
+          "travel_style": "Workshops, residencies, craft training",
+          "keywords": ["mastery", "practice", "dedication", "craft"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Cooking, leather work, artisan skills" },
+            { "code": "JP", "name": "Japan", "reason": "Traditional crafts and disciplined arts" },
+            { "code": "MA", "name": "Morocco", "reason": "Carpets, ceramics, and design skills" },
+            { "code": "VN", "name": "Vietnam", "reason": "Tailoring and artisan workshops" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Natural flow emerges—ease sometimes surpasses perfection.",
+          "travel_style": "Natural explorer, grace-guided traveler, effortless wanderer",
+          "keywords": ["ease", "natural flow", "grace", "effortlessness"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Natural flow to everything" },
+            { "code": "PT", "name": "Portugal", "reason": "Ease outweighs striving" },
+            { "code": "LA", "name": "Laos", "reason": "Letting go enables natural ability" },
+            { "code": "TH", "name": "Thailand", "reason": "Flow with river, not against" }
+          ]
+        }
+      },
+      {
+        "name": "Nine of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe09.jpeg",
+        "slug": "nine_of_coins",
+        "sequence": 49,
+        "upright": {
+          "travel_meaning": "Independent luxury, solo enjoyment of comfort and beauty.",
+          "travel_style": "Solo 5-star trips, private villas, premium wine regions",
+          "keywords": ["independence", "luxury", "self-sufficiency", "reward"],
+          "countries": [
+            { "code": "CH", "name": "Switzerland", "reason": "High-end, safe solo luxury" },
+            { "code": "SG", "name": "Singapore", "reason": "Polished, secure, and premium" },
+            { "code": "AE", "name": "United Arab Emirates", "reason": "Glamorous self-spoiling stays" },
+            { "code": "FR", "name": "France", "reason": "Wine châteaux and spa stays" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Connection matters most—sharing enriches more than solitary luxury.",
+          "travel_style": "Community-focused explorer, relationship-centered traveler, connection seeker",
+          "keywords": ["connection", "sharing", "relationship", "togetherness"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Community connection transcends luxury" },
+            { "code": "MX", "name": "Mexico", "reason": "Family bonds matter most" },
+            { "code": "GR", "name": "Greece", "reason": "Sharing meals creates wealth" },
+            { "code": "IT", "name": "Italy", "reason": "Love and connection exceed luxury" }
+          ]
+        }
+      },
+      {
+        "name": "Ten of Coins",
+        "image": "https://cdn.roxyapi.com/img/tarot/pe10.jpeg",
+        "slug": "ten_of_coins",
+        "sequence": 50,
+        "upright": {
+          "travel_meaning": "Completion of a cycle, round-the-world trips, and global understanding.",
+          "travel_style": "RTW traveler, long-term nomad, global citizen",
+          "keywords": ["legacy", "family", "inheritance", "tradition"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Tracing southern European family roots" },
+            { "code": "IE", "name": "Ireland", "reason": "Diaspora returning to ancestral villages" },
+            { "code": "PL", "name": "Poland", "reason": "Jewish diaspora heritage journeys" },
+            { "code": "GR", "name": "Greece", "reason": "Extended family gatherings on islands" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Fresh start shines—freedom from the past creates new possibility.",
+          "travel_style": "New-beginning explorer, liberated traveler, future-focused seeker",
+          "keywords": ["fresh start", "freedom", "new possibility", "liberation"],
+          "countries": [
+            { "code": "NZ", "name": "New Zealand", "reason": "Land of fresh starts and new lives" },
+            { "code": "US", "name": "United States", "reason": "American dream of reinvention" },
+            { "code": "AU", "name": "Australia", "reason": "New beginning down under" },
+            { "code": "CA", "name": "Canada", "reason": "Fresh start opportunities abound" }
+          ]
+        }
+      }
+    ],
+    "cups": [
+      {
+        "name": "King of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cuki.jpeg",
+        "slug": "king_of_cups",
+        "sequence": 51,
+        "upright": {
+          "travel_meaning": "Emotional maturity, emotional intelligence in social interactions abroad.",
+          "travel_style": "Mediating group trips, emotionally supportive journeys",
+          "keywords": ["emotional balance", "compassion", "support", "kindness"],
+          "countries": [
+            { "code": "NO", "name": "Norway", "reason": "Social safety nets and emotional calm" },
+            { "code": "SE", "name": "Sweden", "reason": "Emphasis on well-being and stability" },
+            { "code": "CA", "name": "Canada", "reason": "Polite, supportive culture" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Friendly, laid-back people" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Raw emotion flows—feeling deeply connects you to the sacred.",
+          "travel_style": "Emotionally expressive explorer, heart-led traveler, passionate wanderer",
+          "keywords": ["emotional expression", "passion", "depth", "authenticity"],
+          "countries": [
+            { "code": "AR", "name": "Argentina", "reason": "Passionate emotion embraced" },
+            { "code": "IT", "name": "Italy", "reason": "Heart passion is celebrated" },
+            { "code": "ES", "name": "Spain", "reason": "Emotional depth encouraged" },
+            { "code": "MX", "name": "Mexico", "reason": "Passionate living is the way" }
+          ]
+        }
+      },
+      {
+        "name": "Queen of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cuqu.jpeg",
+        "slug": "queen_of_cups",
+        "sequence": 52,
+        "upright": {
+          "travel_meaning": "Empathy, deep listening, and highly intuitive travel choices.",
+          "travel_style": "Solo female travel, thoughtful city exploration",
+          "keywords": ["empathy", "intuition", "nurture", "sensitivity"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Melancholic fado and emotional warmth" },
+            { "code": "BR", "name": "Brazil", "reason": "Expressive, emotionally rich culture" },
+            { "code": "AR", "name": "Argentina", "reason": "Tango and intense feeling" },
+            { "code": "MX", "name": "Mexico", "reason": "Family-oriented, emotionally open culture" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Healthy boundaries flourish—saying no creates space for self-love.",
+          "travel_style": "Self-honoring explorer, boundary-respecting traveler, self-caring wanderer",
+          "keywords": ["boundaries", "self-love", "honoring limits", "self-care"],
+          "countries": [
+            { "code": "SE", "name": "Sweden", "reason": "Healthy boundaries culturally valued" },
+            { "code": "DE", "name": "Germany", "reason": "Respect for personal space" },
+            { "code": "NL", "name": "Netherlands", "reason": "Directness about needs" },
+            { "code": "DK", "name": "Denmark", "reason": "Self-care is prioritized" }
+          ]
+        }
+      },
+      {
+        "name": "Knight of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cukn.jpeg",
+        "slug": "knight_of_cups",
+        "sequence": 53,
+        "upright": {
+          "travel_meaning": "Romantic, poetic journeys, following invitations or crushes abroad.",
+          "travel_style": "Love-fueled weekend trips, city breaks for dates",
+          "keywords": ["romance", "idealism", "offers", "charm"],
+          "countries": [
+            { "code": "FR", "name": "France", "reason": "Paris and smaller towns inspire love stories" },
+            { "code": "IT", "name": "Italy", "reason": "Beautiful cities perfect for romantic escapades" },
+            { "code": "CZ", "name": "Czech Republic", "reason": "Prague's fairy-tale romance" },
+            { "code": "HU", "name": "Hungary", "reason": "Budapest's thermal baths and river views" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Authentic connection awaits—drop the fantasy and meet reality's beauty.",
+          "travel_style": "Grounded lover, authentic connector, real-world romantic",
+          "keywords": ["authenticity", "grounding", "real connection", "presence"],
+          "countries": [
+            { "code": "VN", "name": "Vietnam", "reason": "Authentic connection in daily life" },
+            { "code": "IN", "name": "India", "reason": "Real people, real stories" },
+            { "code": "PE", "name": "Peru", "reason": "Genuine human connection" },
+            { "code": "TH", "name": "Thailand", "reason": "Real hearts matter most" }
+          ]
+        }
+      },
+      {
+        "name": "Page of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cupa.jpeg",
+        "slug": "page_of_cups",
+        "sequence": 54,
+        "upright": {
+          "travel_meaning": "Playful curiosity, artistic discovery, and emotional firsts.",
+          "travel_style": "First solo trip, art and music festivals",
+          "keywords": ["playfulness", "surprise", "creativity", "openness"],
+          "countries": [
+            { "code": "IS", "name": "Iceland", "reason": "Unique art and music scene" },
+            { "code": "DE", "name": "Germany", "reason": "Clubs and creative Berlin" },
+            { "code": "NL", "name": "Netherlands", "reason": "Festivals and art hotspots" },
+            { "code": "JP", "name": "Japan", "reason": "Pop culture, anime, and subculture discovery" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Emotional maturity guides—depth surpasses novelty-chasing.",
+          "travel_style": "Emotionally mature explorer, depth-seeking traveler, wisdom-focused wanderer",
+          "keywords": ["emotional maturity", "depth", "wisdom", "genuine experience"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Ancient wisdom over trendy scenes" },
+            { "code": "JP", "name": "Japan", "reason": "Zen depth matters" },
+            { "code": "IN", "name": "India", "reason": "Spiritual depth guides" },
+            { "code": "PE", "name": "Peru", "reason": "Sacred wisdom prevails" }
+          ]
+        }
+      },
+      {
+        "name": "Ace of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu01.jpeg",
+        "slug": "ace_of_cups",
+        "sequence": 55,
+        "upright": {
+          "travel_meaning": "New emotional beginnings, fresh crushes, or falling in love with a place.",
+          "travel_style": "First-time visit that feels like a soulmate city",
+          "keywords": ["new love", "joy", "emotional opening", "connection"],
+          "countries": [
+            { "code": "FR", "name": "France", "reason": "Romantic cafés and new love stories" },
+            { "code": "IT", "name": "Italy", "reason": "Many travelers fall deeply for Italian cities" },
+            { "code": "GR", "name": "Greece", "reason": "Island where people fall for the lifestyle" },
+            { "code": "ES", "name": "Spain", "reason": "Joyful, heart-opening atmosphere" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Quiet love grows—subtle connection deepens over time into profound bond.",
+          "travel_style": "Slow-love explorer, deepening-bond traveler, grounded connector",
+          "keywords": ["quiet love", "deepening", "grounding", "subtle connection"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Quiet affection grows deep" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Love for the land develops slowly" },
+            { "code": "JP", "name": "Japan", "reason": "Subtle beauty becomes profound love" },
+            { "code": "NO", "name": "Norway", "reason": "Deep, quiet affection for nature" }
+          ]
+        }
+      },
+      {
+        "name": "Two of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu02.jpeg",
+        "slug": "two_of_cups",
+        "sequence": 56,
+        "upright": {
+          "travel_meaning": "Mutual attraction, healthy partnerships, and balanced couple travel.",
+          "travel_style": "Trips taken as equals, supportive couple dynamics",
+          "keywords": ["partnership", "mutuality", "harmony", "union"],
+          "countries": [
+            { "code": "MV", "name": "Maldives", "reason": "Classic couple retreat" },
+            { "code": "MU", "name": "Mauritius", "reason": "Honeymoon destination" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Adventurous yet romantic settings" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Road trips that require teamwork" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Solo strength blooms—independent joy radiates beautifully.",
+          "travel_style": "Solo explorer, self-empowered traveler, independent adventurer",
+          "keywords": ["independence", "self-love", "solo joy", "personal power"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Solo adventures empower" },
+            { "code": "AU", "name": "Australia", "reason": "Independent spirit celebrated" },
+            { "code": "CA", "name": "Canada", "reason": "Solo travel is safe and encouraged" },
+            { "code": "JP", "name": "Japan", "reason": "Solo travel culture celebrated" }
+          ]
+        }
+      },
+      {
+        "name": "Three of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu03.jpeg",
+        "slug": "three_of_cups",
+        "sequence": 57,
+        "upright": {
+          "travel_meaning": "Celebration, festivals, and joyful reunions.",
+          "travel_style": "Group trips, hen/stag weekends, festival travel",
+          "keywords": ["celebration", "friendship", "community", "joy"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Carnival and vibrant street parties" },
+            { "code": "DE", "name": "Germany", "reason": "Oktoberfest and beer festivals" },
+            { "code": "ES", "name": "Spain", "reason": "La Tomatina, Las Fallas, local fiestas" },
+            { "code": "IE", "name": "Ireland", "reason": "Pub culture and lively gatherings" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Reflective joy emerges—quiet celebration feeds the soul deeper.",
+          "travel_style": "Introspective celebrator, quiet-joy seeker, personal triumph explorer",
+          "keywords": ["quiet joy", "inner celebration", "reflection", "personal triumph"],
+          "countries": [
+            { "code": "JP", "name": "Japan", "reason": "Quiet celebration is profound" },
+            { "code": "IS", "name": "Iceland", "reason": "Solitary joy with nature" },
+            { "code": "PT", "name": "Portugal", "reason": "Gentle celebration suffices" },
+            { "code": "NO", "name": "Norway", "reason": "Understated joy resonates deep" }
+          ]
+        }
+      },
+      {
+        "name": "Four of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu04.jpeg",
+        "slug": "four_of_cups",
+        "sequence": 58,
+        "upright": {
+          "travel_meaning": "Apathy or need for something new to feel inspired again.",
+          "travel_style": "Jaded travel after many destinations",
+          "keywords": ["apathy", "disinterest", "stagnation", "introversion"],
+          "countries": [
+            { "code": "GB", "name": "United Kingdom", "reason": "Grey skies can dull enthusiasm" },
+            { "code": "BE", "name": "Belgium", "reason": "Trips dominated by routine business travel" },
+            { "code": "LU", "name": "Luxembourg", "reason": "Predictable, safe but sometimes uninspiring" },
+            { "code": "CH", "name": "Switzerland", "reason": "Efficiency that can feel emotionally flat" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Divine invitation arrives—the universe offers exactly what you need.",
+          "travel_style": "Receptive explorer, grace-welcoming traveler, open-to-miracles wanderer",
+          "keywords": ["grace", "divine timing", "invitation", "openness"],
+          "countries": [
+            { "code": "PE", "name": "Peru", "reason": "Sacred synchronicity abounds" },
+            { "code": "IN", "name": "India", "reason": "Miracles meet the open-hearted" },
+            { "code": "MX", "name": "Mexico", "reason": "Magic finds receptive travelers" },
+            { "code": "BR", "name": "Brazil", "reason": "Universe delivers to open hearts" }
+          ]
+        }
+      },
+      {
+        "name": "Five of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu05.jpeg",
+        "slug": "five_of_cups",
+        "sequence": 59,
+        "upright": {
+          "travel_meaning": "Processing loss, grief, or disappointment while traveling.",
+          "travel_style": "Trips tied to grief or reflection after endings",
+          "keywords": ["grief", "loss", "sadness", "processing"],
+          "countries": [
+            { "code": "PL", "name": "Poland", "reason": "Auschwitz and sites of mass tragedy" },
+            { "code": "DE", "name": "Germany", "reason": "Memorials to historical atrocities" },
+            { "code": "KH", "name": "Cambodia", "reason": "Genocide remembrance" },
+            { "code": "BA", "name": "Bosnia and Herzegovina", "reason": "War scars still visible" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Acceptance blooms—what remains becomes precious beyond measure.",
+          "travel_style": "Gratitude explorer, grace-filled traveler, acceptance-centered wanderer",
+          "keywords": ["acceptance", "gratitude", "grace", "finding the good"],
+          "countries": [
+            { "code": "RW", "name": "Rwanda", "reason": "Remarkable resilience and grace" },
+            { "code": "VN", "name": "Vietnam", "reason": "Beautiful people despite history" },
+            { "code": "US", "name": "United States", "reason": "Healing narratives inspire" },
+            { "code": "JP", "name": "Japan", "reason": "Resilience and beauty intertwined" }
+          ]
+        }
+      },
+      {
+        "name": "Six of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu06.jpeg",
+        "slug": "six_of_cups",
+        "sequence": 60,
+        "upright": {
+          "travel_meaning": "Nostalgic trips, childhood destinations, or revisiting places from the past.",
+          "travel_style": "Returning to hometowns, old exchange cities, or first trip locations",
+          "keywords": ["nostalgia", "innocence", "memory", "return"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Many return to childhood vacation spots" },
+            { "code": "FR", "name": "France", "reason": "Families revisit the same villages or coasts yearly" },
+            { "code": "ES", "name": "Spain", "reason": "Generations of beach holidays" },
+            { "code": "IT", "name": "Italy", "reason": "Returning to ancestral villages" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Fresh eyes see familiar places anew—rediscovery brings wonder.",
+          "travel_style": "Renewal explorer, beginner's-mind traveler, fresh-perspective wanderer",
+          "keywords": ["renewal", "fresh discovery", "beginner's mind", "wonder"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Seeing Italy again for the first time" },
+            { "code": "FR", "name": "France", "reason": "New eyes reveal new Paris" },
+            { "code": "JP", "name": "Japan", "reason": "Each visit reveals something new" },
+            { "code": "ES", "name": "Spain", "reason": "Familiar streets become magical" }
+          ]
+        }
+      },
+      {
+        "name": "Seven of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu07.jpeg",
+        "slug": "seven_of_cups",
+        "sequence": 61,
+        "upright": {
+          "travel_meaning": "Many tempting options, fantasy itineraries, or decision paralysis.",
+          "travel_style": "Trip planning via social media boards and dream lists",
+          "keywords": ["fantasy", "illusion", "options", "wishful thinking"],
+          "countries": [
+            { "code": "IS", "name": "Iceland", "reason": "Instagrammable but expensive and overhyped in places" },
+            { "code": "US", "name": "United States", "reason": "Iconic landmarks saturating media" },
+            { "code": "FR", "name": "France", "reason": "Paris heavily idealised" },
+            { "code": "ID", "name": "Indonesia", "reason": "Bali as a symbol of dream life" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Wisdom chooses well—one true destination calls and fulfills deeply.",
+          "travel_style": "Discerning explorer, clarity-guided traveler, truth-seeking wanderer",
+          "keywords": ["clarity", "discernment", "truth", "authentic choice"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "One true city calls and transforms" },
+            { "code": "JP", "name": "Japan", "reason": "Deep choice leads to mastery" },
+            { "code": "PT", "name": "Portugal", "reason": "True path revealed" },
+            { "code": "PE", "name": "Peru", "reason": "Sacred calling answered" }
+          ]
+        }
+      },
+      {
+        "name": "Eight of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu08.jpeg",
+        "slug": "eight_of_cups",
+        "sequence": 62,
+        "upright": {
+          "travel_meaning": "Leaving something behind, intentional one-way journeys, or spiritual walkaways.",
+          "travel_style": "Pilgrimages, gap years after quitting jobs",
+          "keywords": ["departure", "searching", "letting go", "transition"],
+          "countries": [
+            { "code": "ES", "name": "Spain", "reason": "Camino de Santiago pilgrim route" },
+            { "code": "IN", "name": "India", "reason": "Spiritual seekers leaving old lives" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Working holidays that reset life" },
+            { "code": "AU", "name": "Australia", "reason": "Backpacker circuits symbolising new beginnings" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Recommitment strengthens—returning to what matters deepens the bond.",
+          "travel_style": "Recommitted explorer, loyal returner, dedicated traveler",
+          "keywords": ["recommitment", "dedication", "loyalty", "deepening bonds"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Returning deepens love" },
+            { "code": "FR", "name": "France", "reason": "Loyalty grows through return" },
+            { "code": "PT", "name": "Portugal", "reason": "Commitment enriches experience" },
+            { "code": "JP", "name": "Japan", "reason": "Returning reveals deeper layers" }
+          ]
+        }
+      },
+      {
+        "name": "Nine of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu09.jpeg",
+        "slug": "nine_of_cups",
+        "sequence": 63,
+        "upright": {
+          "travel_meaning": "Wish-fulfilment, bucket-list trips, and pure contentment.",
+          "travel_style": "Dream destinations finally visited",
+          "keywords": ["satisfaction", "pleasure", "gratitude", "contentment"],
+          "countries": [
+            { "code": "MV", "name": "Maldives", "reason": "Classic 'once in a lifetime' goals" },
+            { "code": "IS", "name": "Iceland", "reason": "Northern lights and dream landscapes" },
+            { "code": "FJ", "name": "Fiji", "reason": "Paradisiacal tropical dream" },
+            { "code": "PG", "name": "Papua New Guinea", "reason": "Remote and unique experiences" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Simple joys radiate—everyday moments contain infinite richness.",
+          "travel_style": "Gratitude explorer, everyday-miracle finder, simple-joy traveler",
+          "keywords": ["simple joy", "presence", "gratitude", "everyday magic"],
+          "countries": [
+            { "code": "VN", "name": "Vietnam", "reason": "Pho and street life suffice" },
+            { "code": "IN", "name": "India", "reason": "Daily miracles abound" },
+            { "code": "LA", "name": "Laos", "reason": "Simple joy everywhere" },
+            { "code": "TH", "name": "Thailand", "reason": "Everyday kindness fulfills" }
+          ]
+        }
+      },
+      {
+        "name": "Ten of Cups",
+        "image": "https://cdn.roxyapi.com/img/tarot/cu10.jpeg",
+        "slug": "ten_of_cups",
+        "sequence": 64,
+        "upright": {
+          "travel_meaning": "Happy family holidays, emotional harmony, and shared joy.",
+          "travel_style": "Multi-generation beach or theme park trips",
+          "keywords": ["family", "harmony", "joy", "belonging"],
+          "countries": [
+            { "code": "ES", "name": "Spain", "reason": "Family-friendly beach destinations" },
+            { "code": "PT", "name": "Portugal", "reason": "Safe and relaxed for families" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Nature adventures suitable for kids" },
+            { "code": "CA", "name": "Canada", "reason": "Road trips with outdoor family fun" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Individual paths flourish—honoring differences creates deeper respect.",
+          "travel_style": "Respectful-differences explorer, authentic-self traveler, boundary-honoring wanderer",
+          "keywords": ["individual paths", "authenticity", "respect", "healthy boundaries"],
+          "countries": [
+            { "code": "NL", "name": "Netherlands", "reason": "Individuality celebrated" },
+            { "code": "DE", "name": "Germany", "reason": "Personal boundaries respected" },
+            { "code": "SE", "name": "Sweden", "reason": "Individual path honored" },
+            { "code": "DK", "name": "Denmark", "reason": "Authentic self welcomed" }
+          ]
+        }
+      }
+    ],
+    "wands": [
+      {
+        "name": "King of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/waki.jpeg",
+        "slug": "king_of_wands",
+        "sequence": 65,
+        "upright": {
+          "travel_meaning": "Visionary leadership, charismatic guiding, and pioneering routes.",
+          "travel_style": "Leading group expeditions, pioneering new trails",
+          "keywords": ["vision", "charisma", "inspiration", "leadership"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Pioneering narratives and adventure tourism" },
+            { "code": "ZA", "name": "South Africa", "reason": "Safari and adventure operators leading groups" },
+            { "code": "NP", "name": "Nepal", "reason": "Guides leading treks in extreme conditions" },
+            { "code": "CL", "name": "Chile", "reason": "Guided expeditions in Patagonia" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Collaborative spirit shines—shared power creates magic multiplied.",
+          "travel_style": "Collaborative leader, consensus-builder, inclusive organizer",
+          "keywords": ["collaboration", "shared power", "inclusivity", "collective wisdom"],
+          "countries": [
+            { "code": "NL", "name": "Netherlands", "reason": "Consensus culture empowers all" },
+            { "code": "DK", "name": "Denmark", "reason": "Collaborative approach wins" },
+            { "code": "CR", "name": "Costa Costa", "reason": "Shared decision-making thrives" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Indigenous wisdom honored" }
+          ]
+        }
+      },
+      {
+        "name": "Queen of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/waqu.jpeg",
+        "slug": "queen_of_wands",
+        "sequence": 66,
+        "upright": {
+          "travel_meaning": "Warmth, enthusiasm, and hosting others with vibrant hospitality.",
+          "travel_style": "Charismatic host, social trip planner",
+          "keywords": ["warmth", "confidence", "generosity", "vitality"],
+          "countries": [
+            { "code": "BR", "name": "Brazil", "reason": "Warm, expressive hosts" },
+            { "code": "MX", "name": "Mexico", "reason": "Strong hosting and sharing culture" },
+            { "code": "GR", "name": "Greece", "reason": "Famous philoxenia (love of strangers)" },
+            { "code": "TR", "name": "Turkey", "reason": "Tea, invitations and generosity" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Solo brilliance emerges—your light doesn't need an audience.",
+          "travel_style": "Solo brilliance explorer, independent creator, self-directed traveler",
+          "keywords": ["solo brilliance", "independence", "self-direction", "intrinsic light"],
+          "countries": [
+            { "code": "JP", "name": "Japan", "reason": "Individual mastery celebrated" },
+            { "code": "IS", "name": "Iceland", "reason": "Solo travelers thrive" },
+            { "code": "PT", "name": "Portugal", "reason": "Quiet strength shines" },
+            { "code": "NO", "name": "Norway", "reason": "Independent spirit honored" }
+          ]
+        }
+      },
+      {
+        "name": "Knight of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wakn.jpeg",
+        "slug": "knight_of_wands",
+        "sequence": 67,
+        "upright": {
+          "travel_meaning": "Adventure, momentum, and bold, energetic travel.",
+          "travel_style": "Backpacking, overlanding, adventure sports",
+          "keywords": ["energy", "action", "impulsiveness", "courage"],
+          "countries": [
+            { "code": "NZ", "name": "New Zealand", "reason": "Adrenaline and outdoor thrills" },
+            { "code": "AU", "name": "Australia", "reason": "Surfing, diving, and outback adventures" },
+            { "code": "ZA", "name": "South Africa", "reason": "Adventure sports and safaris" },
+            { "code": "CA", "name": "Canada", "reason": "Mountain biking, skiing, and more" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Mindful presence beats speed—depth unfolds when you slow down.",
+          "travel_style": "Contemplative adventurer, presence-focused explorer, depth-seeking traveler",
+          "keywords": ["mindfulness", "presence", "depth", "contemplation"],
+          "countries": [
+            { "code": "JP", "name": "Japan", "reason": "Zen teaches present-moment beauty" },
+            { "code": "IT", "name": "Italy", "reason": "Slow travel reveals soul" },
+            { "code": "PT", "name": "Portugal", "reason": "Stillness teaches wisdom" },
+            { "code": "BT", "name": "Bhutan", "reason": "Presence is the practice" }
+          ]
+        }
+      },
+      {
+        "name": "Page of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wapa.jpeg",
+        "slug": "page_of_wands",
+        "sequence": 68,
+        "upright": {
+          "travel_meaning": "Youthful excitement, trying new activities, starting to explore the world.",
+          "travel_style": "First big backpacking trip, gap year, working holiday",
+          "keywords": ["enthusiasm", "curiosity", "exploration", "play"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Classic first stop on the backpacker trail" },
+            { "code": "ES", "name": "Spain", "reason": "Popular for first solo trips in Europe" },
+            { "code": "PT", "name": "Portugal", "reason": "Surf camps and easy-going youth travel" },
+            { "code": "HU", "name": "Hungary", "reason": "Budapest as an accessible youth hub" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Wise experience guides—knowledge becomes your greatest adventure tool.",
+          "travel_style": "Experienced wisdom-holder, seasoned explorer, knowledge-rich traveler",
+          "keywords": ["wisdom", "experience", "knowledge", "maturity"],
+          "countries": [
+            { "code": "JP", "name": "Japan", "reason": "Ancient wisdom enhances travel" },
+            { "code": "IN", "name": "India", "reason": "Spiritual maturity deepens exploration" },
+            { "code": "IT", "name": "Italy", "reason": "Historical knowledge enriches" },
+            { "code": "PE", "name": "Peru", "reason": "Indigenous wisdom opens portals" }
+          ]
+        }
+      },
+      {
+        "name": "Ace of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa01.jpeg",
+        "slug": "ace_of_wands",
+        "sequence": 69,
+        "upright": {
+          "travel_meaning": "A spark of inspiration to start a new adventure or creative journey.",
+          "travel_style": "Creative residencies, travel blogging beginnings",
+          "keywords": ["inspiration", "new project", "enthusiasm", "initiative"],
+          "countries": [
+            { "code": "FR", "name": "France", "reason": "Artistic inspiration in Paris and beyond" },
+            { "code": "IT", "name": "Italy", "reason": "Visual beauty sparks ideas" },
+            { "code": "ES", "name": "Spain", "reason": "Colourful, lively urban environments" },
+            { "code": "BR", "name": "Brazil", "reason": "Vivid, creative cultural scenes" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Reigniting passion—return to what once sparked your soul ablaze.",
+          "travel_style": "Renewal seeker, passion reclaimer, joy-rediscoverer",
+          "keywords": ["renewal", "rekindling passion", "rediscovery", "joy return"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Rediscover joy in simplicity" },
+            { "code": "CR", "name": "Costa Rica", "reason": "Pura Vida reignites passion" },
+            { "code": "NZ", "name": "New Zealand", "reason": "Nature rekindles fire" },
+            { "code": "MX", "name": "Mexico", "reason": "Vibrant life restores passion" }
+          ]
+        }
+      },
+      {
+        "name": "Two of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa02.jpeg",
+        "slug": "two_of_wands",
+        "sequence": 70,
+        "upright": {
+          "travel_meaning": "Planning, mapping routes, and looking out at the world from home.",
+          "travel_style": "Charting long-term travel plans, researching destinations",
+          "keywords": ["planning", "vision", "strategy", "foresight"],
+          "countries": [
+            { "code": "SG", "name": "Singapore", "reason": "Asian hub for onward planning" },
+            { "code": "AE", "name": "United Arab Emirates", "reason": "Middle Eastern hub connecting routes" },
+            { "code": "HK", "name": "Hong Kong", "reason": "Traditional hub for Asia-Pacific" },
+            { "code": "QA", "name": "Qatar", "reason": "Doha used as stop-over planning point" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Present moment blooms—being here now creates the richest life.",
+          "travel_style": "Presence explorer, now-focused traveler, mindfulness seeker",
+          "keywords": ["presence", "now", "being", "mindfulness"],
+          "countries": [
+            { "code": "BT", "name": "Bhutan", "reason": "GNH teaches present joy" },
+            { "code": "JP", "name": "Japan", "reason": "Zen presence is perfection" },
+            { "code": "TH", "name": "Thailand", "reason": "Being in the moment matters" },
+            { "code": "LA", "name": "Laos", "reason": "Present-moment living is the way" }
+          ]
+        }
+      },
+      {
+        "name": "Three of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa03.jpeg",
+        "slug": "three_of_wands",
+        "sequence": 71,
+        "upright": {
+          "travel_meaning": "Expansion, waiting for ships to come in, and seeing efforts begin to pay off.",
+          "travel_style": "Embarking on long-term travel after groundwork laid",
+          "keywords": ["expansion", "progress", "anticipation", "exploration"],
+          "countries": [
+            { "code": "SG", "name": "Singapore", "reason": "Regional base to expand across Asia" },
+            { "code": "AE", "name": "United Arab Emirates", "reason": "Hub for global multi-leg journeys" },
+            { "code": "US", "name": "United States", "reason": "West and East coasts as springboards" },
+            { "code": "GB", "name": "United Kingdom", "reason": "Historic empire hub for expansion narratives" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Depth over distance—going deeply into one place transcends going widely.",
+          "travel_style": "Deep-place explorer, slow-roots traveler, local-integration seeker",
+          "keywords": ["depth", "local integration", "slow rooting", "essence"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "One village contains infinity" },
+            { "code": "JP", "name": "Japan", "reason": "Mastery through focus" },
+            { "code": "PT", "name": "Portugal", "reason": "One city unfolds eternally" },
+            { "code": "FR", "name": "France", "reason": "Depth of culture in one region" }
+          ]
+        }
+      },
+      {
+        "name": "Four of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa04.jpeg",
+        "slug": "four_of_wands",
+        "sequence": 72,
+        "upright": {
+          "travel_meaning": "Homecomings, small local festivals, and happy gatherings.",
+          "travel_style": "Returning home to celebrate with loved ones",
+          "keywords": ["celebration", "home", "stability", "community"],
+          "countries": [
+            { "code": "IE", "name": "Ireland", "reason": "Strong culture of coming home for holidays" },
+            { "code": "IT", "name": "Italy", "reason": "Village festas and family gatherings" },
+            { "code": "PT", "name": "Portugal", "reason": "Local festivals in home towns" },
+            { "code": "PL", "name": "Poland", "reason": "Many return home for Christmas and Easter" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Wandering wanders well—moving freely creates its own perfect joy.",
+          "travel_style": "Perpetual wanderer, freedom explorer, rootless adventurer",
+          "keywords": ["freedom to roam", "perpetual motion", "nomadic joy", "unrooted bliss"],
+          "countries": [
+            { "code": "TH", "name": "Thailand", "reason": "Nomad paradise with no roots needed" },
+            { "code": "ES", "name": "Spain", "reason": "Endless wandering is blessed" },
+            { "code": "MX", "name": "Mexico", "reason": "Perpetual motion brings joy" },
+            { "code": "AU", "name": "Australia", "reason": "Never settling feels right" }
+          ]
+        }
+      },
+      {
+        "name": "Five of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa05.jpeg",
+        "slug": "five_of_wands",
+        "sequence": 73,
+        "upright": {
+          "travel_meaning": "Competition, jostling tourists, crowded attractions.",
+          "travel_style": "Visiting spots at peak season with lots of hustle",
+          "keywords": ["competition", "chaos", "struggle", "conflict"],
+          "countries": [
+            { "code": "IT", "name": "Italy", "reason": "Crowded historic centres like Venice" },
+            { "code": "FR", "name": "France", "reason": "Paris landmarks with long queues" },
+            { "code": "ES", "name": "Spain", "reason": "Barcelona over-tourism and protest signs" },
+            { "code": "HR", "name": "Croatia", "reason": "Dubrovnik struggling with cruise traffic" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Harmony flourishes—cooperation creates beauty for all.",
+          "travel_style": "Collaborative explorer, harmony-seeker, cooperative traveler",
+          "keywords": ["harmony", "cooperation", "collaboration", "peace"],
+          "countries": [
+            { "code": "NL", "name": "Netherlands", "reason": "Cooperative culture thrives" },
+            { "code": "SE", "name": "Sweden", "reason": "Harmonious society" },
+            { "code": "DK", "name": "Denmark", "reason": "Consensus creates beauty" },
+            { "code": "AT", "name": "Austria", "reason": "Harmonious structures" }
+          ]
+        }
+      },
+      {
+        "name": "Six of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa06.jpeg",
+        "slug": "six_of_wands",
+        "sequence": 74,
+        "upright": {
+          "travel_meaning": "Recognition, successful completion of trips, and social media 'wins'.",
+          "travel_style": "Showcasing achievements, post-trip glow",
+          "keywords": ["victory", "recognition", "success", "visibility"],
+          "countries": [
+            { "code": "US", "name": "United States", "reason": "Symbolic achievements like Route 66, national parks" },
+            { "code": "NP", "name": "Nepal", "reason": "Summiting treks and big bragging rights" },
+            { "code": "AR", "name": "Argentina", "reason": "Patagonia treks as major milestones" },
+            { "code": "TZ", "name": "Tanzania", "reason": "Climbing Kilimanjaro" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Humble quiet shines brightest—inner transformation outweighs outer praise.",
+          "travel_style": "Humble explorer, inner-growth traveler, quiet-brilliance seeker",
+          "keywords": ["humility", "inner transformation", "quiet strength", "inner light"],
+          "countries": [
+            { "code": "BT", "name": "Bhutan", "reason": "Inner growth matters most" },
+            { "code": "JP", "name": "Japan", "reason": "Quiet mastery is supreme" },
+            { "code": "IN", "name": "India", "reason": "Spiritual growth is true victory" },
+            { "code": "LA", "name": "Laos", "reason": "Humble wisdom speaks loudest" }
+          ]
+        }
+      },
+      {
+        "name": "Seven of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa07.jpeg",
+        "slug": "seven_of_wands",
+        "sequence": 75,
+        "upright": {
+          "travel_meaning": "Defending your travel choices, standing your ground.",
+          "travel_style": "Choosing unusual destinations despite criticism",
+          "keywords": ["defence", "conviction", "courage", "standing firm"],
+          "countries": [
+            { "code": "IR", "name": "Iran", "reason": "Travelers defend their positive experiences against stereotypes" },
+            { "code": "CO", "name": "Colombia", "reason": "Overcoming outdated fear narratives" },
+            { "code": "MX", "name": "Mexico", "reason": "Nuancing media portrayals with real experiences" },
+            { "code": "EG", "name": "Egypt", "reason": "Defending trips after negative news" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Flowing acceptance wins—surrender creates unexpected grace.",
+          "travel_style": "Flow-surrender explorer, acceptance-focused traveler, grace receiver",
+          "keywords": ["surrender", "flow", "acceptance", "grace"],
+          "countries": [
+            { "code": "BT", "name": "Bhutan", "reason": "Surrender to what is" },
+            { "code": "JP", "name": "Japan", "reason": "Acceptance brings peace" },
+            { "code": "TH", "name": "Thailand", "reason": "Going with the flow wins" },
+            { "code": "LA", "name": "Laos", "reason": "Surrender brings freedom" }
+          ]
+        }
+      },
+      {
+        "name": "Eight of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa08.jpeg",
+        "slug": "eight_of_wands",
+        "sequence": 76,
+        "upright": {
+          "travel_meaning": "Fast movement, many messages, last-minute changes and quick hops.",
+          "travel_style": "Multi-flight itineraries, rapid-fire city-hopping",
+          "keywords": ["speed", "momentum", "communication", "travel rush"],
+          "countries": [
+            { "code": "DE", "name": "Germany", "reason": "Efficient rail and flight connections" },
+            { "code": "FR", "name": "France", "reason": "TGV, airports and fast links" },
+            { "code": "JP", "name": "Japan", "reason": "Shinkansen and punctual trains" },
+            { "code": "US", "name": "United States", "reason": "Dense domestic flight network" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Pausing reveals hidden gifts—stillness allows deep seeing.",
+          "travel_style": "Stillness seeker, meditative explorer, pause-valuing traveler",
+          "keywords": ["stillness", "pause", "contemplation", "deep seeing"],
+          "countries": [
+            { "code": "IS", "name": "Iceland", "reason": "Stillness of vast spaces" },
+            { "code": "JP", "name": "Japan", "reason": "Zen meditation reveals truth" },
+            { "code": "NP", "name": "Nepal", "reason": "Mountain silence teaches" },
+            { "code": "PT", "name": "Portugal", "reason": "Lazy afternoons reveal beauty" }
+          ]
+        }
+      },
+      {
+        "name": "Nine of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa09.jpeg",
+        "slug": "nine_of_wands",
+        "sequence": 77,
+        "upright": {
+          "travel_meaning": "Perseverance, final push of a long journey, not giving up.",
+          "travel_style": "Long treks, multi-day hikes, big overland journeys",
+          "keywords": ["resilience", "stamina", "endurance", "persistence"],
+          "countries": [
+            { "code": "NP", "name": "Nepal", "reason": "Long treks near the threshold of endurance" },
+            { "code": "PE", "name": "Peru", "reason": "High-altitude, multi-day Andean routes" },
+            { "code": "CL", "name": "Chile", "reason": "Patagonian trekking requires toughness" },
+            { "code": "ET", "name": "Ethiopia", "reason": "Challenging Simien and Danakil trips" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Rest sweetens—honoring your limits brings deeper joy.",
+          "travel_style": "Self-honoring explorer, boundary-respecting traveler, joy-preserving wanderer",
+          "keywords": ["rest", "boundaries", "self-care", "sustainable joy"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Resting is honored art" },
+            { "code": "IT", "name": "Italy", "reason": "Dolce vita values rest" },
+            { "code": "FR", "name": "France", "reason": "Leisure is sacred" },
+            { "code": "ES", "name": "Spain", "reason": "Siesta respects limits" }
+          ]
+        }
+      },
+      {
+        "name": "Ten of Wands",
+        "image": "https://cdn.roxyapi.com/img/tarot/wa10.jpeg",
+        "slug": "ten_of_wands",
+        "sequence": 78,
+        "upright": {
+          "travel_meaning": "Carrying too much; heavy backpacks, overstuffed itineraries, responsibility.",
+          "travel_style": "Overpacked long-term travel with many obligations",
+          "keywords": ["burden", "overload", "obligation", "strain"],
+          "countries": [
+            { "code": "RU", "name": "Russia", "reason": "Trans-Siberian journeys demand stamina" },
+            { "code": "KZ", "name": "Kazakhstan", "reason": "Long distances and tough logistics" },
+            { "code": "MN", "name": "Mongolia", "reason": "Remote, self-supported expeditions" },
+            { "code": "CN", "name": "China", "reason": "Multi-region trips can feel heavy and complex" }
+          ]
+        },
+        "reversed": {
+          "travel_meaning": "Freedom in simplicity—releasing what doesn't serve unleashes joy.",
+          "travel_style": "Minimalist explorer, liberated traveler, essential-focused wanderer",
+          "keywords": ["simplicity", "liberation", "essentials only", "lightness"],
+          "countries": [
+            { "code": "PT", "name": "Portugal", "reason": "Simple living brings freedom" },
+            { "code": "ID", "name": "Indonesia", "reason": "Island life encourages minimalism" },
+            { "code": "LA", "name": "Laos", "reason": "Letting go is practice" },
+            { "code": "TH", "name": "Thailand", "reason": "Light traveling feels right" }
+          ]
+        }
+      }
+    ]
+  }
+}
