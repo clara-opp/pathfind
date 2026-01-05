@@ -1,18 +1,10 @@
-0.01 Make the currently selected button for the sorting of the flights visible by making it darker when selected
+1.
+- if not specified otherwise by the user chatbot should use the defaults of the manual search to search for fligths
+- However the chatbot should be able to select other class, other origin and destination airport, number of adults, number of children, number of infants, other vacation date, non stop and with layovers, trip type if the user writes that in his/her message
 
-0.1 Check flight booking error handling again
-- currently the below is not handled: 
-Error creating flight order: 400 Client Error: Bad Request for url: https://test.api.amadeus.com/v1/booking/flight-orders
-Response body: {'errors': [{'status': 400, 'code': 34651, 'title': 'SEGMENT SELL FAILURE', 'detail': 'Could not sell segment 2', 'source': {'pointer': '/data/flightOffers[0]/itineraries[0]/segments[1]'}}]}
+2. Restructure the code
 
-0.3 
-- Chatbot does not work for finding flight for multiple persons
-- Specifying the airport should be possible (as well as asking the chatbot about the airports in italy, i.e. chatbot should see the flying to list in the manual search)
-- chatbot should be able to select the class (economy, premium_economy etc.)
-
-0.4 Restructure the code
-
-1. Connect chatbot to google maps to plan day trips with a fixed budget
+2. Connect chatbot to google maps to plan day trips with a fixed budget
 - Google Places API: Filter places by price level
     The Feature: Price Level (Ranges from 0 to 4).
     0 = Free
@@ -22,13 +14,13 @@ Response body: {'errors': [{'status': 400, 'code': 34651, 'title': 'SEGMENT SELL
     4 = Very Expensive
 - Google Routes API: Planning the route
 
-2. Downloadable results for the activity planner (which format? pdf? google maps?)
+3. Downloadable results for the activity planner (which format? pdf? google maps?)
 
-3. Input for activity planner: traveler profiles + swipe results + destination country
+4. Input for activity planner: traveler profiles + swipe results + destination country
 
-4. General:
-- ask for travel time at the beginning and use for all other applications (i.e. flight panner and activity planner) --> same for number of travelers (note that for some travel profiles we can already infer the number of travelers, e.g. Adventurous Solo = 1 traveler, honeymoo = 2 travelers)
+5. General:
+- ask for travel time at the beginning and use for all other applications (i.e. flight panner and activity planner) --> same for number of travelers (note that for some travel profiles we can already infer the number of travelers, e.g. Adventurous Solo = 1 traveler, honeymoon = 2 travelers)
 
-5. Add audio to chatbot for flight search and to the chatbot for trip planning
+6. Add audio to chatbot for flight search and to the chatbot for trip planning
 
 

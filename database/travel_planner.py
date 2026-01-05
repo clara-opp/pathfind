@@ -551,12 +551,18 @@ def show_dashboard_step():
             st.session_state.expander_label = f"Flight Search Configuration"
         if 'manual_search_triggered' not in st.session_state:
             st.session_state.manual_search_triggered = False
+        if 'search_count' not in st.session_state:
+            st.session_state.search_count = 0
         if 'ai_search_triggered' not in st.session_state:
             st.session_state.ai_search_triggered = None
 
         img_placeholder = st.empty()
 
-        with st.expander(st.session_state.expander_label, expanded=st.session_state.search_expanded):
+        # Append invisible characters (\u200b) to change the label's identity.
+        # This forces the expander to re-render as a 'new' widget and respect expanded=False.
+        unique_label = st.session_state.expander_label + ("\u200b" * st.session_state.search_count)
+        with st.expander(unique_label, expanded=st.session_state.search_expanded):
+            c_mode, c_type = st.columns([2, 1])
             c_mode, c_type = st.columns([2, 1])
             mode = c_mode.radio("Search Mode", ["Manual Search", "AI Flight Chatbot"], horizontal=True, key="search_mode")
             trip_type = c_type.selectbox("Trip Type", ["Round Trip", "One Way"], key="search_trip_type")
@@ -595,6 +601,8 @@ def show_dashboard_step():
                     if st.session_state.manual_infants > 0: t_str += f", {st.session_state.manual_infants} Infant(s)"
                     
                     st.session_state.expander_label = f"{l_orig} - {l_dest}  \u2003·\u2003  {t_str}  \u2003·\u2003  {st.session_state.manual_class}"
+                    st.session_state.sort_by = "Price"
+                    st.session_state.search_count += 1
                     st.session_state.search_expanded = False
                     st.session_state.manual_search_triggered = True
                     st.session_state.last_search_origin = st.session_state.manual_orig
@@ -603,7 +611,9 @@ def show_dashboard_step():
             else:
                 st.info(f"Currently searching for a **{trip_type}** during your vacation: **{st.session_state.start_date}** to **{st.session_state.end_date}**.")
                 if prompt := st.chat_input("e.g. Find me the cheapest business class options"):
+                    st.session_state.sort_by = "Price"
                     st.session_state.search_expanded = False
+                    st.session_state.search_count += 1
                     # AI search uses current view values for the label until GPT results return
                     l_orig = st.session_state.get('origin_iata', 'Origin')
                     l_dest = country['country_name']
@@ -621,6 +631,7 @@ def show_dashboard_step():
             
             imgs = [country.get('img_1'), country.get('img_2'), country.get('img_3')]
             imgs = [img for img in imgs if img]
+            random.shuffle(imgs)
             
             if trip_type == "Round Trip":
                 start_d = end_d = dates_val[0]
@@ -680,6 +691,7 @@ def show_dashboard_step():
                 st.session_state.traveler_counts = {"ADULT": params.get("adults", 1), "CHILD": params.get("children", 0), "INFANT": params.get("infants", 0)}
                 imgs = [country.get('img_1'), country.get('img_2'), country.get('img_3')]
                 imgs = [img for img in imgs if img]
+                random.shuffle(imgs)
 
                 token = amadeus.get_amadeus_access_token(AMADEUS_API_KEY, AMADEUS_API_SECRET)
                 params["destinationLocationCode"] = dest_airports.iloc[0]['iata_code']
@@ -958,6 +970,8 @@ def show_booking_step():
                                 else:
                                     msg = f"Passenger {p_num} Issue: {detail}"
                                 st.error(f"🚨 {msg}")
+                            elif "SEGMENT SELL FAILURE" in err.get('title', '') or err.get('code') == 34651:
+                                st.error("🚨 **Flight No Longer Available:** One or more segments of this flight sold out while you were filling out the form. Please go back and select a different flight.")
                     else:
                         st.error("Booking failed. The flight may no longer be available or the connection timed out.")
 
