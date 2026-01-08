@@ -1242,12 +1242,18 @@ def show_results_step():
 
 def show_dashboard_step():
     country = st.session_state.selected_country
-
-    top_l, top_r = st.columns([3, 1])
-    with top_l:
+    topl, topm, topr = st.columns([2, 1, 1])
+    
+    with topl:
         st.markdown(f"### 📋 Dashboard: {country['country_name']}")
-    with top_r:
-        if st.button("🔁 Start Over", use_container_width=True):
+    
+    with topm:
+        if st.button("⬅️ Back to Results", use_container_width=True):
+            st.session_state.step = 5
+            st.rerun()
+    
+    with topr:
+        if st.button("🔄 Start Over", use_container_width=True):
             st.session_state.clear()
             st.rerun()
 
