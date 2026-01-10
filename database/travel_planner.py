@@ -138,7 +138,45 @@ st.markdown(
                 font-size: 1rem;
             }
         }
-        
+
+        # CSS - IN DEN BESTEHENDEN STYLE BLOCK hinzufügen
+
+        .pride-badge-top-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .pride-flag-icon {
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            filter: grayscale(1);
+            padding: 0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            line-height: 1;
+        }
+
+        .pride-flag-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .pride-flag-icon.active {
+            filter: grayscale(0);
+            border: 2px solid #FF1493;
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .pride-info-btn {
+            font-size: 20px;
+            padding: 0;
+            height: auto;
+            min-height: auto;
+        }
+
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -608,13 +646,18 @@ class DataManager:
 
             fc.price_eur as flight_price,
             fc.origin as flight_origin,
-            fc.destination as flight_dest
+            fc.destination as flight_dest,
+
+            e.equality_index_score,
+            e.equality_index_legal,
+            e.equality_index_public_opinion
 
         FROM countries c
         LEFT JOIN climate_monthly cm ON c.country_name = cm.country_name_climate
         LEFT JOIN MajorAirports ma ON c.iso2 = ma.iso2
         LEFT JOIN flight_costs fc ON ma.iata_code = fc.destination AND fc.origin = ?
         LEFT JOIN numbeo_indices ni ON ni.iso3 = c.iso3
+        LEFT JOIN equality_index e ON e.iso3 = c.iso3
         """
         conn = _self.get_connection()
         try:
@@ -768,10 +811,15 @@ class TravelMatcher:
         pol_fb = safe_median(pol, default=50.0)
         df["clean_air_score"] = 1 - self.normalize(pol.fillna(pol_fb))
 
-        # Optional spices
+        # New astro-score:
         if float(weights.get("astro", 0.0)) > 0:
-            seed = int(prefs.get("astro_seed", 424242))
-            df["astro_score"] = df["country_name"].apply(lambda c: self._stable_noise(str(c), seed))
+            boosted_countries = st.session_state.get("tarot_boosted_countries", [])
+            if boosted_countries:
+                # 20% boost for matching countries (applied to their base score)
+                df["astro_boost"] = df["iso3"].isin(boosted_countries).astype(float) * 0.20
+                df["astro_score"] = df["astro_boost"]
+            else:
+                df["astro_score"] = 0.0
         else:
             df["astro_score"] = 0.0
 
@@ -853,11 +901,26 @@ def show_profile_step():
 
 def render_profile_ui():
     global data_manager
-    st.markdown("### Step 1: 📍 Where are you starting from?")
-    origin_options = {"Germany": "FRA", "United States": "ATL"}
-    selected_origin = st.radio("Select origin:", list(origin_options.keys()), horizontal=True, label_visibility="collapsed")
-    st.session_state.origin_iata = origin_options[selected_origin]
-
+    col_content, col_flag_empty = st.columns([0.88, 0.12], vertical_alignment="top")
+    
+    with col_content:
+        st.markdown("**Step 1: Where are you starting from?**")
+        origin_options = {"Germany": "FRA", "United States": "ATL"}
+        selected_origin = st.radio("Select origin", list(origin_options.keys()), horizontal=True, label_visibility="collapsed")
+        st.session_state.origin_iata = origin_options[selected_origin]
+    
+    with col_flag_empty:
+        c1, c2 = st.columns([0.5, 0.5])
+        with c1:
+            is_active = st.session_state.lgbtq_filter_active
+            if st.button("🏳️‍🌈", key="pride_toggle", help="LGBTQ+ safe filter", type="primary" if is_active else "secondary"):
+                st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
+                st.rerun()
+        
+        with c2:
+            with st.popover("ℹ️"):
+                st.markdown("Legal rights + Societal acceptance. Index ≥ 60")
+    
     st.markdown("### Step 2: 🧭 Choose Your Traveller Profile")
     st.write("Pick a profile. Advanced Customization shows weights (0–100 points) that always sum to 100.")
 
@@ -1116,72 +1179,179 @@ def show_swiping_step():
 
 
 def show_astro_step():
-    st.markdown("### Step 5: A Final Touch of Destiny? ✨")
-    st.markdown("#### 🃏 Draw Your Mystical Travel Card")
-
-    if st.button("Draw Tarot Card", use_container_width=True, key="draw_tarot"):
-        try:
-            api_key = os.getenv("ROXY_API_KEY")
-            tarot_url = "https://roxyapi.com/api/v1/data/astro/tarot"
-            url = f"{tarot_url}/single-card-draw?token={api_key}&reversed_probability=0.3"
-
-            response = requests.get(url, timeout=20)
-
-            if response.status_code == 200:
-                card_data = response.json()
-                card_name = card_data.get("name", "Unknown Card")
-                is_reversed = card_data.get("is_reversed", False)
-                card_image = card_data.get("image", "")
-
-                conn = data_manager.get_connection()
-                cursor = conn.cursor()
-
-                orientation = "reversed" if is_reversed else "upright"
-                cursor.execute(
-                    """
-                    SELECT DISTINCT country_code, country_name, reason
-                    FROM tarot_countries
-                    WHERE card_name = ? AND orientation = ?
-                    """,
-                    (card_name, orientation),
-                )
-                results = cursor.fetchall()
-                conn.close()
-
-                if results:
-                    tarot_countries = [row[0] for row in results]
-                    st.session_state["tarot_countries"] = tarot_countries
-
-                    w = st.session_state.weights.copy()
-                    w["astro"] = max(int(w.get("astro", 0)), 20)
-                    st.session_state.weights = normalize_weights_100(w)
-
-                    orientation_text = "🔄 Reversed" if is_reversed else "⬆️ Upright"
-                    st.success(f"✨ **{card_name}** ({orientation_text})")
-
-                    if card_image:
-                        col1, col2, col3 = st.columns([1, 2, 1])
-                        with col2:
-                            st.image(card_image, width=200)
-
-                    st.markdown("#### 🌍 Recommended Destinations:")
-                    for country_code, country_name, reason in results:
-                        st.write(f"**{country_name}** ({country_code})")
-                        st.caption(f"_{reason}_")
-                else:
-                    st.warning(f"Card '{card_name}' found but no countries in tarot database.")
-                    st.session_state["tarot_countries"] = []
-            else:
-                st.error(f"API Error: {response.status_code}")
-
-        except Exception as e:
-            st.error(f"Error drawing tarot card: {str(e)}")
-
-    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
-
-    if st.button("Next: Ban List →", use_container_width=True):
-        st.session_state.step = 4
-        st.rerun()
+    st.markdown("""
+    <style>
+    .astro-container {
+        background: linear-gradient(135deg, #0c0c1a 0%, #1a0033 50%, #330066 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        color: #e6d9ff;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+        margin: 1rem 0;
+        font-family: 'Georgia', serif;
+    }
+    .card-title {
+        font-size: 2.5rem;
+        background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        margin-bottom: 1rem;
+    }
+    .meaning-box {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 15px;
+        padding: 1rem;
+        margin: 0.8rem 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    .meaning-box h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+    .meaning-box p {
+        margin: 0;
+    }
+    .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent);
+        animation: sparkle 3s infinite;
+    }
+    @keyframes sparkle {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+    }
+    .result-wrapper {
+        background: rgba(138, 43, 226, 0.1);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    </style>
+    <div style="position: relative;">
+        <div class="stars"></div>
+        <div class="astro-container">
+            <div class="card-title">✨ A Final Touch of Destiny? ✨</div>
+            <p style="font-size: 1.2rem; margin-bottom: 0;">Draw from the cosmic deck or trust pure logic?</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # State Lock
+    if "tarot_drawn" not in st.session_state:
+        st.session_state.tarot_drawn = False
+    
+    # 🔥 GRÖßERE BUTTONS
+    if not st.session_state.tarot_drawn:
+        col1, col2 = st.columns(2, gap="large")
+        
+        with col1:
+            if st.button("🃏 DRAW CARD", key="draw_tarot", use_container_width=True, help="Pull a card from the cosmic deck"):
+                try:
+                    api_key = os.getenv("ROXY_API_KEY")
+                    tarot_url = "https://roxyapi.com/api/v1/data/astro/tarot"
+                    url = f"{tarot_url}/single-card-draw?token={api_key}&reversed_probability=0.3"
+                    response = requests.get(url, timeout=20)
+                    
+                    if response.status_code == 200:
+                        card_data = response.json()
+                        card_name = card_data.get("name", "Unknown Card")
+                        is_reversed = card_data.get("is_reversed", False)
+                        
+                        # 5 Länder für Boost
+                        conn = data_manager.get_connection()
+                        cursor = conn.cursor()
+                        orientation = "reversed" if is_reversed else "upright"
+                        cursor.execute(
+                            "SELECT DISTINCT country_code FROM tarot_countries WHERE card_name = ? AND orientation = ? LIMIT 5",
+                            (card_name, orientation)
+                        )
+                        results = cursor.fetchall()
+                        conn.close()
+                        
+                        st.session_state["tarot_boosted_countries"] = [row[0] for row in results]
+                        
+                        w = st.session_state.weights.copy()
+                        w["astro"] = 20
+                        st.session_state.weights = normalize_weights_100(w)
+                        
+                        st.session_state.tarot_drawn = True
+                        st.session_state.tarot_card = card_data
+                        st.rerun()
+                        
+                    else:
+                        st.error(f"Cosmic connection failed: {response.status_code}")
+                        
+                except Exception as e:
+                    st.error(f"Stars misaligned: {str(e)}")
+        
+        with col2:
+            if st.button("⏭️ SKIP", key="skip_tarot", use_container_width=True, help="Skip tarot and continue"):
+                w = st.session_state.weights.copy()
+                w["astro"] = 0
+                st.session_state.weights = normalize_weights_100(w)
+                st.session_state["tarot_boosted_countries"] = []
+                st.session_state.step = 4
+                st.rerun()
+    
+    # 🎴 RESULT - KARTE LINKS, TEXT RECHTS (MIT ECHTEN COLUMNS!)
+    if st.session_state.tarot_drawn:
+        card_data = st.session_state.get("tarot_card", {})
+        card_name = card_data.get("name", "Unknown Card")
+        is_reversed = card_data.get("is_reversed", False)
+        card_image = card_data.get("image", "")
+        
+        orientation_emoji = "🔄" if is_reversed else "⬆️"
+        
+        # TITLE
+        st.markdown(f"""
+        <div class="astro-container" style="padding: 1.5rem; margin-top: 2rem;">
+            <div class="card-title">{orientation_emoji} {card_name}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # RESULT mit ECHTEN COLUMNS - KARTE LINKS (1) + TEXT RECHTS (1.5)
+        col_img, col_text = st.columns([1, 1.5], gap="large")
+        
+        with col_img:
+            if card_image:
+                st.image(card_image, width=280)
+        
+        with col_text:
+            st.markdown(f"""
+            <div class="meaning-box">
+                <h4>🌌 General Meaning</h4>
+                <p>{card_data.get('meaning', 'Cosmic wisdom awaits...')[:300]}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            travel_meaning = card_data.get('travel_meaning', card_data.get('meaning', 'Destiny guides your path...'))
+            st.markdown(f"""
+            <div class="meaning-box">
+                <h4>✈️ Travel Meaning</h4>
+                <p>{travel_meaning[:300]}</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # NEXT BUTTON
+        if st.button("➡️ Next: Ban List", use_container_width=True, key="next_tarot"):
+            st.session_state.step = 4
+            st.rerun()
 
 
 def show_ban_list_step():
@@ -1224,6 +1394,13 @@ def show_results_step():
     st.markdown("### Step 7: Your Top Destinations!")
     with st.spinner("Analyzing the globe to find your perfect spot..."):
         df_base = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
+
+        if st.session_state.lgbtq_filter_active:
+            if "equality_index_score" in df_base.columns:
+                df_base = df_base[df_base["equality_index_score"] >= 60].reset_index(drop=True)
+                st.info(f"🌈 Filtered to LGBTQ+ friendly destinations")
+            else:
+                st.warning("⚠️ Equality Index data not available in database")
 
         banned_iso3 = set(st.session_state.get("banned_iso3", []))
         if banned_iso3:
@@ -1756,6 +1933,14 @@ def run_app():
         st.session_state.banned_iso3 = []
     if "card_index" not in st.session_state:
         st.session_state.card_index = 0
+
+    if "tarot_drawn" not in st.session_state:
+        st.session_state.tarot_drawn = False
+    if "tarot_boosted_countries" not in st.session_state:
+        st.session_state["tarot_boosted_countries"] = []
+
+    if "lgbtq_filter_active" not in st.session_state:
+        st.session_state.lgbtq_filter_active = False
 
     # routing
     if st.session_state.step == 1:
