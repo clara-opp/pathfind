@@ -2,6 +2,11 @@ import os
 import json
 import requests
 import streamlit as st
+from geopy.geocoders import Nominatim
+import pycountry
+import geonamescache
+import folium
+from streamlit_folium import st_folium
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -9,7 +14,7 @@ from openai import OpenAI
 FSQ_BASE_URL = "https://places-api.foursquare.com"
 FSQ_VERSION = "2025-06-17"  # must match the version header style you're using
 
-DEFAULT_LL = "49.7500,8.6500"  # Seeheim-Jugenheim-ish; change as needed
+
 
 
 # ---------- Foursquare client ----------
@@ -59,7 +64,7 @@ def fsq_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8):
 # ---------- OpenAI tool-calling loop ----------
 def run_planner(messages, ll: str, radius: int, budget_eur: float):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
-
+    found_places = []
     tools = [
         {
             "type": "function",
@@ -138,6 +143,8 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                         radius=int(args.get("radius", radius)),
                         limit=int(args.get("limit", 8)),
                     )
+                    if not out.get("error"):
+                        found_places.extend(out.get("results", []))
                 else:
                     out = {"error": True, "message": f"Unknown tool: {fn}"}
 
@@ -152,9 +159,9 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             continue
 
         # No more tools requested -> final answer
-        return msg.content or "(No response text.)"
+        return (msg.content or "(No response text.)"), found_places
 
-    return "Planner stopped after too many tool calls. Try a more specific request (e.g., 'museum + coffee + scenic walk')."
+    return "Planner stopped after too many tool calls.", []
 
 
 # ---------- Streamlit UI ----------
@@ -174,7 +181,37 @@ def main():
 
     with st.sidebar:
         st.header("Trip settings")
-        ll = st.text_input("Search center (lat,lon)", value=DEFAULT_LL)
+        with st.expander("🌍 Location Selection", expanded=True):
+            # Load all countries in the world
+            country_list = sorted([c.name for c in pycountry.countries])
+            selected_country = st.selectbox("Select Country", options=country_list, index=country_list.index("Germany"))
+            
+            # Fetch cities for the selected country
+            gc = geonamescache.GeonamesCache()
+            country_obj = pycountry.countries.get(name=selected_country)
+            country_code = country_obj.alpha_2 if country_obj else "DE"
+
+            # Filter cities by country code and sort them
+            city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
+            city_list = sorted(list(set(city_data)))
+
+            if city_list:
+                # Default to Berlin if available, otherwise first in list
+                default_idx = city_list.index("Berlin") if "Berlin" in city_list else 0
+                selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
+            else:
+                # Fallback if no cities are found in the database for that country
+                selected_city = st.text_input("Type City Name", value="Berlin")
+
+        geolocator = Nominatim(user_agent="day_trip_planner")
+        location = geolocator.geocode(f"{selected_city}, {selected_country}")
+
+        if location:
+            ll = f"{location.latitude},{location.longitude}"
+            st.success(f"Located: {location.latitude:.4f}, {location.longitude:.4f}")
+        else:
+            st.error("Location not found. Using fallback.")
+            ll = "49.7500,8.6500"
         radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
         budget = st.number_input("Budget (EUR)", min_value=0.0, value=40.0, step=5.0)
 
@@ -207,16 +244,38 @@ def main():
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("Planning with real places..."):
+            with st.spinner("Planning your trip..."):
                 # Pass only user+assistant turns (excluding tool outputs) into the planner
                 planner_messages = [
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                     if m["role"] in ("user", "assistant")
                 ]
-                answer = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
+                # Call the planner to get the text response and the list of places
+                answer, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
                 st.markdown(answer)
 
+                if places:
+                    st.subheader("Trip Map")
+                    m = folium.Map(location=[float(x) for x in ll.split(",")], zoom_start=13)
+                    
+                    # Add marker for search center
+                    folium.Marker(
+                        [float(x) for x in ll.split(",")], 
+                        popup="Search Center", 
+                        icon=folium.Icon(color="red", icon="info-sign")
+                    ).add_to(m)
+
+                    # Add markers for all found places
+                    for p in places:
+                        if p.get("latitude") and p.get("longitude"):
+                            folium.Marker(
+                                [p["latitude"], p["longitude"]],
+                                popup=f"{p['name']}\n{p.get('address', '')}",
+                                tooltip=p["name"]
+                            ).add_to(m)
+                    
+                    st_folium(m, width=700, height=500, key=f"map_{len(st.session_state.messages)}")
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
 

@@ -35,4 +35,3 @@
 - ask for travel time at the beginning and use for all other applications (i.e. flight panner and activity planner) --> same for number of travelers (note that for some travel profiles we can already infer the number of travelers, e.g. Adventurous Solo = 1 traveler, honeymoon = 2 travelers)
 
 6. Add links for the created google calendar events for the flight booking
-

@@ -7,8 +7,7 @@
 
 # Google APIs  #
 - Google Cloud API
-- Google Places API
-- Google Routes API
+- Foursquare API
 
 # Other APIs #
 - OpenAI API
