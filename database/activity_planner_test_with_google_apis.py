@@ -11,63 +11,154 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import polyline
 
-# ---------- Config ----------
-FSQ_BASE_URL = "https://places-api.foursquare.com"
-FSQ_VERSION = "2025-06-17"  # must match the version header style you're using
-
-
-
-
-# ---------- Foursquare client ----------
-def fsq_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8):
-    api_key = os.getenv("FOURSQUARE_API_KEY", "").strip()
-    if not api_key:
-        raise RuntimeError("Missing FOURSQUARE_API_KEY")
-
-    url = f"{FSQ_BASE_URL}/places/search"
-    headers = {
-        "accept": "application/json",
-        "X-Places-Api-Version": FSQ_VERSION,
-        "authorization": f"Bearer {api_key}",
-    }
-    params = {
-        "query": query,
-        "ll": ll,
-        "radius": radius,
-        "limit": limit,
-    }
-
-    r = requests.get(url, headers=headers, params=params, timeout=30)
-    # Helpful for debugging:
-    if r.status_code != 200:
-        return {"error": True, "status": r.status_code, "body": r.text}
-
-    data = r.json()
-    results = []
-    for p in data.get("results", []):
-        results.append(
-            {
-                "fsq_place_id": p.get("fsq_place_id"),
-                "name": p.get("name"),
-                "distance_m": p.get("distance"),
-                "categories": [c.get("name") for c in (p.get("categories") or []) if c.get("name")],
-                "address": (p.get("location") or {}).get("formatted_address"),
-                "website": p.get("website"),
-                "tel": p.get("tel"),
-                "latitude": p.get("latitude"),
-                "longitude": p.get("longitude"),
-            }
-        )
-
-    return {"error": False, "results": results}
-
-# ---------- Helper: OSRM Routing ----------
-def get_route_osrm(coordinates):
+# ---------- Google Places API client ----------
+def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8):
     """
+    Search for places using Google Places API (New).
+    ll: "lat,lon" string, e.g. "49.75,8.65"
+    """
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("Missing GOOGLE_MAPS_API_KEY")
+    
+    url = "https://places.googleapis.com/v1/places:searchText"
+    
+    # Parse lat/lon
+    lat_str, lon_str = ll.split(",")
+    lat, lon = float(lat_str), float(lon_str)
+    
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": api_key,
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.websiteUri,places.nationalPhoneNumber"
+    }
+    
+    data = {
+        "textQuery": query,
+        "locationBias": {
+            "circle": {
+                "center": {
+                    "latitude": lat,
+                    "longitude": lon
+                },
+                "radius": radius
+            }
+        },
+        "maxResultCount": limit
+    }
+    
+    try:
+        r = requests.post(url, headers=headers, json=data, timeout=30)
+        
+        if r.status_code != 200:
+            return {"error": True, "status": r.status_code, "body": r.text}
+        
+        response_data = r.json()
+        results = []
+        
+        for p in response_data.get("places", []):
+            # Extract location coordinates
+            location = p.get("location", {})
+            place_lat = location.get("latitude")
+            place_lon = location.get("longitude")
+            
+            # Calculate distance (approximate)
+            distance_m = None
+            if place_lat and place_lon:
+                import math
+                # Haversine formula for approximate distance
+                dlat = math.radians(place_lat - lat)
+                dlon = math.radians(place_lon - lon)
+                a = math.sin(dlat/2)**2 + math.cos(math.radians(lat)) * math.cos(math.radians(place_lat)) * math.sin(dlon/2)**2
+                c = 2 * math.asin(math.sqrt(a))
+                distance_m = 6371000 * c  # Earth radius in meters
+            
+            results.append({
+                "place_id": p.get("id", ""),
+                "name": p.get("displayName", {}).get("text", ""),
+                "distance_m": distance_m,
+                "categories": p.get("types", []),
+                "address": p.get("formattedAddress", ""),
+                "website": p.get("websiteUri", ""),
+                "tel": p.get("nationalPhoneNumber", ""),
+                "latitude": place_lat,
+                "longitude": place_lon,
+            })
+        
+        return {"error": False, "results": results}
+    
+    except Exception as e:
+        return {"error": True, "message": str(e)}
+
+
+# ---------- Helper: Google Routes API ----------
+def get_route_google(coordinates, api_key):
+    """
+    Get walking route using Google Routes API.
     coordinates: List of [lat, lon] pairs.
     Returns: List of [lat, lon] points representing the walking path.
     """
-    # OSRM expects "lon,lat" strings separated by semicolons
+    if len(coordinates) < 2:
+        return []
+    
+    url = "https://routes.googleapis.com/directions/v2:computeRoutes"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": api_key,
+        "X-Goog-FieldMask": "routes.polyline.encodedPolyline"
+    }
+    
+    # Build waypoints
+    waypoints = []
+    for i, coord in enumerate(coordinates):
+        waypoint = {
+            "location": {
+                "latLng": {
+                    "latitude": coord[0],
+                    "longitude": coord[1]
+                }
+            }
+        }
+        if i == 0:
+            origin = waypoint
+        elif i == len(coordinates) - 1:
+            destination = waypoint
+        else:
+            waypoints.append({"via": False, **waypoint})
+    
+    data = {
+        "origin": origin,
+        "destination": destination,
+        "travelMode": "WALK",
+        "polylineQuality": "HIGH_QUALITY"
+    }
+    
+    if waypoints:
+        data["intermediates"] = waypoints
+    
+    try:
+        r = requests.post(url, headers=headers, json=data, timeout=10)
+        if r.status_code == 200:
+            response_data = r.json()
+            routes = response_data.get("routes", [])
+            if routes:
+                encoded = routes[0].get("polyline", {}).get("encodedPolyline", "")
+                if encoded:
+                    return polyline.decode(encoded)
+    except Exception:
+        pass
+    
+    return []
+
+
+# ---------- Fallback: OSRM Routing ----------
+def get_route_osrm(coordinates):
+    """
+    Fallback routing using free OSRM service.
+    coordinates: List of [lat, lon] pairs.
+    Returns: List of [lat, lon] points representing the walking path.
+    """
     locs = ";".join([f"{lon},{lat}" for lat, lon in coordinates])
     url = f"http://router.project-osrm.org/route/v1/foot/{locs}?overview=full&geometries=polyline"
     
@@ -76,23 +167,25 @@ def get_route_osrm(coordinates):
         if r.status_code == 200:
             data = r.json()
             if data.get("routes"):
-                # Decode the polyline into a list of points
                 encoded = data["routes"][0]["geometry"]
                 return polyline.decode(encoded)
     except Exception:
         pass
+    
     return []
+
 
 # ---------- OpenAI tool-calling loop ----------
 def run_planner(messages, ll: str, radius: int, budget_eur: float):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
     found_places = []
+    
     tools = [
         {
             "type": "function",
             "function": {
-                "name": "fsq_search_places",
-                "description": "Search for places near a lat/lon using Foursquare Places API.",
+                "name": "google_search_places",
+                "description": "Search for places near a lat/lon using Google Places API.",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -106,23 +199,21 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             },
         }
     ]
-
-    # A tight system prompt that forces: budget awareness + citations/estimates + using Foursquare tool.
+    
     system_msg = {
         "role": "system",
         "content": (
             "You are a day-trip planner.\n"
             "Goal: propose a realistic day-trip itinerary within the user's fixed budget.\n"
             "Rules:\n"
-            "- Use fsq_search_places to fetch real nearby places before recommending venues.\n"
-            "- Foursquare results do not include exact prices; clearly mark any costs as estimates.\n"
+            "- Use google_search_places to fetch real nearby places before recommending venues.\n"
+            "- Google Places results do not include exact prices; clearly mark any costs as estimates.\n"
             "- Provide a per-item cost estimate and a running total not exceeding the budget.\n"
             "- Return a compact itinerary with times, travel notes, and place addresses.\n"
             "- IMPORTANT: When recommending a place, use its exact name from the search results so it can be mapped.\n"
         ),
     }
-
-    # Add context to user request so the model always has ll/budget in scope.
+    
     context_msg = {
         "role": "user",
         "content": (
@@ -130,11 +221,9 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             "Plan a day trip for today based on my preferences in this chat."
         ),
     }
-
+    
     convo = [system_msg] + messages + [context_msg]
-
-
-    # Tool-calling loop (a few iterations is usually enough)
+    
     for _ in range(6):
         resp = client.chat.completions.create(
             model=st.session_state.model,
@@ -142,11 +231,10 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             tools=tools,
             tool_choice="auto",
         )
-
+        
         msg = resp.choices[0].message
-
-        # If the model wants to call tools, execute them and append results.
         tool_calls = getattr(msg, "tool_calls", None)
+        
         if tool_calls:
             convo.append(
                 {
@@ -155,13 +243,13 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                     "tool_calls": [tc.model_dump() for tc in tool_calls],
                 }
             )
-
+            
             for tc in tool_calls:
                 fn = tc.function.name
                 args = json.loads(tc.function.arguments or "{}")
-
-                if fn == "fsq_search_places":
-                    out = fsq_search_places(
+                
+                if fn == "google_search_places":
+                    out = google_search_places(
                         query=args.get("query", ""),
                         ll=args.get("ll", ll),
                         radius=int(args.get("radius", radius)),
@@ -171,7 +259,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                         found_places.extend(out.get("results", []))
                 else:
                     out = {"error": True, "message": f"Unknown tool: {fn}"}
-
+                
                 convo.append(
                     {
                         "role": "tool",
@@ -179,12 +267,10 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                         "content": json.dumps(out, ensure_ascii=False),
                     }
                 )
-
             continue
-
-        # No more tools requested -> final answer
+        
         return (msg.content or "(No response text.)"), found_places
-
+    
     return "Planner stopped after too many tool calls.", []
 
 
@@ -205,72 +291,69 @@ def get_category_style(categories):
         return "shopping-bag", "orange"
     return "map-marker", "blue"
 
+
 def main():
     load_dotenv()
-
     st.set_page_config(
-        page_title="Day Trip Planner (OpenAI  Foursquare)", 
-        layout="wide", 
+        page_title="Day Trip Planner (OpenAI + Google Maps)",
+        layout="wide",
         initial_sidebar_state="expanded"
     )
-    st.title("Day Trip Planner (Chat + Foursquare)")
-
-    # Basic key checks (don’t print secrets)
+    
+    st.title("Day Trip Planner (Chat + Google Maps)")
+    
+    # API key checks
     if not os.getenv("OPENAI_API_KEY"):
         st.error("Missing OPENAI_API_KEY in environment/.env")
         st.stop()
-    if not os.getenv("FOURSQUARE_API_KEY"):
-        st.error("Missing FOURSQUARE_API_KEY in environment/.env")
+    
+    if not os.getenv("GOOGLE_MAPS_API_KEY"):
+        st.error("Missing GOOGLE_MAPS_API_KEY in environment/.env")
         st.stop()
-
+    
     with st.sidebar:
         st.header("Trip settings")
+        
         with st.expander("🌍 Location Selection", expanded=True):
-            # Load all countries in the world
             country_list = sorted([c.name for c in pycountry.countries])
             selected_country = st.selectbox("Select Country", options=country_list, index=country_list.index("Germany"))
             
-            # Fetch cities for the selected country
             gc = geonamescache.GeonamesCache()
             country_obj = pycountry.countries.get(name=selected_country)
             country_code = country_obj.alpha_2 if country_obj else "DE"
-
-            # Filter cities by country code and sort them
+            
             city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
             city_list = sorted(list(set(city_data)))
-
+            
             if city_list:
-                # Default to Berlin if available, otherwise first in list
                 default_idx = city_list.index("Berlin") if "Berlin" in city_list else 0
                 selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
             else:
-                # Fallback if no cities are found in the database for that country
                 selected_city = st.text_input("Type City Name", value="Berlin")
-
-        geolocator = Nominatim(user_agent="day_trip_planner")
-        try:
-            # Increase timeout to 10s to avoid ReadTimeoutError
-            location = geolocator.geocode(f"{selected_city}, {selected_country}", timeout=10)
-        except Exception as e:
-            st.warning(f"Geocoding service unavailable: {e}")
-            location = None
-
-        if location:
-            ll = f"{location.latitude},{location.longitude}"
-            st.success(f"Located: {location.latitude:.4f}, {location.longitude:.4f}")
-        else:
-            st.error("Location not found or connection failed. Using fallback.")
-            ll = "49.7500,8.6500"        
-        radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
-        budget = st.number_input("Budget (EUR)", min_value=0.0, value=40.0, step=5.0)
-
+            
+            geolocator = Nominatim(user_agent="day_trip_planner")
+            try:
+                location = geolocator.geocode(f"{selected_city}, {selected_country}", timeout=10)
+            except Exception as e:
+                st.warning(f"Geocoding service unavailable: {e}")
+                location = None
+            
+            if location:
+                ll = f"{location.latitude},{location.longitude}"
+                st.success(f"Located: {location.latitude:.4f}, {location.longitude:.4f}")
+            else:
+                st.error("Location not found. Using fallback.")
+                ll = "49.7500,8.6500"
+            
+            radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
+            budget = st.number_input("Budget (EUR)", min_value=0.0, value=40.0, step=5.0)
+        
         st.header("Model")
         if "model" not in st.session_state:
-            st.session_state.model = "gpt-5-nano-2025-08-07"
+            st.session_state.model = "gpt-4o-mini"
         st.session_state.model = st.text_input("OpenAI model", value=st.session_state.model)
-
         st.caption("Tip: Ask for a style (relaxed/packed), interests, and dietary needs.")
-
+    
     # Chat state
     if "messages" not in st.session_state:
         st.session_state.messages = [
@@ -279,26 +362,25 @@ def main():
                 "content": "Tell me your interests (e.g., nature, cafés, museums) and any constraints (time window, kids, mobility).",
             }
         ]
+    
     if "map_data" not in st.session_state:
         st.session_state.map_data = {"places": [], "center": None}
-
-    # Layout: Chatbot on the left, Map on the right
+    
+    # Layout
     col1, col2 = st.columns([1, 1])
-
-    # Render chat history
+    
     with col1:
-        # Render chat history
         for m in st.session_state.messages:
             with st.chat_message(m["role"]):
                 st.markdown(m["content"])
-
-        # Input
+        
         prompt = st.chat_input("What kind of day trip do you want?")
+        
         if prompt:
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)
-
+            
             with st.chat_message("assistant"):
                 with st.spinner("Planning your trip..."):
                     planner_messages = [
@@ -306,56 +388,50 @@ def main():
                         for m in st.session_state.messages
                         if m["role"] in ("user", "assistant")
                     ]
-                    answer, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
-
-                    # --- FILTERING LOGIC ---
-                    # 1. Deduplicate places (Foursquare might return duplicates across searches)
-                    unique_places = {p["fsq_place_id"]: p for p in places}.values()
                     
-                    # 2. Only keep places that are actually mentioned in the AI's text answer
+                    answer, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
+                    
+                    # Filter places mentioned in answer
+                    unique_places = {p["place_id"]: p for p in places}.values()
                     final_places = [
-                        p for p in unique_places 
+                        p for p in unique_places
                         if p["name"].lower() in answer.lower()
                     ]
-
-                    # Store data in session state for persistence
+                    
                     st.session_state.map_data = {"places": final_places, "center": ll}
                     st.markdown(answer)
-            
-            st.session_state.messages.append({"role": "assistant", "content": answer})
-            st.rerun()
-
+                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                    st.rerun()
+    
     with col2:
         st.subheader("Trip Map")
         map_info = st.session_state.map_data
+        
         if map_info["center"]:
             center_ll = [float(x) for x in map_info["center"].split(",")]
-            # Use CartoDB Positron for a cleaner look
             m = folium.Map(location=center_ll, zoom_start=13, tiles="Cartodb Positron")
-
-            # Add search radius circle for context
+            
             folium.Circle(
                 location=center_ll, radius=radius, color="#3388ff", weight=1,
                 fill=True, fill_color="#3388ff", fill_opacity=0.1,
                 tooltip=f"Search Radius: {radius}m"
             ).add_to(m)
-
-            # Center marker
+            
             folium.Marker(
                 center_ll, popup="Search Center", tooltip="Start Here",
                 icon=folium.Icon(color="black", icon="home", prefix="fa")
             ).add_to(m)
-
+            
             bounds = [center_ll]
-            route_points = [center_ll] # Start at center
+            route_points = [center_ll]
+            
             for p in map_info["places"]:
                 lat, lon = p.get("latitude"), p.get("longitude")
                 if lat and lon:
                     route_points.append([lat, lon])
                     icon_name, icon_color = get_category_style(p.get("categories", []))
-                    # Formatted HTML popup
-                    popup_html = f"<b>{p['name']}</b><br>{p.get('address', '')}"
                     
+                    popup_html = f"<b>{p['name']}</b><br>{p.get('address', '')}"
                     folium.Marker(
                         [lat, lon],
                         popup=folium.Popup(popup_html, max_width=200),
@@ -363,32 +439,34 @@ def main():
                         icon=folium.Icon(color=icon_color, icon=icon_name, prefix="fa")
                     ).add_to(m)
                     bounds.append([lat, lon])
-
-            # Auto-fit map to show all markers
+            
             if len(bounds) > 1:
-                m.fit_bounds(bounds, padding=(30, 30))            
-
-            # --- DRAW ROUTE ---
-            # Only draw if we have at least 2 points
+                m.fit_bounds(bounds, padding=(30, 30))
+            
+            # Draw route
             if len(route_points) > 1:
-                # 1. Get the actual walking path from OSRM
-                path_latlon = get_route_osrm(route_points)
+                # Try Google Routes API first
+                api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+                path_latlon = get_route_google(route_points, api_key)
+                
+                # Fallback to OSRM if Google fails
+                if not path_latlon:
+                    path_latlon = get_route_osrm(route_points)
                 
                 if path_latlon:
-                    # Draw the realistic road path
                     folium.PolyLine(
-                        path_latlon, color="blue", weight=4, opacity=0.7, 
+                        path_latlon, color="blue", weight=4, opacity=0.7,
                         tooltip="Walking Path"
                     ).add_to(m)
                 else:
-                    # Fallback: Draw straight lines if OSRM fails
                     folium.PolyLine(
                         route_points, color="gray", weight=2, dash_array="5, 5"
                     ).add_to(m)
-
+            
             st_folium(m, width="100%", height=600, key="persistent_map")
         else:
             st.info("The map will appear here once a trip is planned.")
+
 
 if __name__ == "__main__":
     main()

@@ -3,18 +3,7 @@
 1.1 Change origin airports selection so that it shows all airports not only the most important one for each country. Note that the default selected airport should still be the most important airport of the country the user is located in.
 
 2. Activity Planner (should be the tab next to flight search)
-    1. Provide the chatbot with all the information the user already entered, e.g. travel profile, swiping cards, destination country. Then let the chatbot plan 3 unique days based on that information. The computation and API calls should start as soon as the user presses the "View Details" button for the top destination results so that the results for the planned 3 unique days are ready as soon as the user navigates to the activity planner tab. The total costs of the trip should be shown as well as the number of adults and children the trip was planned for (leave out infants because they usually don't cost anything). Calculate the cost based on the following (or alternatively let the chatbot do an estimation):
-        Foursquare categorizes venues into 4 price levels:
-            1. (Cheap)
-            2. (Moderate)
-            3. (Expensive)
-            4. (Very Expensive)
-            To make this work, we combine the Price Tier from Foursquare with the Cost Index from your local database to turn those "$" signs into real Euro amounts.
-            The "Bottom-Up" Accountant Logic:
-            Foursquare: Tells us a restaurant is a level 2 (
-            ).
-            Local DB: Tells us that in Germany, a "Moderate" meal is roughly €18.
-            Calculation: Venue Price Tier × Country Base Cost = Estimated Cost.
+    1. Provide the chatbot with all the information the user already entered, e.g. travel profile, swiping cards, destination country. Then let the chatbot plan 3 unique days based on that information. The computation and API calls should start as soon as the user presses the "View Details" button for the top destination results so that the results for the planned 3 unique days are ready as soon as the user navigates to the activity planner tab. The total costs of the trip should be shown as well as the number of adults and children the trip was planned for (leave out infants because they usually don't cost anything). 
     2. The Translator (Geopy / Nominatim)
         The Problem: Computers and Maps don't understand the word "Paris." They only understand coordinates (Latitude and Longitude).
         The Solution: This uses OpenStreetMap’s Nominatim service. It takes the text you typed in the sidebar and sends it to a free server. The server returns numbers like 48.8566, 2.3522.
@@ -26,6 +15,7 @@
         Folium creates an interactive HTML map in the background.
         The script adds a Blue Marker for the center of the city.
         It then loops through the Foursquare list and adds Red Markers for every museum or restaurant found.
+    5. Connect chatbot to Web Search API, so that the chatbot can search the web for prices. Note the budget should be close to exhaustion but never exceeded.
 
 3. Downloadable results for the activity planner (which format? pdf? google maps?)
 
