@@ -168,6 +168,48 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# hardcoded region to ISO3 mapping (6 continents)
+REGION_TO_ISO3 = {
+    "Europe": [
+        "ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE",
+        "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA",
+        "XKX", "LVA", "LIE", "LTU", "LUX", "MLT", "MDA", "MCO", "MNE", "NLD",
+        "MKD", "NOR", "POL", "PRT", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN",
+        "ESP", "SWE", "CHE", "UKR", "GBR", "VAT"
+    ],
+    "Asia": [
+        "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "GEO",
+        "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KWT", "KGZ",
+        "LAO", "LBN", "MYS", "MDV", "MNG", "MMR", "NPL", "OMN", "PAK", "PHL",
+        "PSE", "QAT", "SAU", "SGP", "KOR", "LKA", "SYR", "TWN", "TJK", "THA",
+        "TLS", "TKM", "TUR", "ARE", "UZB", "VNM", "YEM", "PRK"
+    ],
+    "Africa": [
+        "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD",
+        "COM", "COG", "COD", "CIV", "DJI", "EGY", "GNQ", "ERI", "ETH", "GAB",
+        "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI",
+        "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP",
+        "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO",
+        "TUN", "UGA", "ZMB", "ZWE"
+    ],
+    "North America": [
+        "ATG", "BHS", "BRB", "BLZ", "CAN", "CRI", "CUB", "DMA", "DOM", "SLV",
+        "GRD", "GTM", "HTI", "HND", "JAM", "MEX", "NIC", "PAN", "KNA", "LCA",
+        "VCT", "TTO", "USA"
+    ],
+    "South America": [
+        "ARG", "BOL", "BRA", "CHL", "COL", "ECU", "GUY", "PRY", "PER", "SUR",
+        "URY", "VEN"
+    ],
+    "Oceania": [
+        "AUS", "FJI", "KIR", "MHL", "FSM", "NRU", "NZL", "PLW", "PNG", "WSM",
+        "SLB", "TON", "TUV", "VUT"
+    ]
+}
+
+
+
+
 # ============================================================
 # DYNAMIC IMPORTS
 # ============================================================
@@ -845,14 +887,19 @@ def init_session_state():
     st.session_state.setdefault("swipe_mode_chosen", False)
     st.session_state.setdefault("active_swipe_cards", [])
 
+    st.session_state.setdefault("ban_mode", None)  
+
 # ============================================================
 # UI STEPS
 # ============================================================
-def render_profile_ui(data_manager):
+def show_basic_info_step(data_manager):
+    """Step 1: Origin, LGBTQ filter, and vacation dates"""
+    
+    # Origin selection
     col_content, col_flag_empty = st.columns([0.88, 0.12], vertical_alignment="top")
-
+    
     with col_content:
-        st.markdown("**Step 1: Where are you starting from?**")
+        st.markdown("### Step 1: Where are you starting from?")
         origin_options = {"Germany": "FRA", "United States": "ATL"}
         selected_origin = st.radio(
             "Select origin",
@@ -860,12 +907,12 @@ def render_profile_ui(data_manager):
             horizontal=True,
             label_visibility="collapsed",
         )
-        st.session_state.origin_iata = origin_options[selected_origin]
-
+        st.session_state["origin_iata"] = origin_options[selected_origin]
+    
     with col_flag_empty:
         c1, c2 = st.columns([0.5, 0.5])
         with c1:
-            is_active = st.session_state.lgbtq_filter_active
+            is_active = st.session_state.get("lgbtq_filter_active", False)
             if st.button(
                 "🏳️‍🌈",
                 key="pride_toggle",
@@ -874,153 +921,166 @@ def render_profile_ui(data_manager):
             ):
                 st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
                 st.rerun()
-
         with c2:
             with st.popover("ℹ️"):
-                st.markdown("Legal rights + Societal acceptance. Index ≥ 60")
-
-    st.markdown("### Step 2: 🧭 Choose Your Traveller Profile")
-    st.write("Pick a profile. Advanced Customization shows weights (0–100 points) that always sum to 100.")
-
-    personas = {
-        "🗺️ Story Hunter": normalize_weights_100({
-            "safety_tugo": 15, "culture": 22, "hidden_gem": 14,
-            "cost": 12, "restaurant": 8, "groceries": 5,
-            "weather": 10, "qol": 7, "clean_air": 5,
-            "purchasing_power": 2,
-            "rent": 0, "health_care": 0, "luxury_price": 0, "astro": 0, "jitter": 0
-        }),
-        "👨‍👩‍👧‍👦 Family Fortress": normalize_weights_100({
-            "safety_tugo": 28, "health_care": 14, "qol": 12, "clean_air": 12,
-            "weather": 10, "culture": 6,
-            "cost": 8, "restaurant": 3, "groceries": 3,
-            "purchasing_power": 4,
-            "rent": 0, "hidden_gem": 0, "luxury_price": 0, "astro": 0, "jitter": 0
-        }),
-        "💻 WiFi Goblin (Long stay)": normalize_weights_100({
-            "rent": 20, "purchasing_power": 14,
-            "groceries": 10, "restaurant": 6, "cost": 12,
-            "safety_tugo": 14,
-            "qol": 12, "clean_air": 6,
-            "weather": 4, "culture": 2,
-            "hidden_gem": 0, "health_care": 0, "luxury_price": 0, "astro": 0, "jitter": 0
-        }),
-        "❤️ Comfort Snob": normalize_weights_100({
-            "qol": 20, "safety_tugo": 18,
-            "clean_air": 12, "health_care": 10,
-            "weather": 10, "culture": 6,
-            "luxury_price": 10, "restaurant": 4,
-            "purchasing_power": 4,
-            "cost": 0, "groceries": 0, "rent": 0, "hidden_gem": 2, "astro": 0, "jitter": 0
-        }),
-        "🧌 Budget Goblin": normalize_weights_100({
-            "cost": 26, "groceries": 12, "restaurant": 10,
-            "purchasing_power": 12,
-            "safety_tugo": 14,
-            "weather": 8, "culture": 6,
-            "clean_air": 6, "qol": 4,
-            "hidden_gem": 2,
-            "rent": 0, "health_care": 0, "luxury_price": 0, "astro": 0, "jitter": 0
-        }),
-        "🌿 Clean Air & Calm": normalize_weights_100({
-            "clean_air": 24, "safety_tugo": 22,
-            "qol": 12, "health_care": 10, "weather": 10,
-            "cost": 10, "groceries": 4, "restaurant": 2,
-            "culture": 4, "hidden_gem": 2,
-            "purchasing_power": 0, "rent": 0, "luxury_price": 0, "astro": 0, "jitter": 0
-        }),
-        "🧨 Chaos Gremlin (but not stupid)": normalize_weights_100({
-            "hidden_gem": 24, "culture": 10,
-            "cost": 10, "restaurant": 6, "weather": 4,
-            "safety_tugo": 16, "qol": 6, "clean_air": 4,
-            "purchasing_power": 4, "jitter": 10, "astro": 6,
-            "luxury_price": 0, "rent": 0, "health_care": 0, "groceries": 0
-        }),
-    }
-
-    persona = st.selectbox(
-        "Select a persona:",
-        list(personas.keys()),
-        key="persona_select",
-        label_visibility="collapsed",
-    )
-    st.session_state.persona_defaults = personas[persona].copy()
-
-    if st.session_state.get("persona_active") != persona:
-        st.session_state.persona_active = persona
-        for wk in WEIGHT_KEYS:
-            st.session_state.pop(f"adv_{wk}", None)
-        set_adv_from_weights(personas[persona])
-
-    with st.expander("Advanced Customization (Optional)"):
-        if st.button("↩ Reset to Persona Defaults", use_container_width=True):
-            for wk in WEIGHT_KEYS:
-                st.session_state.pop(f"adv_{wk}", None)
-            set_adv_from_weights(st.session_state.persona_defaults)
-            st.rerun()
-
-        total_live = sum(clamp_int(st.session_state.get(f"adv_{k}", 0)) for k in WEIGHT_KEYS)
-        st.caption(f"Current sum: **{total_live} / 100**")
-
-        slider_row("Safety (TuGo Advisory)", "safety_tugo")
-        slider_row("Cost (Cheap is good)", "cost")
-        slider_row("Restaurant Value", "restaurant")
-        slider_row("Groceries Value", "groceries")
-        slider_row("Rent (Long stay)", "rent")
-        slider_row("Purchasing Power", "purchasing_power")
-        slider_row("Quality of Life", "qol")
-        slider_row("Health Care", "health_care")
-        slider_row("Clean Air (Low pollution)", "clean_air")
-        slider_row("Culture (UNESCO)", "culture")
-        slider_row("Weather Fit", "weather")
-        slider_row("Luxury Price Vibe (High cost can be good)", "luxury_price")
-        slider_row("Hidden Gem Spice", "hidden_gem")
-        slider_row("Astro Spice", "astro")
-        slider_row("Chaos Jitter", "jitter")
-
-    st.markdown("### Step 3: 📅 When is your vacation?")
+                st.markdown("Legal rights + Societal acceptance. Index ≥ 60.")
+    
+    st.markdown("---")
+    
+    # Vacation dates
+    st.markdown("### Step 2: When is your vacation?")
     today = datetime.date.today()
     vacation_dates = st.date_input(
-        "Select your travel window:",
-        value=[today + datetime.timedelta(days=30), today + datetime.timedelta(days=40)],
+        "Select your travel window",
+        value=(today + datetime.timedelta(days=30), today + datetime.timedelta(days=40)),
         min_value=today,
         help="This helps us find the best flights and weather for your trip.",
     )
-
-    if st.button("Next: Personalize Your Trip →"):
-        if not (isinstance(vacation_dates, (list, tuple)) and len(vacation_dates) == 2):
+    
+    # Next button
+    if st.button("Next: Choose Your Profile"):
+        if not isinstance(vacation_dates, (list, tuple)) or len(vacation_dates) != 2:
             st.error("Please select both a start and end date for your vacation.")
             st.stop()
-
+        
         st.session_state.start_date = vacation_dates[0]
         st.session_state.end_date = vacation_dates[1]
-
-        committed = {k: clamp_int(st.session_state.get(f"adv_{k}", 0)) for k in WEIGHT_KEYS}
-        st.session_state.weights = normalize_weights_100(committed)
-
-        st.session_state.prefs = {
-            "target_temp": 25,
-            "food_style": None,
-            "night_style": None,
-            "move_style": None,
-            "gem_seed": st.session_state.get("gem_seed", random.randint(1, 10_000_000)),
-            "astro_seed": st.session_state.get("astro_seed", random.randint(1, 10_000_000)),
-            "jitter_seed": st.session_state.get("jitter_seed", random.randint(1, 10_000_000)),
-        }
-
-        st.session_state.swipe_mode_chosen = False
-        st.session_state.active_swipe_cards = []
-        st.session_state.card_index = 0
-
+        
+        # Set currency based on origin
         if st.session_state.origin_iata == "ATL":
             st.session_state.currency_symbol = "$"
             st.session_state.currency_rate = data_manager.get_exchange_rate("USD")
         else:
             st.session_state.currency_symbol = "€"
             st.session_state.currency_rate = 1.0
-
+        
         st.session_state.step = 2
         st.rerun()
+
+
+def show_persona_step(data_manager):
+    """Step 2: Choose traveler profile/persona"""
+    
+    st.markdown("### Step 3: Choose Your Traveller Profile")
+    st.write("Pick a profile. Advanced Customization shows weights (0-100 points) that always sum to 100.")
+    
+    # Define personas
+    personas = {
+        "Story Hunter": normalize_weights_100({
+            "safety_tugo": 15, "culture": 22, "hiddengem": 14, "cost": 12,
+            "restaurant": 8, "groceries": 5, "weather": 10, "qol": 7,
+            "cleanair": 5, "purchasingpower": 2, "rent": 0, "healthcare": 0,
+            "luxuryprice": 0, "astro": 0, "jitter": 0
+        }),
+        "Family Fortress": normalize_weights_100({
+            "safety_tugo": 28, "healthcare": 14, "qol": 12, "cleanair": 12,
+            "weather": 10, "culture": 6, "cost": 8, "restaurant": 3,
+            "groceries": 3, "purchasingpower": 4, "rent": 0, "hiddengem": 0,
+            "luxuryprice": 0, "astro": 0, "jitter": 0
+        }),
+        "WiFi Goblin (Long stay)": normalize_weights_100({
+            "rent": 20, "purchasingpower": 14, "groceries": 10, "restaurant": 6,
+            "cost": 12, "safety_tugo": 14, "qol": 12, "cleanair": 6,
+            "weather": 4, "culture": 2, "hiddengem": 0, "healthcare": 0,
+            "luxuryprice": 0, "astro": 0, "jitter": 0
+        }),
+        "Comfort Snob": normalize_weights_100({
+            "qol": 20, "safety_tugo": 18, "cleanair": 12, "healthcare": 10,
+            "weather": 10, "culture": 6, "luxuryprice": 10, "restaurant": 4,
+            "purchasingpower": 4, "cost": 0, "groceries": 0, "rent": 0,
+            "hiddengem": 2, "astro": 0, "jitter": 0
+        }),
+        "Budget Goblin": normalize_weights_100({
+            "cost": 26, "groceries": 12, "restaurant": 10, "purchasingpower": 12,
+            "safety_tugo": 14, "weather": 8, "culture": 6, "cleanair": 6,
+            "qol": 4, "hiddengem": 2, "rent": 0, "healthcare": 0,
+            "luxuryprice": 0, "astro": 0, "jitter": 0
+        }),
+        "Clean Air & Calm": normalize_weights_100({
+            "cleanair": 24, "safety_tugo": 22, "qol": 12, "healthcare": 10,
+            "weather": 10, "cost": 10, "groceries": 4, "restaurant": 2,
+            "culture": 4, "hiddengem": 2, "purchasingpower": 0, "rent": 0,
+            "luxuryprice": 0, "astro": 0, "jitter": 0
+        }),
+        "Chaos Gremlin (but not stupid)": normalize_weights_100({
+            "hiddengem": 24, "culture": 10, "cost": 10, "restaurant": 6,
+            "weather": 4, "safety_tugo": 16, "qol": 6, "cleanair": 4,
+            "purchasingpower": 4, "jitter": 10, "astro": 6, "luxuryprice": 0,
+            "rent": 0, "healthcare": 0, "groceries": 0
+        }),
+    }
+    
+    # Persona selection
+    persona = st.selectbox(
+        "Select a persona",
+        list(personas.keys()),
+        key="persona_select",
+        label_visibility="collapsed",
+    )
+    
+    # Store persona defaults
+    st.session_state["persona_defaults"] = personas[persona].copy()
+    
+    # Initialize weights if persona changed
+    if st.session_state.get("persona_active") != persona:
+        st.session_state["persona_active"] = persona
+        for wk in WEIGHT_KEYS:
+            st.session_state.pop(f"fadv_{wk}", None)
+        set_adv_from_weights(personas[persona])
+    
+    # Advanced customization expander
+    with st.expander("⚙️ Advanced Customization (Optional)"):
+        if st.button("Reset to Persona Defaults", use_container_width=True):
+            for wk in WEIGHT_KEYS:
+                st.session_state.pop(f"fadv_{wk}", None)
+            set_adv_from_weights(st.session_state["persona_defaults"])
+            st.rerun()
+        
+        total_live = sum(clamp_int(st.session_state.get(f"fadv_{k}", 0)) for k in WEIGHT_KEYS)
+        st.caption(f"Current sum: {total_live}/100")
+        
+        # Sliders for all weight categories
+        slider_row("Safety (TuGo Advisory)", "safety_tugo")
+        slider_row("Cost (Cheap is good)", "cost")
+        slider_row("Restaurant Value", "restaurant")
+        slider_row("Groceries Value", "groceries")
+        slider_row("Rent (Long stay)", "rent")
+        slider_row("Purchasing Power", "purchasingpower")
+        slider_row("Quality of Life", "qol")
+        slider_row("Health Care", "healthcare")
+        slider_row("Clean Air (Low pollution)", "cleanair")
+        slider_row("Culture (UNESCO)", "culture")
+        slider_row("Weather Fit", "weather")
+        slider_row("Luxury Price Vibe (High cost can be good)", "luxuryprice")
+        slider_row("Hidden Gem Spice", "hiddengem")
+        slider_row("Astro Spice", "astro")
+        slider_row("Chaos Jitter", "jitter")
+    
+    # Next button
+    if st.button("Next: Personalize Your Trip"):
+        # Commit the weights
+        committed = {k: clamp_int(st.session_state.get(f"fadv_{k}", 0)) for k in WEIGHT_KEYS}
+        st.session_state.weights = normalize_weights_100(committed)
+        
+        # Set preferences
+        st.session_state.prefs = {
+            "targettemp": 25,
+            "foodstyle": None,
+            "nightstyle": None,
+            "movestyle": None,
+            "gemseed": st.session_state.get("gemseed", random.randint(1, 10000000)),
+            "astroseed": st.session_state.get("astroseed", random.randint(1, 10000000)),
+            "jitterseed": st.session_state.get("jitterseed", random.randint(1, 10000000)),
+        }
+        
+        # Reset swipe cards
+        st.session_state.swipe_mode_chosen = False
+        st.session_state.active_swipe_cards = []
+        st.session_state.card_index = 0
+        
+        st.session_state.step = 3
+        st.rerun()
+
 
 
 def _choose_swipe_cards(mode: str):
@@ -1056,7 +1116,7 @@ def show_swiping_step():
 
     cards = st.session_state.get("active_swipe_cards") or list(SWIPE_CARDS_ALL)
     if st.session_state.card_index >= len(cards):
-        st.session_state.step = 3
+        st.session_state.step = 4
         st.rerun()
         return
 
@@ -1280,7 +1340,7 @@ def show_astro_step(data_manager):
                 w["astro"] = 0
                 st.session_state.weights = normalize_weights_100(w)
                 st.session_state["tarot_boosted_countries"] = []
-                st.session_state.step = 4
+                st.session_state.step = 5
                 st.rerun()
 
     if st.session_state.tarot_drawn:
@@ -1330,159 +1390,234 @@ def show_astro_step(data_manager):
 
         st.markdown("---")
         if st.button("➡️ Next: Ban List", use_container_width=True, key="next_tarot"):
-            st.session_state.step = 4
+            st.session_state.step = 5
+            st.rerun()
+
+
+def show_ban_choices_step(datamanager):
+    st.markdown("### Step 6: 🚫 Ban List (Optional)")
+    st.caption("Do you want to exclude specific countries from your recommendations?")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("Ban a region", use_container_width=True, key="ban_choice_yes"):
+            st.session_state["ban_mode"] = "use"
+            st.session_state.step = 5.1  # go to actual ban-page
+            st.rerun()
+    with c2:
+        if st.button("Skip, show me my matches →", use_container_width=True, key="ban_choice_skip"):
+            st.session_state["ban_mode"] = "skip"
+            st.session_state.step = 6  # directly to results
             st.rerun()
 
 
 def show_ban_list_step(data_manager):
     st.markdown("### Step 6: 🚫 Ban List (Optional)")
-    st.caption("Choose any countries you do NOT want to see. Leave empty to skip.")
-
-    df_base = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
-    if df_base.empty:
-        st.error("No base data loaded. Check DB / query.")
-        return
-
-    iso3_to_name = (
-        df_base.dropna(subset=["iso3", "country_name"])
-        .drop_duplicates(subset=["iso3"])
-        .set_index("iso3")["country_name"]
-        .to_dict()
-    )
-    all_iso3 = sorted(list(iso3_to_name.keys()))
-
-    st.multiselect(
-        "Banned countries:",
-        options=all_iso3,
-        default=st.session_state.get("banned_iso3", []),
-        format_func=lambda x: iso3_to_name.get(x, x),
-        key="banned_iso3",
+    st.caption(
+        "Quickly exclude whole regions from your recommendations. "
+        "Leave everything unselected to keep the whole world in play."
     )
 
-    c1, c2 = st.columns([1, 1])
-    with c1:
-        if st.button("Skip →", use_container_width=True):
-            st.session_state.step = 5
+    # Use hardcoded region mapping
+    region_to_iso3 = REGION_TO_ISO3.copy()
+
+    # Nice ordering of regions for display
+    nice_order = [
+        "Europe",
+        "Asia",
+        "North America",
+        "South America",
+        "Africa",
+        "Oceania",
+    ]
+
+    regions = [r for r in nice_order if r in region_to_iso3] + [
+        r for r in region_to_iso3.keys() if r not in nice_order
+    ]
+
+    st.markdown("#### Pick regions you want to **exclude**")
+    st.caption(
+        "Tap one or more regions below. We will hide all countries from those areas in your results."
+    )
+
+    # Current selections from session
+    banned_regions = set(st.session_state.get("banned_regions", set()))
+    cols = st.columns(3)
+
+    # Render pill-style toggle buttons for each region
+    for idx, region in enumerate(regions):
+        col = cols[idx % 3]
+        is_banned = region in banned_regions
+        label = f"❌ {region}" if is_banned else region
+        button_key = f"ban_region_{region}"
+
+        with col:
+            clicked = st.button(
+                label,
+                use_container_width=True,
+                key=button_key,
+                type="primary" if is_banned else "secondary",
+            )
+
+        if clicked:
+            if is_banned:
+                banned_regions.discard(region)
+            else:
+                banned_regions.add(region)
+            # Update session state immediately
+            st.session_state["banned_regions"] = banned_regions
+            # Force rerun to show the change immediately
             st.rerun()
+
+    # Persist region selection
+    st.session_state["banned_regions"] = banned_regions
+
+    # Derive banned ISO3 codes from selected regions
+    banned_iso3 = set()
+    for region in banned_regions:
+        banned_iso3.update(region_to_iso3.get(region, []))
+
+    st.session_state["bannediso3"] = sorted(banned_iso3)
+
+    # Small summary line
+    if banned_regions:
+        st.markdown(
+            "You are currently excluding: "
+            + ", ".join(f"`{r}`" for r in sorted(banned_regions))
+        )
+    else:
+        st.caption("No regions excluded. Your matches can come from anywhere 🌍")
+
+    st.markdown("---")
+    c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
-        if st.button("Calculate My Matches! 🚀", use_container_width=True):
-            st.session_state.step = 5
+        if st.button(
+            "Calculate My Matches! 🚀",
+            use_container_width=True,
+            key="ban_regions_calc",
+        ):
+            st.session_state.step = 6
             st.rerun()
 
 
 def show_results_step(data_manager):
-    st.markdown("### Step 7: Your Top Destinations!")
+    st.markdown("### Step 7: 🎉 Your Top Destinations!")
+    st.caption("Based on your preferences and filters, here are your personalized matches.")
+    
     with st.spinner("Analyzing the globe to find your perfect spot..."):
-        df_base = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
-        if df_base.empty:
-            st.error("No base data loaded. Check DB / query.")
+        dfbase = data_manager.load_base_data(st.session_state.get("originiata", "FRA"))
+        if dfbase.empty:
+            st.error("No base data loaded. Check DB query.")
             return
 
-        if st.session_state.lgbtq_filter_active:
-            if "equality_index_score" in df_base.columns:
-                df_base = df_base[df_base["equality_index_score"] >= 60].reset_index(drop=True)
-                st.info("🌈 Filtered to LGBTQ+ friendly destinations")
+        if st.session_state.get("lgbtqfilteractive", False):
+            if "equality_index_score" in dfbase.columns:
+                dfbase = dfbase[dfbase["equality_index_score"] >= 60].reset_index(drop=True)
+                st.info("✅ Filtered to LGBTQ+ friendly destinations")
             else:
-                st.warning("⚠️ Equality Index data not available in database")
+                st.warning("Equality Index data not available in database")
 
-        banned_iso3 = set(st.session_state.get("banned_iso3", []))
-        if banned_iso3 and "iso3" in df_base.columns:
-            df_base = df_base[~df_base["iso3"].isin(banned_iso3)].reset_index(drop=True)
+        banned_iso3 = set(st.session_state.get("bannediso3", []))
+        if banned_iso3 and "iso3" in dfbase.columns:
+            before_count = len(dfbase)
+            dfbase = dfbase[~dfbase["iso3"].isin(banned_iso3)].reset_index(drop=True)
+            after_count = len(dfbase)
+            if before_count - after_count > 0:
+                st.info(f"🚫 Filtered out {before_count - after_count} destinations from banned regions.")
 
-        df_base = dedupe_one_row_per_country(df_base)
+        dfbase = dedupe_one_row_per_country(dfbase)
+        matcher = TravelMatcher(dfbase)
+        st.session_state["matcheddf"] = matcher.calculate_match(st.session_state.weights, st.session_state.prefs)
+        df = st.session_state["matcheddf"]
 
-        matcher = TravelMatcher(df_base)
-        st.session_state.matched_df = matcher.calculate_match(st.session_state.weights, st.session_state.prefs)
+        if df.empty:
+            st.warning("No destinations found after filters.")
+            return
 
-    df = st.session_state.matched_df
-    if df.empty:
-        st.warning("No destinations found after filters.")
-        return
+        # Display results
+        top3 = df.head(3)
+        st.balloons()
+        st.success(f"🎉 Your #1 Match: {top3.iloc[0]['country_name']}")
 
-    top_5 = df.head(5)
+        for i, row in top3.iterrows():
+            with st.container():
+                c1, c2, c3 = st.columns([1.5, 2, 1])
+                with c1:
+                    imgs = [row.get("img_1"), row.get("img_2"), row.get("img_3")]
+                    imgs = [x for x in imgs if x]
+                    if imgs:
+                        st.image(random.choice(imgs), use_container_width=True)
+                with c2:
+                    st.markdown(f"**{i+1}. {row['country_name']}**")
+                    score_pct = float(row.get("final_score", 0.0)) * 100.0
+                    a, b = st.columns([0.88, 0.12], vertical_alignment="center")
+                    with a:
+                        st.markdown(
+                            f"Match Score: <span style='color:green; font-weight:bold'>{score_pct:.0f}%</span>",
+                            unsafe_allow_html=True,
+                        )
+                        st.caption("Peek behind the score: see how your categories shape this match.")
+                    with b:
+                        with st.popover("ℹ️"):
+                            w_unit = weights_to_unit(st.session_state.get("weights", {}))
+                            contrib = {
+                                "Safety": float(row.get("safety_tugo_score", 0.0)) * float(w_unit.get("safetytugo", 0.0)),
+                                "Cost": float(row.get("cost_score", 0.0)) * float(w_unit.get("cost", 0.0)),
+                                "Restaurant": float(row.get("restaurant_value_score", 0.0)) * float(w_unit.get("restaurant", 0.0)),
+                                "Groceries": float(row.get("groceries_value_score", 0.0)) * float(w_unit.get("groceries", 0.0)),
+                                "Rent": float(row.get("rent_score", 0.0)) * float(w_unit.get("rent", 0.0)),
+                                "Purchasing power": float(row.get("purchasing_power_score", 0.0)) * float(w_unit.get("purchasingpower", 0.0)),
+                                "QoL": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
+                                "Healthcare": float(row.get("health_care_score", 0.0)) * float(w_unit.get("healthcare", 0.0)),
+                                "Clean Air": float(row.get("clean_air_score", 0.0)) * float(w_unit.get("cleanair", 0.0)),
+                                "Culture": float(row.get("culture_score", 0.0)) * float(w_unit.get("culture", 0.0)),
+                                "Weather": float(row.get("weather_score", 0.0)) * float(w_unit.get("weather", 0.0)),
+                                "Luxury": float(row.get("luxury_price_score", 0.0)) * float(w_unit.get("luxuryprice", 0.0)),
+                                "Hidden Gem": float(row.get("hidden_gem_score", 0.0)) * float(w_unit.get("hiddengem", 0.0)),
+                                "Astro": float(row.get("astro_score", 0.0)) * float(w_unit.get("astro", 0.0)),
+                                "Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
+                            }
+                            for cat, val in sorted(contrib.items(), key=lambda x: x[1], reverse=True):
+                                if val > 0.001:
+                                    st.write(f"{cat}: {val*100:.1f}%")
 
-    st.balloons()
-    st.success(f"**Your #1 Match: {top_5.iloc[0]['country_name']}**")
+                    flight_price = row.get("flight_price")
+                    symbol = st.session_state.get("currencysymbol", "€")
+                    rate = st.session_state.get("currencyrate", 1.0)
+                    if flight_price and pd.notna(flight_price):
+                        converted_price = float(flight_price) * rate
+                        tooltip = f"From {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
+                        st.markdown(f"✈️ **Est. Flight:** {symbol}{converted_price:.0f}", help=tooltip)
 
-    for i, row in top_5.iterrows():
-        with st.container():
-            c1, c2, c3 = st.columns([1.5, 2, 1])
+                with c3:
+                    if st.button("View Details", key=f"details_{row['iso2']}_{i}"):
+                        st.session_state["selected_country"] = row.to_dict()  # ✅ Convert to dict
+                        st.session_state.step = 7
+                        st.rerun()
 
-            with c1:
-                imgs = [row.get("img_1"), row.get("img_2"), row.get("img_3")]
-                imgs = [x for x in imgs if x]
-                if imgs:
-                    st.image(random.choice(imgs), use_container_width=True)
 
-            with c2:
-                st.markdown(f"#### {i+1}. {row['country_name']}")
-                score_pct = float(row.get("final_score", 0.0)) * 100.0
-
-                a, b = st.columns([0.88, 0.12], vertical_alignment="center")
-                with a:
-                    st.markdown(
-                        f"**Match Score:** <span style='color:green; font-weight:bold'>{score_pct:.0f}%</span>",
-                        unsafe_allow_html=True,
-                    )
-                    st.caption("Peek behind the score: see how your categories shape this match.")
-                with b:
-                    with st.popover("❓"):
-                        w_unit = weights_to_unit(st.session_state.get("weights", {}))
-                        contrib = {
-                            "Safety": float(row.get("safety_tugo_score", 0.0)) * float(w_unit.get("safety_tugo", 0.0)),
-                            "Cost": float(row.get("cost_score", 0.0)) * float(w_unit.get("cost", 0.0)),
-                            "Restaurant": float(row.get("restaurant_value_score", 0.0)) * float(w_unit.get("restaurant", 0.0)),
-                            "Groceries": float(row.get("groceries_value_score", 0.0)) * float(w_unit.get("groceries", 0.0)),
-                            "Rent": float(row.get("rent_score", 0.0)) * float(w_unit.get("rent", 0.0)),
-                            "Purchasing power": float(row.get("purchasing_power_score", 0.0)) * float(w_unit.get("purchasing_power", 0.0)),
-                            "QoL": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
-                            "Health care": float(row.get("health_care_score", 0.0)) * float(w_unit.get("health_care", 0.0)),
-                            "Clean air": float(row.get("clean_air_score", 0.0)) * float(w_unit.get("clean_air", 0.0)),
-                            "Culture": float(row.get("culture_score", 0.0)) * float(w_unit.get("culture", 0.0)),
-                            "Weather": float(row.get("weather_score", 0.0)) * float(w_unit.get("weather", 0.0)),
-                            "Luxury": float(row.get("luxury_price_score", 0.0)) * float(w_unit.get("luxury_price", 0.0)),
-                            "Hidden gem": float(row.get("hidden_gem_score", 0.0)) * float(w_unit.get("hidden_gem", 0.0)),
-                            "Astro": float(row.get("astro_score", 0.0)) * float(w_unit.get("astro", 0.0)),
-                            "Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
-                        }
-                        denom = sum(contrib.values())
-                        if denom > 0:
-                            pct = {k: 100.0 * v / denom for k, v in contrib.items() if v > 0}
-                            top_parts = sorted(pct.items(), key=lambda kv: kv[1], reverse=True)[:10]
-                            st.write(" • ".join([f"{k} {v:.0f}%" for k, v in top_parts]))
-                        else:
-                            st.write("No active weights.")
-
-                if pd.notnull(row.get("flight_price")):
-                    rate = st.session_state.get("currency_rate", 1.0)
-                    symbol = st.session_state.get("currency_symbol", "€")
-                    converted_price = float(row["flight_price"]) * float(rate)
-                    tooltip = f"Two-way flight from {row.get('flight_origin')} to {row.get('flight_dest')}"
-                    st.markdown(f"✈️ Est. Flight: **{symbol}{converted_price:.0f}**", help=tooltip)
-
-            with c3:
-                if st.button("View Details", key=f"details_{row['iso2']}_{i}"):
-                    st.session_state.selected_country = row
-                    st.session_state.step = 6
-                    st.rerun()
-
-    if st.button("Start Over"):
-        st.session_state.clear()
-        st.rerun()
-
+        if st.button("🔄 Start Over"):
+            st.session_state.clear()
+            st.rerun()
 
 def show_dashboard_step(data_manager):
-    country = st.session_state.selected_country
+    country = st.session_state.get("selected_country")
+    if not country:
+        st.error("No country selected. Please go back to results.")
+        if st.button("Back to Results"):
+            st.session_state.step = 6
+            st.rerun()
+        return
+    
     topl, topm, topr = st.columns([2, 1, 1])
-
     with topl:
-        st.markdown(f"### 📋 Dashboard: {country['country_name']}")
+        st.markdown(f"### Dashboard: {country['country_name']}")
     with topm:
-        if st.button("⬅️ Back to Results", use_container_width=True):
-            st.session_state.step = 5
+        if st.button("⬅️ Back to Results"):
+            st.session_state.step = 6
             st.rerun()
     with topr:
-        if st.button("🔄 Start Over", use_container_width=True):
+        if st.button("🔄 Start Over"):
             st.session_state.clear()
             st.rerun()
 
@@ -1557,9 +1692,8 @@ def show_dashboard_step(data_manager):
 def run_app():
     load_heavy_libs_dynamically()
     data_manager = DataManager()
-
     init_session_state()
-
+    
     handle_google_oauth_callback(
         data_manager=data_manager,
         calendar_client=calendar_client,
@@ -1567,30 +1701,35 @@ def run_app():
         google_client_secret=GOOGLE_CLIENT_SECRET,
         redirect_uri=REDIRECT_URI,
     )
-
-    st.markdown('<div class="main-header">Your Next Adventure Awaits</div>', unsafe_allow_html=True)
+    
+    st.markdown('<div class="main-header">🌍 Your Next Adventure Awaits</div>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">A personalized travel planner for your individual needs.</p>', unsafe_allow_html=True)
-
+    
     step = st.session_state.step
+    
     if step == 1:
-        render_profile_ui(data_manager)
+        show_basic_info_step(data_manager)
     elif step == 2:
-        show_swiping_step()
+        show_persona_step(data_manager)
     elif step == 3:
-        show_astro_step(data_manager)
+        show_swiping_step()
     elif step == 4:
-        show_ban_list_step(data_manager)
+        show_astro_step(data_manager)
     elif step == 5:
-        show_results_step(data_manager)
+        show_ban_choices_step(data_manager)
+    elif step == 5.1:
+        show_ban_list_step(data_manager)
     elif step == 6:
-        show_dashboard_step(data_manager)
+        show_results_step(data_manager)
     elif step == 7:
+        show_dashboard_step(data_manager)
+    elif step == 8:
         show_booking_step(
             amadeus=amadeus,
             amadeus_api_key=AMADEUS_API_KEY,
             amadeus_api_secret=AMADEUS_API_SECRET,
         )
-    elif step == 8:
+    elif step == 9:
         show_confirmation_step(
             data_manager=data_manager,
             calendar_client=calendar_client,
