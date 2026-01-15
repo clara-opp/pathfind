@@ -14,6 +14,8 @@ from modules.flight_search import (
     show_confirmation_step,
     handle_google_oauth_callback,
 )
+from modules.country_overview import render_country_overview
+
 
 # ============================================================
 # CONFIG
@@ -1620,90 +1622,40 @@ def show_results_step(data_manager):
             st.rerun()
 
 def show_dashboard_step(data_manager):
-    country = st.session_state.get("selected_country")
+    """Country dashboard with overview, chatbot, and PDF"""
+    country = st.session_state.get('selected_country')
     if not country:
         st.error("No country selected. Please go back to results.")
-        if st.button("Back to Results"):
+        if st.button("← Back to Results"):
             st.session_state.step = 6
             st.rerun()
         return
     
+    # Top navigation
     topl, topm, topr = st.columns([2, 1, 1])
     with topl:
-        st.markdown(f"### Dashboard: {country['country_name']}")
+        st.markdown(f"### 🌍 {country['country_name']}")
     with topm:
-        if st.button("⬅️ Back to Results"):
+        if st.button("← Back to Results", use_container_width=True):
             st.session_state.step = 6
             st.rerun()
     with topr:
-        if st.button("🔄 Start Over"):
+        if st.button("🔄 Start Over", use_container_width=True):
             st.session_state.clear()
             st.rerun()
+    
+    st.markdown("---")
+    
+    # Render the new overview module
+    render_country_overview(
+        country=country,
+        data_manager=data_manager,
+        openai_client=get_openai_client(),
+        amadeus=amadeus,
+        amadeus_api_key=AMADEUS_API_KEY,
+        amadeus_api_secret=AMADEUS_API_SECRET
+    )
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🛡️ Safety", "🏥 Health & Visa", "🏛️ Culture", "💰 Budget", "✈️ Find Flights"])
-    details = data_manager.get_country_details(country["iso2"])
-
-    with tab1:
-        st.info(f"Advisory: {country.get('tugo_advisory_state')}")
-        if not details["safety"].empty:
-            st.dataframe(details["safety"], use_container_width=True)
-
-    with tab2:
-        st.write("#### Vaccinations & Diseases")
-        st.dataframe(details["health"], use_container_width=True)
-
-    with tab3:
-        st.metric("UNESCO World Heritage Sites", int(country.get("unesco_count", 0) or 0))
-        if not details["unesco"].empty:
-            st.dataframe(details["unesco"], use_container_width=True)
-
-    with tab4:
-        start_date = st.session_state.get("start_date")
-        end_date = st.session_state.get("end_date")
-
-        days_default = 7
-        if start_date and end_date:
-            try:
-                days_default = max(1, int((end_date - start_date).days))
-            except Exception:
-                days_default = 7
-
-        iso3 = country.get("iso3")
-        if not iso3:
-            st.warning("No ISO3 found for this country → cannot run the cost estimator.")
-        else:
-            prev_iso3 = st.session_state.get("ce_active_iso3")
-            if prev_iso3 != iso3:
-                for k in list(st.session_state.keys()):
-                    if k.startswith("ce_"):
-                        del st.session_state[k]
-                st.session_state["ce_active_iso3"] = iso3
-                st.rerun()
-
-            render_cost_estimator(
-                iso3=iso3,
-                days_default=days_default,
-                adults_default=2,
-                kids_default=0,
-                db_path=data_manager.db_path,
-                key_prefix=f"ce_{iso3}",
-            )
-
-    with tab5:
-        iso3 = country.get("iso3") or "NA"
-        render_flight_search(
-            country=country,
-            data_manager=data_manager,
-            amadeus=amadeus,
-            amadeus_api_key=AMADEUS_API_KEY,
-            amadeus_api_secret=AMADEUS_API_SECRET,
-            currency_code="USD" if st.session_state.get("origin_iata") == "ATL" else "EUR",
-            origin_iata_default=st.session_state.get("origin_iata", "FRA"),
-            start_date_default=st.session_state.get("start_date"),
-            end_date_default=st.session_state.get("end_date"),
-            image_urls=[country.get("img_1"), country.get("img_2"), country.get("img_3")],
-            key_prefix=f"fs_{iso3}",
-        )
 
 # ============================================================
 # APP ROUTER
