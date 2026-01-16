@@ -1,0 +1,239 @@
+country_name,country_param_used,currency,iso3
+Afghanistan,Afghanistan,AFN,AFG
+Aland Islands,Aland Islands,EUR,ALA
+Albania,Albania,ALL,ALB
+Alderney,Alderney,GBP,GGY
+Algeria,Algeria,EUR,DZA
+American Samoa,American Samoa,USD,ASM
+Andorra,Andorra,EUR,AND
+Angola,Angola,USD,AGO
+Anguilla,Anguilla,USD,AIA
+Antigua And Barbuda,Antigua And Barbuda,XCD,ATG
+Argentina,Argentina,USD,ARG
+Armenia,Armenia,AMD,ARM
+Aruba,Aruba,USD,ABW
+Australia,Australia,AUD,AUS
+Austria,Austria,EUR,AUT
+Azerbaijan,Azerbaijan,AZN,AZE
+Bahamas,Bahamas,USD,BHS
+Bahrain,Bahrain,BHD,BHR
+Bangladesh,Bangladesh,BDT,BGD
+Barbados,Barbados,BBD,BRB
+Belarus,Belarus,BYN,BLR
+Belgium,Belgium,EUR,BEL
+Belize,Belize,USD,BLZ
+Benin,Benin,XOF,BEN
+Bermuda,Bermuda,USD,BMU
+Bhutan,Bhutan,BTN,BTN
+Bolivia,Bolivia,BOB,BOL
+Bonaire,Bonaire,USD,BES
+Bosnia And Herzegovina,Bosnia And Herzegovina,BAM,BIH
+Botswana,Botswana,BWP,BWA
+Brazil,Brazil,BRL,BRA
+British Virgin Islands,British Virgin Islands,USD,VGB
+Brunei,Brunei,SGD,BRN
+Bulgaria,Bulgaria,BGN,BGR
+Burkina Faso,Burkina Faso,XOF,BFA
+Burundi,Burundi,USD,BDI
+Cambodia,Cambodia,USD,KHM
+Cameroon,Cameroon,XAF,CMR
+Canada,Canada,CAD,CAN
+Cape Verde,Cape Verde,CVE,CPV
+Cayman Islands,Cayman Islands,KYD,CYM
+Central African Republic,Central African Republic,XAF,CAF
+Chad,Chad,XAF,TCD
+Chile,Chile,CLP,CHL
+China,China,CNY,CHN
+Colombia,Colombia,COP,COL
+Comoros,Comoros,EUR,COM
+Cook Islands,Cook Islands,NZD,COK
+Costa Rica,Costa Rica,CRC,CRI
+Croatia,Croatia,EUR,HRV
+Cuba,Cuba,USD,CUB
+Curacao,Curacao,ANG,CUW
+Cyprus,Cyprus,EUR,CYP
+Czech Republic,Czech Republic,CZK,CZE
+Democratic Republic of the Congo,Democratic Republic of the Congo,USD,COD
+Denmark,Denmark,DKK,DNK
+Djibouti,Djibouti,DJF,DJI
+Dominica,Dominica,XCD,DMA
+Dominican Republic,Dominican Republic,DOP,DOM
+Ecuador,Ecuador,USD,ECU
+Egypt,Egypt,EGP,EGY
+El Salvador,El Salvador,USD,SLV
+Equatorial Guinea,Equatorial Guinea,XAF,GNQ
+Eritrea,Eritrea,USD,ERI
+Estonia,Estonia,EUR,EST
+Eswatini,Eswatini,ZAR,SWZ
+Ethiopia,Ethiopia,USD,ETH
+Falkland Islands,Falkland Islands,GBP,FLK
+Faroe Islands,Faroe Islands,DKK,FRO
+Fiji,Fiji,FJD,FJI
+Finland,Finland,EUR,FIN
+France,France,EUR,FRA
+French Guiana,French Guiana,EUR,GUF
+French Polynesia,French Polynesia,XPF,PYF
+French Southern Territories,French Southern Territories,EUR,ATF
+Gabon,Gabon,XAF,GAB
+Gambia,Gambia,GMD,GMB
+Georgia,Georgia,GEL,GEO
+Germany,Germany,EUR,DEU
+Ghana,Ghana,USD,GHA
+Gibraltar,Gibraltar,GBP,GIB
+Greece,Greece,EUR,GRC
+Greenland,Greenland,DKK,GRL
+Grenada,Grenada,XCD,GRD
+Guadeloupe,Guadeloupe,EUR,GLP
+Guam,Guam,USD,GUM
+Guatemala,Guatemala,GTQ,GTM
+Guernsey,Guernsey,GBP,GGY
+Guinea,Guinea,USD,GIN
+Guinea-Bissau,Guinea-Bissau,XOF,GNB
+Guyana,Guyana,GYD,GUY
+Haiti,Haiti,USD,HTI
+Honduras,Honduras,HNL,HND
+Hong Kong (China),Hong Kong (China),HKD,HKG
+Hungary,Hungary,HUF,HUN
+Iceland,Iceland,ISK,ISL
+India,India,INR,IND
+Indonesia,Indonesia,IDR,IDN
+Iran,Iran,USD,IRN
+Iraq,Iraq,IQD,IRQ
+Ireland,Ireland,EUR,IRL
+Isle Of Man,Isle Of Man,GBP,IMN
+Israel,Israel,ILS,ISR
+Italy,Italy,EUR,ITA
+Ivory Coast,Ivory Coast,XOF,CIV
+Jamaica,Jamaica,JMD,JAM
+Japan,Japan,JPY,JPN
+Jersey,Jersey,GBP,JEY
+Jordan,Jordan,JOD,JOR
+Kazakhstan,Kazakhstan,KZT,KAZ
+Kenya,Kenya,KES,KEN
+Kiribati,Kiribati,AUD,KIR
+Kosovo (Disputed Territory),Kosovo (Disputed Territory),EUR,XKX
+Kuwait,Kuwait,KWD,KWT
+Kyrgyzstan,Kyrgyzstan,KGS,KGZ
+Laos,Laos,LAK,LAO
+Latvia,Latvia,EUR,LVA
+Lebanon,Lebanon,USD,LBN
+Lesotho,Lesotho,ZAR,LSO
+Liberia,Liberia,USD,LBR
+Libya,Libya,LYD,LBY
+Liechtenstein,Liechtenstein,CHF,LIE
+Lithuania,Lithuania,EUR,LTU
+Luxembourg,Luxembourg,EUR,LUX
+Macao (China),Macao (China),MOP,MAC
+Madagascar,Madagascar,MGA,MDG
+Malawi,Malawi,USD,MWI
+Malaysia,Malaysia,MYR,MYS
+Maldives,Maldives,MVR,MDV
+Mali,Mali,USD,MLI
+Malta,Malta,EUR,MLT
+Marshall Islands,Marshall Islands,USD,MHL
+Martinique,Martinique,EUR,MTQ
+Mauritania,Mauritania,MRU,MRT
+Mauritius,Mauritius,MUR,MUS
+Mayotte,Mayotte,EUR,MYT
+Mexico,Mexico,MXN,MEX
+Micronesia,Micronesia,USD,FSM
+Moldova,Moldova,MDL,MDA
+Monaco,Monaco,EUR,MCO
+Mongolia,Mongolia,MNT,MNG
+Montenegro,Montenegro,EUR,MNE
+Montserrat,Montserrat,XCD,MSR
+Morocco,Morocco,MAD,MAR
+Mozambique,Mozambique,MZN,MOZ
+Myanmar,Myanmar,USD,MMR
+Namibia,Namibia,NAD,NAM
+Nauru,Nauru,AUD,NRU
+Nepal,Nepal,NPR,NPL
+Netherlands,Netherlands,EUR,NLD
+New Caledonia,New Caledonia,XPF,NCL
+New Zealand,New Zealand,NZD,NZL
+Nicaragua,Nicaragua,USD,NIC
+Niger,Niger,XOF,NER
+Nigeria,Nigeria,USD,NGA
+Niue,Niue,NZD,NIU
+Norfolk Island,Norfolk Island,AUD,NFK
+North Korea,North Korea,EUR,PRK
+North Macedonia,North Macedonia,MKD,MKD
+Northern Mariana Islands,Northern Mariana Islands,USD,MNP
+Norway,Norway,NOK,NOR
+Oman,Oman,OMR,OMN
+Pakistan,Pakistan,PKR,PAK
+Palau,Palau,USD,PLW
+Palestine,Palestine,ILS,PSE
+Panama,Panama,USD,PAN
+Papua New Guinea,Papua New Guinea,PGK,PNG
+Paraguay,Paraguay,PYG,PRY
+Peru,Peru,PEN,PER
+Philippines,Philippines,PHP,PHL
+Poland,Poland,PLN,POL
+Portugal,Portugal,EUR,PRT
+Puerto Rico,Puerto Rico,USD,PRI
+Qatar,Qatar,QAR,QAT
+Republic of the Congo,Republic of the Congo,XAF,COG
+Reunion,Reunion,EUR,REU
+Romania,Romania,RON,ROU
+Russia,Russia,RUB,RUS
+Rwanda,Rwanda,RWF,RWA
+Saint Helena,Saint Helena,GBP,SHN
+Saint Kitts And Nevis,Saint Kitts And Nevis,XCD,KNA
+Saint Lucia,Saint Lucia,XCD,LCA
+Saint Vincent And The Grenadines,Saint Vincent And The Grenadines,XCD,VCT
+Saint-Pierre And Miquelon,Saint-Pierre And Miquelon,EUR,SPM
+Samoa,Samoa,WST,WSM
+San Marino,San Marino,EUR,SMR
+Sao Tome And Principe,Sao Tome And Principe,EUR,STP
+Saudi Arabia,Saudi Arabia,SAR,SAU
+Senegal,Senegal,XOF,SEN
+Serbia,Serbia,RSD,SRB
+Seychelles,Seychelles,SCR,SYC
+Sierra Leone,Sierra Leone,USD,SLE
+Singapore,Singapore,SGD,SGP
+Sint Maarten,Sint Maarten,USD,SXM
+Slovakia,Slovakia,EUR,SVK
+Slovenia,Slovenia,EUR,SVN
+Solomon Islands,Solomon Islands,SBD,SLB
+Somalia,Somalia,USD,SOM
+South Africa,South Africa,ZAR,ZAF
+South Korea,South Korea,KRW,KOR
+South Sudan,South Sudan,USD,SSD
+Spain,Spain,EUR,ESP
+Sri Lanka,Sri Lanka,LKR,LKA
+Sudan,Sudan,USD,SDN
+Suriname,Suriname,USD,SUR
+Sweden,Sweden,SEK,SWE
+Switzerland,Switzerland,CHF,CHE
+Syria,Syria,USD,SYR
+Taiwan,Taiwan,TWD,TWN
+Tajikistan,Tajikistan,TJS,TJK
+Tanzania,Tanzania,TZS,TZA
+Thailand,Thailand,THB,THA
+Timor-Leste,Timor-Leste,USD,TLS
+Togo,Togo,XOF,TGO
+Tonga,Tonga,TOP,TON
+Trinidad And Tobago,Trinidad And Tobago,TTD,TTO
+Tunisia,Tunisia,TND,TUN
+Turkey,Turkey,TRY,TUR
+Turkmenistan,Turkmenistan,TMT,TKM
+Turks And Caicos Islands,Turks And Caicos Islands,USD,TCA
+Tuvalu,Tuvalu,EUR,TUV
+Uganda,Uganda,UGX,UGA
+Ukraine,Ukraine,UAH,UKR
+United Arab Emirates,United Arab Emirates,AED,ARE
+United Kingdom,United Kingdom,GBP,GBR
+United States,United States,USD,USA
+Uruguay,Uruguay,UYU,URY
+Us Virgin Islands,Us Virgin Islands,USD,VIR
+Uzbekistan,Uzbekistan,UZS,UZB
+Vanuatu,Vanuatu,VUV,VUT
+Vatican City,Vatican City,EUR,VAT
+Venezuela,Venezuela,USD,VEN
+Vietnam,Vietnam,VND,VNM
+Wallis And Futuna,Wallis And Futuna,EUR,WLF
+Western Sahara,Western Sahara,EUR,ESH
+Yemen,Yemen,YER,YEM
+Zambia,Zambia,USD,ZMB
+Zimbabwe,Zimbabwe,USD,ZWE
