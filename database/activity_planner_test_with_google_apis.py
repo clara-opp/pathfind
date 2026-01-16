@@ -4,6 +4,7 @@ import json
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
+import concurrent.futures
 from geopy.geocoders import Nominatim
 import pycountry
 import geonamescache
@@ -61,11 +62,13 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
         results = []
         
         for p in response_data.get("places", []):
-            # Construct photo URL if available
-            photo_url = None
+            # Construct photo URLs (up to 3)
+            photo_urls = []            
             if p.get("photos"):
-                photo_name = p["photos"][0].get("name")
-                photo_url = f"https://places.googleapis.com/v1/{photo_name}/media?key={api_key}&maxWidthPx=400"
+                for photo in p["photos"][:3]:
+                    photo_name = photo.get("name")
+                    url = f"https://places.googleapis.com/v1/{photo_name}/media?key={api_key}&maxWidthPx=400"
+                    photo_urls.append(url)
 
             # Extract location coordinates
             location = p.get("location", {})
@@ -91,7 +94,7 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
                 "address": p.get("formattedAddress", ""),
                 "website": p.get("websiteUri", ""),
                 "tel": p.get("nationalPhoneNumber", ""),
-                "photo_url": photo_url,
+                "photo_urls": photo_urls,
                 "latitude": place_lat,
                 "longitude": place_lon,
             })
@@ -245,13 +248,18 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             "You are a day-trip planner.\n"
             "Goal: propose a realistic day-trip itinerary within the user's fixed budget.\n"
             "Rules:\n"
-            "- Use google_search_places to fetch real nearby places before recommending venues.\n"
-            "- Use serper_search_prices to find actual costs for activities, entrance fees, or meals. You can call multiple tools in a single turn to be efficient.\n"
+            "- Use google_search_places to fetch real nearby places. You MUST generate ALL search queries for the entire day (morning, afternoon, evening) if not specified otherwise by the user.\n"
+            "- EVERY trip plan MUST include food recommendations for each day: 1 breakfast spot for the morning, 1 lunch option (restaurant or street food), and 1 dinner option (restaurant or street food).\n"
+            "- Use serper_search_prices to find actual costs for activities, entrance fees, or meals. Run these in the same turn as the place searches.\n"
             "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget.\n"
-            "- Return a compact itinerary with times, travel notes, and place addresses.\n"
-            "- Do not include 'Optional' sections, alternatives, or secondary choices. Provide one definitive plan.\n"
-            "- IMPORTANT: Use exact names from search results. Format the main itinerary as a numbered list (e.g., '1. Place Name').\n"
-        ),
+            "- You MUST use serper_search_prices for every paid activity. Do not include disclaimers like 'could not be retrieved'; if a tool fails, use your best estimate based on the search results without mentioning the failure.\n"
+            "- Return a JSON object with two keys: 'locations' then 'itinerary'. The 'locations' key MUST come first.\n"
+            "- The 'locations' array MUST contain an entry for EVERY numbered stop in your itinerary. Use the exact 'place_id' from the tools for the 'id' field.\n"
+            "- The 'itinerary' MUST be a numbered list (1., 2., 3., etc.). Do not use bullet points for main stops.\n"
+            "- Every trip MUST include logical stops for meals (restaurant) and refreshments (cafe).\n"
+            "- The 'itinerary' MUST be a string formatted with Markdown: each stop starts with a '### Time Range - Place Name' headline, followed by bullet points for ' - Description: [One liner describing the place and activities]' and ' - Price: [Price for the location]'.\n"
+            "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
+            ),
     }
     
     context_msg = {
@@ -264,27 +272,27 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
     
     convo = [system_msg] + messages + [context_msg]
     
-    for _ in range(12):
-        resp = client.chat.completions.create(
-            model=st.session_state.model,
-            messages=convo,
-            tools=tools,
-            tool_choice="auto",
-        )
-        
-        msg = resp.choices[0].message
-        tool_calls = getattr(msg, "tool_calls", None)
-        
-        if tool_calls:
-            convo.append(
-                {
-                    "role": "assistant",
-                    "content": msg.content or "",
-                    "tool_calls": [tc.model_dump() for tc in tool_calls],
-                }
-            )
+    # --- Phase 1: Discovery (Get Search Queries) ---
+    resp = client.chat.completions.create(
+        model=st.session_state.model,
+        messages=convo,
+        tools=tools,
+        tool_choice="auto",
+    )
+    
+    msg = resp.choices[0].message
+    tool_calls = getattr(msg, "tool_calls", None)
+
+    if tool_calls:
+        convo.append(
+            {
+                "role": "assistant",
+                "content": msg.content or "",
+                "tool_calls": [tc.model_dump() for tc in tool_calls],
+            }
+        )            
             
-            for tc in tool_calls:
+        def execute_tool(tc):
                 fn = tc.function.name
                 args = json.loads(tc.function.arguments or "{}")
                 
@@ -295,31 +303,56 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                         radius=int(args.get("radius", radius)),
                         limit=int(args.get("limit", 8)),
                     )
-                    if not out.get("error"):
-                        found_places.extend(out.get("results", []))
+                    # Return places separately to update main list safely
+                    return tc.id, out, out.get("results", []) if not out.get("error") else []
                 elif fn == "serper_search_prices":
-                    out = serper_search_prices(query=args.get("query", ""))                        
+                    out = serper_search_prices(query=args.get("query", ""))
+                    return tc.id, out, []
                 else:
-                    out = {"error": True, "message": f"Unknown tool: {fn}"}
-                
-                convo.append(
-                    {
-                        "role": "tool",
-                        "tool_call_id": tc.id,
-                        "content": json.dumps(out, ensure_ascii=False),
-                    }
-                )
-            continue
-        
-        return (msg.content or "(No response text.)"), found_places
-    
-    return "Planner stopped after too many tool calls.", []
+                    return tc.id, {"error": True, "message": f"Unknown tool: {fn}"}, []
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Execute in parallel, preserve order for conversation history
+            results = executor.map(execute_tool, tool_calls)
+            
+            for tc_id, out, new_places in results:
+                if new_places:
+                    found_places.extend(new_places)
+                convo.append({
+                    "role": "tool",
+                    "tool_call_id": tc_id,
+                    "content": json.dumps(out, ensure_ascii=False),
+                })
+
+        # --- Phase 2: Synthesis (Generate Itinerary) ---
+        final_resp = client.chat.completions.create(
+            model=st.session_state.model,
+            messages=convo,
+            tools=tools,
+            tool_choice="none", # Force text generation, no more tools
+            response_format={"type": "json_object"},
+            stream=False,
+        )
+        return final_resp.choices[0].message.content or "", found_places
+
+    # If no tools were called in Phase 1, return the initial text
+    return (msg.content or "(No response text.)"), found_places
 
 
 # ---------- Streamlit UI ----------
 def create_styled_popup(place, index):
     """Create beautiful HTML popup with CSS styling"""
-    img_html = f'<img src="{place["photo_url"]}" style="width:100%; height:140px; object-fit:cover; border-radius:4px; margin-bottom:8px;">' if place.get('photo_url') else ''
+    
+    # Create scrolling image gallery
+    images_html = ""
+    if place.get('photo_urls'):
+        imgs = "".join([f'<img src="{url}" style="width:100%; height:140px; object-fit:cover; border-radius:4px; flex-shrink:0; scroll-snap-align: start;">' for url in place['photo_urls']])
+        images_html = f"""
+        <div style="display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-bottom: 8px; scrollbar-width: thin;">
+            {imgs}
+        </div>
+        """
+
     desc_html = f'<p style="margin: 8px 0; color: #666; font-size: 12px; font-style: italic;">{place["description"]}</p>' if place.get('description') else ''
 
     popup_html = f"""
@@ -334,7 +367,7 @@ def create_styled_popup(place, index):
         </div>
         
         <div style="padding: 0 5px;">
-            {img_html}
+            {images_html}
             {desc_html}
             <p style="margin: 8px 0; color: #444; font-size: 13px;">
                 <i class="fa fa-map-marker" style="color: #667eea; margin-right: 6px;"></i>
@@ -636,27 +669,19 @@ def main():
                             if m["role"] in ("user", "assistant")
                         ]
                         
-                        answer, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
-                        
-                        # Filter places mentioned in answer
-                        unique_places = {p["place_id"]: p for p in places}.values()
-                        
-                        # 1. Split text to ignore optional sections
-                        plan_text = re.split(r'(?i)\n\s*(?:Optional|Notes|Alternative|Expansion|Remaining budget)', answer)[0]
-                        # 2. Identify places mentioned in lines starting with "1.", "2.", etc.
-                        numbered_lines = re.findall(r'^\s*\d\.\s*(.*)', plan_text, re.MULTILINE)
-                        final_places = []
-                        for line in numbered_lines:
-                            for p in unique_places:
-                                if p["name"].lower() in line.lower():
-                                    if p not in final_places:
-                                        # Extract the "Why" description from the text following the place name
-                                        desc_match = re.search(fr"{re.escape(p['name'])}.*?Why:\s*(.*?)(?:\n|$)", answer, re.IGNORECASE | re.DOTALL)
-                                        p["description"] = desc_match.group(1).strip() if desc_match else ""
-                                        final_places.append(p)
-                                        break
+                        raw_json, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
+                        try:
+                            data = json.loads(raw_json)
+                        except:
+                            data = {}                        
+                        st.session_state.map_data = {"places": [], "center": ll}
+                        for loc in (data.get("locations", []) if isinstance(data, dict) else []):
+                            pid = loc.get("id")
+                            match = next((p for p in places if p["place_id"] == pid), None)
+                            if match:
+                                st.session_state.map_data["places"].append(match)
+                        answer = data.get("itinerary", raw_json) if isinstance(data, dict) else raw_json
 
-                        st.session_state.map_data = {"places": final_places, "center": ll}
                         st.markdown(answer)
                         st.session_state.messages.append({"role": "assistant", "content": answer})
                         st.rerun()
