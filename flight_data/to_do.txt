@@ -1,3 +1,5 @@
+0. Fix flight search: should show image diashow of the destination country: why does that currently not work? Booking does also not work, when I click on the booking button the streamlit app renders but I do not get to the next booking step. What is the issue?
+
 1. Make the round-trip selection in flight search configuration smaller
 
 1.1 Change origin airports selection so that it shows all airports not only the most important one for each country. Note that the default selected airport should still be the most important airport of the country the user is located in.

@@ -16,6 +16,7 @@ from modules.flight_search import (
 )
 from modules.country_overview import render_country_overview
 from modules.persona_selector import render_persona_step
+from modules.trip_planner import show_trip_planner
 
 
 # ============================================================
@@ -1489,16 +1490,15 @@ def show_dashboard_step(data_manager):
     
     st.markdown("---")
 
-    # Render the new overview module
     render_country_overview(
         country=country,
         data_manager=data_manager,
         openai_client=get_openai_client(),
         amadeus=amadeus,
         amadeus_api_key=AMADEUS_API_KEY,
-        amadeus_api_secret=AMADEUS_API_SECRET
+        amadeus_api_secret=AMADEUS_API_SECRET,
+        trip_planner_render=show_trip_planner
     )
-
 
 # ============================================================
 # APP ROUTER

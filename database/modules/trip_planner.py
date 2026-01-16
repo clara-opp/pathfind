@@ -564,13 +564,16 @@ def create_beautiful_map(map_info, radius, center_ll):
     return m
 
 
-def main():
+def show_trip_planner():
     load_dotenv()
-    st.set_page_config(
-        page_title="🗺️Trip Planner",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
+    try:
+        st.set_page_config(
+            page_title="🗺️Trip Planner",
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+    except:
+        pass
 
     # CSS to perfectly align the columns and remove default margins
     st.markdown("""
@@ -723,7 +726,3 @@ def main():
             st_folium(m, width="100%", height=650, key="persistent_map")
         else:
             st.info("🎯 The map will appear here once a trip is planned.")
-
-
-if __name__ == "__main__":
-    main()

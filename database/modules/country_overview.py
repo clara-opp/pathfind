@@ -13,7 +13,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 
 
-def render_country_overview(country, data_manager, openai_client, amadeus, amadeus_api_key, amadeus_api_secret):
+def render_country_overview(country, data_manager, openai_client, amadeus, amadeus_api_key, amadeus_api_secret, trip_planner_render=None):
     """
     Main entry point for country overview page
     """
@@ -26,9 +26,10 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
     st.markdown("---")
     
     # Tabs for different sections
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "📊 Overview", 
         "💰 Budget Planner",
+        "🗺️ Plan Trips",
         "✈️ Book Flights",
         "🤖 AI Assistant", 
         "📄 Download PDF"
@@ -39,8 +40,12 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
     
     with tab2:
         render_budget_tab(country, data_manager)
-    
+
     with tab3:
+        if trip_planner_render:
+            trip_planner_render()
+    
+    with tab4:
         # Import existing flight search - KEEP INLINE
         from modules.flight_search import render_flight_search
         iso3 = country.get('iso3') or "NA"
@@ -54,14 +59,14 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
             origin_iata_default=st.session_state.get('origin_iata', 'FRA'),
             start_date_default=st.session_state.get('start_date'),
             end_date_default=st.session_state.get('end_date'),
-            image_urls=(country.get('img1'), country.get('img2'), country.get('img3')),
+            image_urls=(country.get('img_1'), country.get('img_2'), country.get('img_3')),
             key_prefix=f"fs_{iso3}"
         )
     
-    with tab4:
+    with tab5:
         render_chatbot_tab(country, openai_client)
     
-    with tab5:
+    with tab6:
         render_pdf_tab(country, data_manager)
 
 
