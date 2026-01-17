@@ -1,14 +1,14 @@
 # ============================================================================
-# PERSONA SELECTOR MODULE - ROBUST CLOUD VERSION
+# PERSONA SELECTOR MODULE - FIXED VERSION
 # File: modules/persona_selector.py
-# Purpose: Persona carousel with auto-adjusting weight sliders
 # ============================================================================
+
 
 import streamlit as st
 import base64
 import os
 from pathlib import Path
-import copy
+
 
 
 def get_img_as_base64(file_path):
@@ -19,6 +19,7 @@ def get_img_as_base64(file_path):
         return base64.b64encode(data).decode()
     except Exception:
         return ""
+
 
 
 def find_image_source(img_file, img_url):
@@ -44,8 +45,9 @@ def find_image_source(img_file, img_url):
     return img_url or "https://via.placeholder.com/600x450?text=No+Image"
 
 
+
 def load_carousel_css():
-    """Load optimized CSS with smooth animations and centered tooltip."""
+    """Load optimized CSS with smooth animations and FIXED TOOLTIP POSITION."""
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap');
@@ -66,11 +68,6 @@ def load_carousel_css():
             100% { transform: rotateY(0deg) rotateX(0deg); opacity: 1; }
         }
         
-        @keyframes smooth-fade {
-            0% { opacity: 0; transform: scale(0.98); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
         .profile-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(245,247,252,0.95));
             border-radius: 28px;
@@ -89,6 +86,7 @@ def load_carousel_css():
             position: relative;
         }
 
+
         .profile-card.active {
             transform: scale(1.1) rotateY(0deg);
             border: 3px solid #667eea;
@@ -99,12 +97,14 @@ def load_carousel_css():
                        gentle-bounce 3s ease-in-out 0.5s infinite;
         }
 
+
         .profile-card.inactive {
             transform: scale(0.8) rotateY(25deg);
             opacity: 0.35;
             filter: grayscale(0.7) blur(1.2px);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
+
 
         .card-img-container {
             width: 100%;
@@ -129,12 +129,14 @@ def load_carousel_css():
             border-radius: 16px;
         }
 
+
         .info-icon-wrapper {
             position: absolute;
             top: 12px;
             right: 12px;
             z-index: 10;
         }
+
 
         .info-icon {
             width: 32px;
@@ -150,7 +152,9 @@ def load_carousel_css():
             transition: all 0.2s ease;
             font-size: 18px;
             box-shadow: 0 2px 12px rgba(102, 126, 234, 0.45);
+            position: relative;
         }
+
 
         .info-icon:hover {
             background: rgba(102, 126, 234, 1);
@@ -158,11 +162,12 @@ def load_carousel_css():
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
         }
 
+
         .tooltip {
             position: absolute;
-            top: 100%;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%) translateY(8px);
+            transform: translateX(-50%) translateY(-8px);
             background: rgba(30, 30, 40, 0.99);
             color: #ffffff;
             padding: 14px 18px;
@@ -183,11 +188,13 @@ def load_carousel_css():
             letter-spacing: 0.3px;
         }
 
+
         .info-icon:hover .tooltip {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(-50%) translateY(0px);
+            transform: translateX(-50%) translateY(-8px);
         }
+
 
         .nav-button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -206,11 +213,13 @@ def load_carousel_css():
             animation: gentle-bounce 2.5s ease-in-out;
         }
 
+
         .nav-button:hover {
             transform: scale(1.15) translateY(-3px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
+
 
         .nav-button:active {
             transform: scale(0.95) translateY(2px);
@@ -220,11 +229,13 @@ def load_carousel_css():
     """, unsafe_allow_html=True)
 
 
+
 def create_card_html(profile_data, is_active=False):
-    """Generate HTML for persona card with centered info tooltip."""
+    """Generate HTML for persona card with centered info tooltip ABOVE the icon."""
     status_class = "active" if is_active else "inactive"
     img_src = find_image_source(profile_data["img_file"], profile_data.get("img_url"))
     description = profile_data['description'].replace('"', '&quot;').replace("'", "&#39;")
+
 
     html = f"""
     <div class="profile-card {status_class}">
@@ -242,20 +253,24 @@ def create_card_html(profile_data, is_active=False):
     return html
 
 
+
 def get_travel_profiles():
-    """Return list of all travel persona profiles with fallback image URLs."""
+    """
+    Return list of all travel persona profiles with EXACT values from app.py.
+    All values pre-normalized to sum to 100.
+    """
     return [
         {
-            "internal_key": "Story Hunter",
+            "internal_key": "Story Hunter bleibt",
             "display_name": "Story Hunter",
             "img_file": "storyhunter.jpg",
             "img_url": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=450&fit=crop",
             "description": "Cultural explorer seeking authentic experiences and hidden narratives.",
             "weights": {
-                "safety_tugo": 15, "culture": 22, "hiddengem": 14, "cost": 12, 
-                "restaurant": 8, "groceries": 5, "weather": 10, "qol": 7, 
-                "cleanair": 5, "purchasingpower": 2, "rent": 0, "healthcare": 0, 
-                "luxuryprice": 0, "astro": 0, "jitter": 0
+                "safety_tugo": 15, "cost": 12, "restaurant": 8, "groceries": 5, 
+                "rent": 0, "purchasing_power": 2, "qol": 7, "health_care": 0, 
+                "clean_air": 5, "culture": 22, "weather": 10, "luxury_price": 0, 
+                "hidden_gem": 14, "astro": 0, "jitter": 0
             }
         },
         {
@@ -265,144 +280,115 @@ def get_travel_profiles():
             "img_url": "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=450&fit=crop",
             "description": "Safety-focused family travelers prioritizing comfort and security.",
             "weights": {
-                "safety_tugo": 28, "healthcare": 14, "qol": 12, "cleanair": 12, 
-                "weather": 10, "culture": 6, "cost": 8, "restaurant": 3, 
-                "groceries": 3, "purchasingpower": 4, "rent": 0, "hiddengem": 0, 
-                "luxuryprice": 0, "astro": 0, "jitter": 0
+                "safety_tugo": 28, "cost": 8, "restaurant": 3, "groceries": 3, 
+                "rent": 0, "purchasing_power": 4, "qol": 12, "health_care": 14, 
+                "clean_air": 12, "culture": 6, "weather": 10, "luxury_price": 0, 
+                "hidden_gem": 0, "astro": 0, "jitter": 0
             }
         },
         {
-            "internal_key": "WiFi Goblin",
+            "internal_key": "Digital Nomad",
             "display_name": "Digital Nomad",
             "img_file": "digitalnomad.jpg",
             "img_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=450&fit=crop",
             "description": "Location-independent professional balancing work and travel.",
             "weights": {
-                "rent": 20, "purchasingpower": 14, "groceries": 10, "restaurant": 6, 
-                "cost": 12, "safety_tugo": 14, "qol": 12, "cleanair": 6, 
-                "weather": 4, "culture": 2, "hiddengem": 0, "healthcare": 0, 
-                "luxuryprice": 0, "astro": 0, "jitter": 0
+                "safety_tugo": 14, "cost": 12, "restaurant": 6, "groceries": 10, 
+                "rent": 20, "purchasing_power": 14, "qol": 12, "health_care": 0, 
+                "clean_air": 6, "culture": 2, "weather": 4, "luxury_price": 0, 
+                "hidden_gem": 0, "astro": 0, "jitter": 0
             }
         },
         {
-            "internal_key": "Comfort Snob",
+            "internal_key": "Honeymoon (für comfort snob)",
             "display_name": "Honeymoon",
             "img_file": "honeymoon.jpg",
             "img_url": "https://images.unsplash.com/photo-1537571627991-a7ad86a66464?w=600&h=450&fit=crop",
             "description": "Luxury-seeking couples prioritizing premium experiences and romance.",
             "weights": {
-                "qol": 20, "safety_tugo": 18, "cleanair": 12, "healthcare": 10, 
-                "weather": 10, "culture": 6, "luxuryprice": 10, "restaurant": 4, 
-                "purchasingpower": 4, "cost": 0, "groceries": 0, "rent": 0, 
-                "hiddengem": 2, "astro": 0, "jitter": 0
+                "safety_tugo": 18, "cost": 0, "restaurant": 4, "groceries": 0, 
+                "rent": 0, "purchasing_power": 4, "qol": 20, "health_care": 10, 
+                "clean_air": 12, "culture": 6, "weather": 10, "luxury_price": 14, 
+                "hidden_gem": 2, "astro": 0, "jitter": 0
             }
         },
         {
-            "internal_key": "Budget Goblin",
+            "internal_key": "Budget Backpacker",
             "display_name": "Budget Backpacker",
             "img_file": "budgetbackpacker.jpg",
             "img_url": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=450&fit=crop",
             "description": "Cost-conscious adventurer seeking authentic experiences on a budget.",
             "weights": {
-                "cost": 26, "groceries": 12, "restaurant": 10, "purchasingpower": 12, 
-                "safety_tugo": 14, "weather": 8, "culture": 6, "cleanair": 6, 
-                "qol": 4, "hiddengem": 2, "rent": 0, "healthcare": 0, 
-                "luxuryprice": 0, "astro": 0, "jitter": 0
+                "safety_tugo": 14, "cost": 26, "restaurant": 10, "groceries": 12, 
+                "rent": 0, "purchasing_power": 12, "qol": 4, "health_care": 0, 
+                "clean_air": 6, "culture": 6, "weather": 8, "luxury_price": 0, 
+                "hidden_gem": 2, "astro": 0, "jitter": 0
             }
         },
         {
-            "internal_key": "Clean Air Calm",
+            "internal_key": "Clean Air & Calm",
             "display_name": "Clean Air & Calm",
             "img_file": "cleanair.jpg",
             "img_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=450&fit=crop",
             "description": "Wellness-focused traveler prioritizing health, nature, and tranquility.",
             "weights": {
-                "cleanair": 24, "safety_tugo": 22, "qol": 12, "healthcare": 10, 
-                "weather": 10, "cost": 10, "groceries": 4, "restaurant": 2, 
-                "culture": 4, "hiddengem": 2, "purchasingpower": 0, "rent": 0, 
-                "luxuryprice": 0, "astro": 0, "jitter": 0
+                "safety_tugo": 22, "cost": 10, "restaurant": 2, "groceries": 4, 
+                "rent": 0, "purchasing_power": 0, "qol": 12, "health_care": 10, 
+                "clean_air": 24, "culture": 4, "weather": 10, "luxury_price": 0, 
+                "hidden_gem": 2, "astro": 0, "jitter": 0
             }
         },
         {
-            "internal_key": "Chaos Gremlin but not stupid",
+            "internal_key": "Chaos Gremlin",
             "display_name": "Chaos Gremlin",
             "img_file": "chaosgremlin.jpg",
             "img_url": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=450&fit=crop",
             "description": "Spontaneous adventurer thriving on unplanned experiences and surprises.",
             "weights": {
-                "hiddengem": 24, "culture": 10, "cost": 10, "restaurant": 6, 
-                "weather": 4, "safety_tugo": 16, "qol": 6, "cleanair": 4, 
-                "purchasingpower": 4, "jitter": 10, "astro": 6, "luxuryprice": 0, 
-                "rent": 0, "healthcare": 0, "groceries": 0
+                "safety_tugo": 16, "cost": 10, "restaurant": 6, "groceries": 0, 
+                "rent": 0, "purchasing_power": 4, "qol": 6, "health_care": 0, 
+                "clean_air": 4, "culture": 10, "weather": 4, "luxury_price": 0, 
+                "hidden_gem": 24, "astro": 6, "jitter": 10
             }
         }
     ]
 
 
-def redistribute_weights(weights_dict, changed_key, new_value, weight_keys):
-    """
-    Auto-redistribute weights to maintain sum of 100.
-    ULTRA-ROBUST version - handles all edge cases for Cloud.
-    """
+
+def enforce_sum_100_proportional(changed_key, weight_keys):
+    """When one slider changes, proportionally reduce others to maintain sum=100."""
     try:
-        w = copy.deepcopy(weights_dict)
+        values = {k: int(st.session_state.get(f"adv_{k}", 0)) for k in weight_keys}
+        current_sum = sum(values.values())
         
-        # STEP 1: Clamp the changed value to 0-100
-        w[changed_key] = max(0, min(100, int(new_value)))
-        
-        # STEP 2: Get other keys and sum
-        other_keys = [k for k in weight_keys if k != changed_key]
-        other_sum = sum(max(0, int(w.get(k, 0))) for k in other_keys)
-        
-        # STEP 3: Redistribute proportionally
-        old_value = int(weights_dict.get(changed_key, 0))
-        diff = w[changed_key] - old_value
-        
-        if other_sum > 0 and diff != 0:
-            for other_key in other_keys:
-                current_val = max(0, int(w.get(other_key, 0)))
-                if current_val > 0:
-                    proportion = current_val / other_sum
-                    reduction = int(round(diff * proportion))
-                    w[other_key] = max(0, current_val - reduction)
-        
-        # STEP 4: Ensure all values are integers
-        for key in weight_keys:
-            w[key] = max(0, int(w.get(key, 0)))
-        
-        # STEP 5: Final normalization
-        current_sum = sum(w.values())
-        
-        if current_sum == 0:
-            # All zero - distribute equally
-            val_per_key = 100 // len(weight_keys)
-            remainder = 100 % len(weight_keys)
-            for idx, key in enumerate(weight_keys):
-                w[key] = val_per_key + (1 if idx < remainder else 0)
-        elif current_sum != 100:
-            # Scale to 100
-            scale_factor = 100.0 / current_sum
-            for key in weight_keys:
-                w[key] = int(round(w[key] * scale_factor))
+        if current_sum != 100:
+            diff = 100 - current_sum
+            other_keys = [k for k in weight_keys if k != changed_key]
             
-            # Fix rounding errors
-            final_sum = sum(w.values())
+            if other_keys:
+                other_sum = sum(values[k] for k in other_keys)
+                
+                if other_sum > 0:
+                    for k in other_keys:
+                        if values[k] > 0:
+                            proportion = values[k] / other_sum
+                            adjustment = int(round(diff * proportion))
+                            new_val = max(0, values[k] + adjustment)
+                            st.session_state[f"adv_{k}"] = new_val
+            
+            final_sum = sum(int(st.session_state.get(f"adv_{k}", 0)) for k in weight_keys)
             if final_sum != 100:
                 diff_needed = 100 - final_sum
-                # Add to key with largest value
-                max_key = max(weight_keys, key=lambda k: w.get(k, 0))
-                w[max_key] += diff_needed
-        
-        return w
+                current_changed = int(st.session_state.get(f"adv_{changed_key}", 0))
+                st.session_state[f"adv_{changed_key}"] = max(0, current_changed + diff_needed)
     
-    except Exception as e:
-        # Fallback: return original if something breaks
-        st.warning(f"Weight adjustment error: {str(e)}, using previous values")
-        return copy.deepcopy(weights_dict)
+    except Exception:
+        pass
+
 
 
 def render_persona_step(datamanager):
-    """Render persona carousel with fine-tune customization."""
+    """Render persona carousel with custom weight tuning."""
     
     import sys
     main_module = sys.modules['__main__']
@@ -419,17 +405,30 @@ def render_persona_step(datamanager):
     if 'profile_index' not in st.session_state:
         st.session_state.profile_index = 0
     
-    if "custom_weights_sliders" not in st.session_state:
-        st.session_state.custom_weights_sliders = copy.deepcopy(travel_profiles[0]["weights"])
-    
     if "last_profile_idx" not in st.session_state:
-        st.session_state.last_profile_idx = 0
+        st.session_state.last_profile_idx = -1
+    
+    current_idx = st.session_state.profile_index
+    selected_profile = travel_profiles[current_idx]
+    
+    # CRITICAL: Initialize session keys ONLY on persona change
+    if st.session_state.last_profile_idx != current_idx:
+        # Reset ALL custom slider keys first
+        keys_to_delete = [k for k in st.session_state.keys() if k.startswith("adv_")]
+        for k in keys_to_delete:
+            del st.session_state[k]
+        
+        # Initialize ALL keys with EXACT persona defaults
+        for k in WEIGHT_KEYS:
+            default_val = selected_profile["weights"].get(k, 0)
+            st.session_state[f"adv_{k}"] = int(default_val)
+        
+        st.session_state.last_profile_idx = current_idx
     
     load_carousel_css()
     
     st.markdown('<h2 style="text-align: center; margin-bottom: 50px; margin-top: 20px;">Choose Your Travel Persona</h2>', unsafe_allow_html=True)
     
-    current_idx = st.session_state.profile_index
     prev_idx = (current_idx - 1) % total_profiles
     next_idx = (current_idx + 1) % total_profiles
     
@@ -458,27 +457,23 @@ def render_persona_step(datamanager):
     with col_next:
         st.markdown(create_card_html(travel_profiles[next_idx], is_active=False), unsafe_allow_html=True)
     
-    selected_profile = travel_profiles[current_idx]
-    st.session_state.selected_persona = selected_profile["display_name"]
-    
-    if st.session_state.last_profile_idx != current_idx:
-        st.session_state.custom_weights_sliders = copy.deepcopy(selected_profile["weights"])
-        st.session_state.last_profile_idx = current_idx
+    persona_name = selected_profile["display_name"]
+    st.session_state.selected_persona = persona_name
     
     st.markdown('<div style="margin-top: 30px; margin-bottom: 30px;"></div>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        if st.button("🎯 Choose this persona", key="next_btn", type="primary", use_container_width=True):
-            final_weights = normalize_weights_100(st.session_state.custom_weights_sliders)
+        if st.button(f"Choose {persona_name}", key="choose_persona_btn", type="primary", use_container_width=True):
+            final_weights = normalize_weights_100(selected_profile["weights"])
             st.session_state.weights = final_weights
-            st.session_state.persona_active = selected_profile["display_name"]
+            st.session_state.persona_active = persona_name
             st.session_state.step = 3
             st.rerun()
     
     st.markdown('<div style="margin-top: 40px; margin-bottom: 20px;"></div>', unsafe_allow_html=True)
-    with st.expander("⚙️ Fine-Tune Your Persona (Optional)"):
-        st.write("Customize the weights. Other values adjust automatically to keep sum = 100.")
+    with st.expander("⚙️ Custom Settings (Optional)"):
+        st.write("Fine-tune the weights. When you change one, others adjust proportionally to stay at 100.")
         
         slider_labels = {
             "safety_tugo": "Safety (TuGo Advisory)",
@@ -486,54 +481,85 @@ def render_persona_step(datamanager):
             "restaurant": "Restaurant Value",
             "groceries": "Groceries Value",
             "rent": "Rent (Long stay)",
-            "purchasingpower": "Purchasing Power",
+            "purchasing_power": "Purchasing Power",
             "qol": "Quality of Life",
-            "healthcare": "Health Care",
-            "cleanair": "Clean Air (Low pollution)",
+            "health_care": "Health Care",
+            "clean_air": "Clean Air (Low pollution)",
             "culture": "Culture (UNESCO)",
             "weather": "Weather Fit",
-            "luxuryprice": "Luxury Price Vibe (High cost can be good)",
-            "hiddengem": "Hidden Gem Spice",
+            "luxury_price": "Luxury Price Vibe",
+            "hidden_gem": "Hidden Gem Spice",
             "astro": "Astro Spice",
             "jitter": "Chaos Jitter"
         }
         
+        slider_help = {
+            "safety_tugo": "Travel safety based on TuGo advisory levels. Higher = safer destinations.",
+            "cost": "Overall cost of living. Higher = more affordable destinations.",
+            "restaurant": "Restaurant prices & value. Higher = better value for dining.",
+            "groceries": "Grocery prices. Higher = cheaper groceries for self-catering.",
+            "rent": "Monthly rental costs. Higher = cheaper long-term accommodation.",
+            "purchasing_power": "Your money goes further. Higher = better purchasing power.",
+            "qol": "Quality of life, infrastructure & comfort. Higher = more comfortable.",
+            "health_care": "Healthcare quality & accessibility. Higher = better healthcare.",
+            "clean_air": "Air quality & pollution levels. Higher = cleaner air.",
+            "culture": "Cultural attractions & UNESCO sites. Higher = more cultural experiences.",
+            "weather": "Weather suitability. Higher = better weather for your preferences.",
+            "luxury_price": "High luxury prices (good for luxury hunters). Higher = premium experiences.",
+            "hidden_gem": "Lesser-known, unique destinations. Higher = more hidden gems.",
+            "astro": "Stargazing & celestial conditions. Higher = better for astronomy.",
+            "jitter": "Chaos factor for spontaneity. Higher = more unpredictable surprises."
+        }
+        
+        # Render sliders in exact WEIGHT_KEYS order
         for key in WEIGHT_KEYS:
-            current_val = int(st.session_state.custom_weights_sliders.get(key, 0))
             label = slider_labels.get(key, key.replace('_', ' ').title())
             
-            new_val = st.slider(
-                label,
-                min_value=0,
-                max_value=100,
-                value=current_val,
-                step=1,
-                key=f"adv_slider_{key}"
-            )
+            col_label, col_slider = st.columns([0.20, 0.80], vertical_alignment="center")
             
-            if new_val != current_val:
-                st.session_state.custom_weights_sliders = redistribute_weights(
-                    st.session_state.custom_weights_sliders,
-                    key,
-                    new_val,
-                    WEIGHT_KEYS
+            with col_label:
+                st.markdown(f"**{label}**")
+            
+            with col_slider:
+                st.slider(
+                    label=label,
+                    min_value=0,
+                    max_value=100,
+                    key=f"adv_{key}",
+                    label_visibility="collapsed",
+                    on_change=enforce_sum_100_proportional,
+                    args=(key, WEIGHT_KEYS)
                 )
-                st.rerun()
         
         st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
-        st.success(f"✅ Sum = 100/100")
+        
+        total_sum = sum(int(st.session_state.get(f"adv_{k}", 0)) for k in WEIGHT_KEYS)
+        if total_sum == 100:
+            st.success(f"✅ Sum = {total_sum}/100")
+        else:
+            st.warning(f"⚠️ Sum = {total_sum}/100 (needs adjustment)")
         
         col_r, col_c = st.columns([1, 1])
         
         with col_r:
-            if st.button("🔄 Reset to Defaults", use_container_width=True, key="reset_btn"):
-                st.session_state.custom_weights_sliders = copy.deepcopy(selected_profile["weights"])
+            if st.button("🔄 Reset to Persona Defaults", use_container_width=True, key="reset_btn"):
+                # Delete ONLY the slider keys, NOT the profile_index or last_profile_idx
+                keys_to_delete = [k for k in st.session_state.keys() if k.startswith("adv_")]
+                for k in keys_to_delete:
+                    del st.session_state[k]
+                
+                # Re-initialize with current persona defaults
+                for k in WEIGHT_KEYS:
+                    default_val = selected_profile["weights"].get(k, 0)
+                    st.session_state[f"adv_{k}"] = int(default_val)
+                
                 st.rerun()
         
         with col_c:
-            if st.button("✨ Continue with custom settings", key="custom_next_btn", type="primary", use_container_width=True):
-                final_weights = normalize_weights_100(st.session_state.custom_weights_sliders)
+            if st.button("🎯 Apply Custom Settings", key="custom_next_btn", type="primary", use_container_width=True):
+                custom_weights = {k: int(st.session_state.get(f"adv_{k}", 0)) for k in WEIGHT_KEYS}
+                final_weights = normalize_weights_100(custom_weights)
                 st.session_state.weights = final_weights
-                st.session_state.persona_active = selected_profile["display_name"]
+                st.session_state.persona_active = f"{persona_name} (Custom)"
                 st.session_state.step = 3
                 st.rerun()

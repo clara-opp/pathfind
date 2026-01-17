@@ -791,12 +791,11 @@ class TravelMatcher:
         noise_score = df["country_name"].apply(lambda c: self._stable_noise(str(c), gem_seed))
         df["hidden_gem_score"] = 0.70 * low_unesco_score + 0.30 * noise_score
 
-        if float(weights.get("astro", 0.0)) > 0:
-            boosted_countries = st.session_state.get("tarot_boosted_countries", [])
-            if boosted_countries:
-                df["astro_score"] = df["iso3"].isin(boosted_countries).astype(float) * 0.20
-            else:
-                df["astro_score"] = 0.0
+        # Tarot countries boost (+20%)
+        tarot_countries = st.session_state.get("tarot_countries", [])
+        if tarot_countries and float(weights.get("astro", 0.0)) > 0:
+            df["tarot_boost"] = df["iso3"].isin(tarot_countries).astype(float) * 0.20
+            df["astro_score"] = df["tarot_boost"]
         else:
             df["astro_score"] = 0.0
 
@@ -1105,7 +1104,6 @@ def show_swiping_step():
 
             post_update()
 
-
 def show_astro_step(data_manager):
     st.markdown(
         """
@@ -1176,7 +1174,7 @@ def show_astro_step(data_manager):
 
     if not st.session_state.tarot_drawn:
         col1, col2 = st.columns(2, gap="large")
-
+        
         with col1:
             if st.button("🃏 DRAW CARD", key="draw_tarot", use_container_width=True):
                 try:
@@ -1194,23 +1192,39 @@ def show_astro_step(data_manager):
                     is_reversed = bool(card_data.get("is_reversed", False))
                     orientation = "reversed" if is_reversed else "upright"
 
+                    # ✅ FETCH FROM DATABASE: country_code, travel_meaning, travel_style
                     conn = data_manager.get_connection()
                     cursor = conn.cursor()
                     cursor.execute(
-                        "SELECT DISTINCT country_code FROM tarot_countries WHERE card_name = ? AND orientation = ? LIMIT 5",
-                        (card_name, orientation)
+                        """
+                        SELECT DISTINCT country_code, travel_meaning, travel_style
+                        FROM tarot_countries
+                        WHERE card_name = ? AND orientation = ?
+                        """,
+                        (card_name, orientation),
                     )
                     results = cursor.fetchall()
                     conn.close()
 
-                    st.session_state["tarot_boosted_countries"] = [row[0] for row in results]
+                    # Extract countries + DB data
+                    tarot_countries = [row[0] for row in results]  # List of country_code
+                    
+                    # Get FIRST row for travel_meaning and travel_style
+                    travel_meaning = results[0][1] if results else "Destiny guides your path..."
+                    travel_style = results[0][2] if results else ""
 
+                    # Save to session state
+                    st.session_state["tarot_countries"] = tarot_countries  # Countries for score boost
+                    st.session_state.tarot_card = card_data  # API data
+                    st.session_state["tarot_travel_meaning"] = travel_meaning
+                    st.session_state["tarot_travel_style"] = travel_style
+
+                    # Apply astro boost (20%)
                     w = st.session_state.weights.copy()
                     w["astro"] = 20
                     st.session_state.weights = normalize_weights_100(w)
 
                     st.session_state.tarot_drawn = True
-                    st.session_state.tarot_card = card_data
                     st.rerun()
 
                 except Exception as e:
@@ -1221,17 +1235,22 @@ def show_astro_step(data_manager):
                 w = st.session_state.weights.copy()
                 w["astro"] = 0
                 st.session_state.weights = normalize_weights_100(w)
-                st.session_state["tarot_boosted_countries"] = []
+                st.session_state["tarot_countries"] = []
                 st.session_state.step = 5
                 st.rerun()
 
+    # DISPLAY (after draw)
     if st.session_state.tarot_drawn:
         card_data = st.session_state.get("tarot_card", {})
         card_name = card_data.get("name", "Unknown Card")
         is_reversed = bool(card_data.get("is_reversed", False))
         card_image = card_data.get("image", "")
-
         orientation_emoji = "🔄" if is_reversed else "⬆️"
+
+        # 3 Meanings
+        general_meaning = card_data.get("meaning", "Cosmic wisdom awaits...")
+        travel_meaning = st.session_state.get("tarot_travel_meaning", "Destiny guides your path...")
+        travel_style = st.session_state.get("tarot_travel_style", "")
 
         st.markdown(
             f"""
@@ -1249,32 +1268,45 @@ def show_astro_step(data_manager):
                 st.image(card_image, width=280)
 
         with col_text:
+            # 1.General Meaning (from API)
             st.markdown(
                 f"""
                 <div class="meaning-box">
                     <h4>🌌 General Meaning</h4>
-                    <p>{card_data.get('meaning', 'Cosmic wisdom awaits...')[:300]}</p>
+                    <p>{general_meaning}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-            travel_meaning = card_data.get("travel_meaning", card_data.get("meaning", "Destiny guides your path..."))
+            # 2.Travel Meaning (from Database)
             st.markdown(
                 f"""
                 <div class="meaning-box">
                     <h4>✈️ Travel Meaning</h4>
-                    <p>{travel_meaning[:300]}</p>
+                    <p>{travel_meaning}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
+            # 3.Travel Style (from Database, only if present)
+            if travel_style:
+                st.markdown(
+                    f"""
+                    <div class="meaning-box">
+                        <h4>🎯 Travel Style</h4>
+                        <p>{travel_style}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
         st.markdown("---")
+
         if st.button("➡️ Next: Ban List", use_container_width=True, key="next_tarot"):
             st.session_state.step = 5
             st.rerun()
-
 
 def show_ban_choices_step(datamanager):
     st.markdown("### 🚫 Ban List (Optional)")
