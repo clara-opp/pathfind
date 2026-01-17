@@ -25,6 +25,8 @@ from modules.pathfind_design import setup_complete_design, render_pathfind_heade
 # ============================================================
 load_dotenv()
 st.set_page_config(page_title="Pathfind - your personal travel planner", page_icon="✈️", layout="wide")
+setup_complete_design()
+render_pathfind_header()
 
 AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
 AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
@@ -1736,9 +1738,6 @@ def run_app():
     data_manager = DataManager()
     init_session_state()
 
-    #include corporate design
-    setup_complete_design()
-    render_pathfind_header()
 
     handle_google_oauth_callback(
         data_manager=data_manager,
