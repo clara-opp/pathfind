@@ -1,6 +1,6 @@
 # ============================================================
-# pathfind_design.py - UNIFIED DARK DESIGN v18
-# PERFECT V8 + 50% ZOOM = CLEAN DISPLAY
+# pathfind_design.py - UNIFIED DARK DESIGN v19
+# CLOUD OPTIMIZED - SCALE + BACKGROUND FIX
 # ============================================================
 
 import streamlit as st
@@ -44,27 +44,27 @@ def find_background_image(img_file="background.jpg"):
 
 def setup_complete_design():
     """
-    ULTIMATE DARK DESIGN v18 - PERFECT V8 + 50% ZOOM:
+    ULTIMATE DARK DESIGN v19 - CLOUD OPTIMIZED:
     
-    - Zurück zu v8 Direct Styling (NO double boxes!)
-    - 50% zoom auf entire page (lokal + cloud)
-    - Alles sieht wie 50% zoomed aus
-    - PERFECT spacing wie damals
-    - Clean display überall
+    FIXES für Cloud:
+    - Zoom entfernt (Cloud mag das nicht!)
+    - Transform: scale(0.7) stattdessen (funktioniert überall)
+    - background-attachment: scroll (nicht fixed, Cloud-Bug fix)
+    - Blur direkt auf Element (nicht pseudo-element)
+    - Lokal + Cloud identisch 70% skaliert
     """
     
     st.markdown("""
     <style>
         :root {
             color-scheme: dark !important;
-            zoom: 70% !important;
         }
         html, body {
             color-scheme: dark !important;
-            zoom: 70% !important;
+            transform: scale(0.7);
             transform-origin: top left;
-            width: 200%;
-            height: 200%;
+            width: 142.857%;
+            height: 142.857%;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -83,52 +83,44 @@ def setup_complete_design():
        ======================================== */
     :root {{
         color-scheme: dark !important;
-        zoom: 70% !important;
     }}
     
     html, body {{
         color-scheme: dark !important;
-        zoom: 70% !important;
+        transform: scale(0.7);
         transform-origin: top left;
-        width: 200%;
-        height: 200%;
+        width: 142.857%;
+        height: 142.857%;
+        margin: 0;
+        padding: 0;
     }}
     
     /* ========================================
        FULL-SCREEN BACKGROUND - DARK
+       Cloud-optimized (scroll statt fixed!)
        ======================================== */
-    html, body, [data-testid="stAppViewContainer"], .stApp {{
+    html, body {{
         background-image: url("data:image/jpeg;base64,{bin_str}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        background-attachment: fixed;
-        margin: 0;
-        padding: 0;
+        background-attachment: scroll;
         background-color: #0a0f1e !important;
     }}
     
-    [data-testid="stAppViewContainer"]::before {{
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/jpeg;base64,{bin_str}");
+    [data-testid="stAppViewContainer"], .stApp {{
+        background: linear-gradient(135deg, rgba(10, 15, 30, 0.4) 0%, rgba(26, 42, 58, 0.4) 50%, rgba(15, 21, 32, 0.4) 100%), 
+                    url("data:image/jpeg;base64,{bin_str}");
         background-size: cover;
         background-position: center;
-        background-attachment: fixed;
-        filter: blur(8px);
-        opacity: 0.97;
-        z-index: -2;
-        animation: drift-bg 30s ease-in-out infinite;
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-color: #0a0f1e !important;
+        filter: blur(0px);
     }}
     
-    @keyframes drift-bg {{
-        0% {{ filter: blur(8px) brightness(0.98); }}
-        50% {{ filter: blur(8px) brightness(1.02); }}
-        100% {{ filter: blur(8px) brightness(0.98); }}
+    [data-testid="stMain"] {{
+        background: transparent !important;
     }}
     
     /* ========================================
