@@ -228,20 +228,6 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                 },
             },
         },
-        {
-            "type": "function",
-            "function": {
-                "name": "serper_search_prices",
-                "description": "Search the web for real-world prices, entrance fees, or menu costs for a specific venue.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "Price-related query, e.g., 'Louvre museum entrance fee 2024'."},
-                    },
-                    "required": ["query"],
-                },
-            },
-        },
     ]
     
     system_msg = {
@@ -252,14 +238,11 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             "Rules:\n"
             "- Use google_search_places to fetch real nearby places. You MUST generate ALL search queries for the entire day (morning, afternoon, evening) if not specified otherwise by the user.\n"
             "- EVERY trip plan MUST include food recommendations for each day: 1 breakfast spot for the morning, 1 lunch option (restaurant or street food), and 1 dinner option (restaurant or street food).\n"
-            "- Use serper_search_prices to find actual costs for activities, entrance fees, or meals. Run these in the same turn as the place searches.\n"
+            "- Once you have searched for places, the system will automatically provide real-world price data for them. Use that data for your budget calculations.\n"
             "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget.\n"
-            "- You MUST use serper_search_prices for every paid activity. Do not include disclaimers like 'could not be retrieved'; if a tool fails, use your best estimate based on the search results without mentioning the failure.\n"
-            "- Return a JSON object with two keys: 'locations' then 'itinerary'. The 'locations' key MUST come first.\n"
-            "- The 'locations' array MUST contain an entry for EVERY numbered stop in your itinerary. Use the exact 'place_id' from the tools for the 'id' field.\n"
-            "- The 'itinerary' MUST be a numbered list (1., 2., 3., etc.). Do not use bullet points for main stops.\n"
-            "- Every trip MUST include logical stops for meals (restaurant) and refreshments (cafe).\n"
-            "- The 'itinerary' MUST be a string formatted with Markdown: each stop starts with a '### Time Range - Place Name' headline, followed by bullet points for ' - Description: [One liner describing the place and activities]' and ' - Price: [Price for the location]'.\n"
+            "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
+            "- Return a JSON object with one key: 'itinerary'.\n"
+            "- 'itinerary' MUST be a list of objects. Each object MUST have: 'id' (the google place_id), 'time_range' (e.g. '09:00-10:30'), 'description' (one liner), and 'price' (numeric value in EUR).\n"
             "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
             ),
     }
@@ -314,11 +297,6 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                     )
                     # Return places separately to update main list safely
                     return tc.id, out, out.get("results", []) if not out.get("error") else []
-                elif fn == "serper_search_prices":
-                    print(f"DEBUG: Executing Serper Price Search: {args.get('query')}")
-                    out = serper_search_prices(query=args.get("query", ""))
-                    print(f"DEBUG: Serper results found: {len(out.get('organic', [])) if isinstance(out, dict) else 'Error'}")
-                    return tc.id, out, []
                 else:
                     return tc.id, {"error": True, "message": f"Unknown tool: {fn}"}, []
 
@@ -335,7 +313,26 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
                     "content": json.dumps(out, ensure_ascii=False),
                 })
 
-        # --- Phase 2: Synthesis (Generate Itinerary) ---
+        # --- Phase 2: Deterministic Enrichment (Price Search) ---
+        if found_places:
+            print(f"DEBUG: Deterministically searching prices for {len(found_places)} places...")
+            with concurrent.futures.ThreadPoolExecutor() as price_executor:
+                price_futures = {
+                    price_executor.submit(serper_search_prices, f"entrance fee price menu cost {p['name']} {p['address']}"): p 
+                    for p in found_places
+                }
+                enriched_data = []
+                for future in concurrent.futures.as_completed(price_futures):
+                    p = price_futures[future]
+                    res = future.result()
+                    enriched_data.append({"place": p['name'], "price_info": res.get("organic", [])[:3]})
+            
+            convo.append({
+                "role": "system", 
+                "content": f"CRITICAL PRICE DATA: Use the following search results to determine the budget for your selected places: {json.dumps(enriched_data, ensure_ascii=False)}"
+            })
+
+        # --- Phase 3: Synthesis (Generate Itinerary) ---
         final_resp = client.chat.completions.create(
             model=st.session_state.model,
             messages=convo,
@@ -564,13 +561,16 @@ def create_beautiful_map(map_info, radius, center_ll):
     return m
 
 
-def main():
+def show_trip_planner():
     load_dotenv()
-    st.set_page_config(
-        page_title="🗺️Trip Planner",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
+    try:
+        st.set_page_config(
+            page_title="🗺️Trip Planner",
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+    except:
+        pass
 
     # CSS to perfectly align the columns and remove default margins
     st.markdown("""
@@ -684,14 +684,33 @@ def main():
                         try:
                             data = json.loads(raw_json)
                         except:
-                            data = {}                        
+                            data = {}                                   
+
                         st.session_state.map_data = {"places": [], "center": ll}
-                        for loc in (data.get("locations", []) if isinstance(data, dict) else []):
-                            pid = loc.get("id")
-                            match = next((p for p in places if p["place_id"] == pid), None)
-                            if match:
-                                st.session_state.map_data["places"].append(match)
-                        answer = data.get("itinerary", raw_json) if isinstance(data, dict) else raw_json
+                        itinerary_md = []
+                        
+                        if isinstance(data, dict) and "itinerary" in data:
+                            for entry in data["itinerary"]:
+                                pid = entry.get("id")
+                                # Find the official place data from our tool results
+                                match = next((p for p in places if p["place_id"] == pid), None)
+                                if match:
+                                    # Add to Map
+                                    st.session_state.map_data["places"].append(match)
+                                    
+                                    # Build Markdown using official name
+                                    name = match.get("name", "Unknown Place")
+                                    time = entry.get("time_range", "TBD")
+                                    desc = entry.get("description", "")
+                                    price = entry.get("price", 0)
+                                    
+                                    itinerary_md.append(f"### {time} - {name}")
+                                    itinerary_md.append(f"- **Description**: {desc}")
+                                    itinerary_md.append(f"- **Price**: €{price}")
+                                    itinerary_md.append("")
+                                    
+                        # Define the answer by joining the markdown list
+                        answer = "\n".join(itinerary_md) if itinerary_md else raw_json      
 
                         st.markdown(answer)
                         st.session_state.messages.append({"role": "assistant", "content": answer})
@@ -723,7 +742,3 @@ def main():
             st_folium(m, width="100%", height=650, key="persistent_map")
         else:
             st.info("🎯 The map will appear here once a trip is planned.")
-
-
-if __name__ == "__main__":
-    main()

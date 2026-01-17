@@ -1,5 +1,5 @@
 # Activity Planner
-- Before: from entering the user prompt to receiving the full results (chatbot output + map): ~1-2 minutes 
+- Before: from entering the user prompt to receiving the full results (chatbot output + map): ~3 minutes 
 
 
 # Use dynamic loading (importlib)

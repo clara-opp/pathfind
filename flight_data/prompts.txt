@@ -14,7 +14,7 @@ Example output:
 
 ```diff
    def compute(x, y):
--      result = x - yh
+-      result = x - y
 +      result = x + y
        return result
 
