@@ -24,7 +24,7 @@ from modules.pathfind_design import setup_complete_design, render_pathfind_heade
 # CONFIG
 # ============================================================
 load_dotenv()
-st.set_page_config(page_title="Global Travel Planner", page_icon="🌏", layout="wide")
+st.set_page_config(page_title="Pathfind - your personal travel planner", page_icon="✈️", layout="wide")
 
 AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
 AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")

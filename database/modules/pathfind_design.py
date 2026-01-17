@@ -1,6 +1,6 @@
 # ============================================================
-# pathfind_design.py - UNIFIED DARK DESIGN v11
-# WORKS ON CLOUD + LOCAL (NO ANIMATION - STATIC BLUR)
+# pathfind_design.py - UNIFIED DARK DESIGN v18
+# PERFECT V8 + 50% ZOOM = CLEAN DISPLAY
 # ============================================================
 
 import streamlit as st
@@ -44,22 +44,27 @@ def find_background_image(img_file="background.jpg"):
 
 def setup_complete_design():
     """
-    ULTIMATE DARK DESIGN v11 - PRODUCTION READY FOR CLOUD:
-    - FORCE DARK MODE überall
-    - Dunkel Hintergrund mit STATIC BLUR (kein Animation!)
-    - HELLER TEXT überall (Kontrast-optimiert)
-    - DUNKEL BUTTONS - ALL STATES COVERED
-    - WORKS IDENTICALLY EVERYWHERE (Local + Cloud)
-    - MOBILE RESPONSIVE
+    ULTIMATE DARK DESIGN v18 - PERFECT V8 + 50% ZOOM:
+    
+    - Zurück zu v8 Direct Styling (NO double boxes!)
+    - 50% zoom auf entire page (lokal + cloud)
+    - Alles sieht wie 50% zoomed aus
+    - PERFECT spacing wie damals
+    - Clean display überall
     """
     
     st.markdown("""
     <style>
         :root {
             color-scheme: dark !important;
+            zoom: 70% !important;
         }
         html, body {
             color-scheme: dark !important;
+            zoom: 70% !important;
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -69,13 +74,30 @@ def setup_complete_design():
     if not bin_str:
         st.warning("⚠️ Background image not found - using gradient fallback")
     
-    # Build CSS based on whether image exists
-    if bin_str:
-        bg_css = f"""
+    complete_css = f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Mono:wght@700&family=Poppins:wght@400;500;600;700;800&display=swap');
+    
     /* ========================================
-       BACKGROUND WITH IMAGE - STATIC BLUR
+       FORCE DARK MODE EVERYWHERE
        ======================================== */
+    :root {{
+        color-scheme: dark !important;
+        zoom: 70% !important;
+    }}
+    
     html, body {{
+        color-scheme: dark !important;
+        zoom: 70% !important;
+        transform-origin: top left;
+        width: 200%;
+        height: 200%;
+    }}
+    
+    /* ========================================
+       FULL-SCREEN BACKGROUND - DARK
+       ======================================== */
+    html, body, [data-testid="stAppViewContainer"], .stApp {{
         background-image: url("data:image/jpeg;base64,{bin_str}");
         background-size: cover;
         background-position: center;
@@ -97,62 +119,17 @@ def setup_complete_design():
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        filter: blur(10px) brightness(0.7);
-        opacity: 1;
+        filter: blur(8px);
+        opacity: 0.97;
         z-index: -2;
+        animation: drift-bg 30s ease-in-out infinite;
     }}
     
-    [data-testid="stAppViewContainer"] {{
-        position: relative;
-        z-index: 1;
+    @keyframes drift-bg {{
+        0% {{ filter: blur(8px) brightness(0.98); }}
+        50% {{ filter: blur(8px) brightness(1.02); }}
+        100% {{ filter: blur(8px) brightness(0.98); }}
     }}
-        """
-    else:
-        bg_css = """
-    /* ========================================
-       BACKGROUND GRADIENT FALLBACK
-       ======================================== */
-    html, body {{
-        background: linear-gradient(135deg, #0a0f1e 0%, #1a2a3a 50%, #0f1520 100%) !important;
-        background-attachment: fixed;
-        margin: 0;
-        padding: 0;
-    }}
-    
-    [data-testid="stAppViewContainer"]::before {{
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(10, 15, 30, 0.4);
-        z-index: -2;
-        pointer-events: none;
-    }}
-    
-    [data-testid="stAppViewContainer"] {{
-        position: relative;
-        z-index: 1;
-    }}
-        """
-    
-    complete_css = f"""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Mono:wght@700&family=Poppins:wght@400;500;600;700;800&display=swap');
-    
-    /* ========================================
-       FORCE DARK MODE EVERYWHERE
-       ======================================== */
-    :root {{
-        color-scheme: dark !important;
-    }}
-    
-    html, body {{
-        color-scheme: dark !important;
-    }}
-    
-    {bg_css}
     
     /* ========================================
        UNIVERSAL TEXT - MAXIMUM CONTRAST
@@ -222,8 +199,6 @@ def setup_complete_design():
         text-align: center;
         margin: 1.5rem 0 2rem 0;
         animation: slide-down 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-        z-index: 10;
     }}
     
     .pathfind-logo {{
@@ -327,6 +302,7 @@ def setup_complete_design():
     
     /* ========================================
        CONTENT MODULES - BLURRED DARK BOXES
+       Direct styling (NO wrapper/inner mess!)
        ======================================== */
     [data-testid="stVerticalBlockBorderWrapper"] {{
         background: rgba(15, 20, 40, 0.35) !important;
@@ -339,8 +315,6 @@ def setup_complete_design():
             inset 0 0 25px rgba(255, 255, 255, 0.08) !important;
         color: rgba(255, 255, 255, 1);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        z-index: 5;
     }}
     
     [data-testid="stVerticalBlockBorderWrapper"]:hover {{
@@ -352,7 +326,7 @@ def setup_complete_design():
     }}
     
     /* ========================================
-       DARK BUTTONS - ULTIMATE AGGRESSIVE + MOBILE
+       DARK BUTTONS - ULTIMATE AGGRESSIVE
        ======================================== */
     button,
     .stButton button,
@@ -367,8 +341,7 @@ def setup_complete_design():
     [data-testid="stColumn"] > div button,
     [data-testid="stColumn"] button,
     [data-testid="stHorizontalBlock"] button,
-    [data-testid="stExpanderContainer"] button,
-    [data-testid="stExpander"] button {{
+    [data-testid="stExpanderContainer"] button {{
         background: rgba(25, 35, 55, 0.95) !important;
         backdrop-filter: blur(10px) !important;
         border: 1.5px solid rgba(80, 120, 180, 0.7) !important;
@@ -398,8 +371,7 @@ def setup_complete_design():
     [data-testid="stColumn"] > div button:hover,
     [data-testid="stColumn"] button:hover,
     [data-testid="stHorizontalBlock"] button:hover,
-    [data-testid="stExpanderContainer"] button:hover,
-    [data-testid="stExpander"] button:hover {{
+    [data-testid="stExpanderContainer"] button:hover {{
         background: rgba(50, 70, 100, 0.98) !important;
         border: 1.5px solid rgba(100, 150, 220, 0.9) !important;
         box-shadow: 
@@ -421,8 +393,7 @@ def setup_complete_design():
     [data-testid="stColumn"] > div button:active,
     [data-testid="stColumn"] button:active,
     [data-testid="stHorizontalBlock"] button:active,
-    [data-testid="stExpanderContainer"] button:active,
-    [data-testid="stExpander"] button:active {{
+    [data-testid="stExpanderContainer"] button:active {{
         transform: translateY(0px) !important;
         box-shadow: 
             0 4px 12px rgba(0, 0, 0, 0.3),
