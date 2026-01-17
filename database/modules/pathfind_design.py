@@ -1,6 +1,6 @@
 # ============================================================
-# pathfind_design.py - UNIFIED DARK DESIGN v21
-# HYBRID PLATFORM DETECTION - LOKAL + CLOUD PERFECT
+# pathfind_design.py - UNIFIED DARK DESIGN v18
+# PERFECT V8 + 80% ZOOM = CLEAN DISPLAY
 # ============================================================
 
 import streamlit as st
@@ -22,7 +22,6 @@ def get_img_as_base64(file_path):
 def find_background_image(img_file="background.jpg"):
     """Find background image in multiple possible directories."""
     possible_dirs = [
-        ".",                # Repo-Root (für Cloud)
         "personas",
         "./personas",
         os.path.join(os.getcwd(), "personas"),
@@ -43,21 +42,27 @@ def find_background_image(img_file="background.jpg"):
     return ""
 
 
-def setup_complete_design():
-    """
-    ULTIMATE DARK DESIGN v21 - HYBRID PLATFORM DETECTION:
-    
-    ✅ Lokal:  zoom: 70% (perfekt wie v18!)
-    ✅ Cloud:  CSS-basiert, Cloud-safe (identisches Aussehen)
-    ✅ Background + Blur: Funktioniert überall
-    ✅ Format: Perfekt auf beiden Plattformen
-    """
+def setup_complete_design():   
+    st.markdown("""
+    <style>
+        :root {
+            color-scheme: dark !important;
+            zoom: 80% !important;
+        }
+        html, body {
+            color-scheme: dark !important;
+            zoom: 80% !important;
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     
     bin_str = find_background_image("background.jpg")
 
     if not bin_str:
-        st.warning("⚠️ Background image not found")
-        bin_str = ""
+        st.warning("⚠️ Background image not found - using gradient fallback")
     
     complete_css = f"""
     <style>
@@ -68,22 +73,19 @@ def setup_complete_design():
        ======================================== */
     :root {{
         color-scheme: dark !important;
-        zoom: 70% !important;
+        zoom: 80% !important;
     }}
     
     html, body {{
         color-scheme: dark !important;
-        zoom: 70% !important;
+        zoom: 80% !important;
         transform-origin: top left;
         width: 200%;
         height: 200%;
-        margin: 0;
-        padding: 0;
     }}
     
     /* ========================================
-       FULL-SCREEN BACKGROUND - HYBRID SAFE
-       Works both lokal (zoom) + Cloud (fixed overlay)
+       FULL-SCREEN BACKGROUND - DARK
        ======================================== */
     html, body, [data-testid="stAppViewContainer"], .stApp {{
         background-image: url("data:image/jpeg;base64,{bin_str}");
@@ -91,10 +93,11 @@ def setup_complete_design():
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        margin: 0;
+        padding: 0;
         background-color: #0a0f1e !important;
     }}
     
-    /* Blur Overlay für zusätzliche Tiefe */
     [data-testid="stAppViewContainer"]::before {{
         content: "";
         position: fixed;
