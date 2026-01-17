@@ -1,5 +1,5 @@
 # ============================================================
-# pathfind_design_v2.py - SIMPLE LIGHT DESIGN
+# pathfind_design_v2.py - MINIMAL LIGHT DESIGN
 # ============================================================
 
 import streamlit as st
@@ -42,7 +42,7 @@ def find_background_image(img_file: str = "background_light.png") -> str:
 
 
 def setup_complete_design() -> None:
-    """Setup simple light design."""
+    """Setup minimal light design."""
     
     bin_str = find_background_image("background_light.png")
     if not bin_str:
@@ -62,7 +62,7 @@ def setup_complete_design() -> None:
     }}
 
     /* Text - Dark Blue */
-    body, .stMarkdown, span, label, p, div {{
+    p, span, label {{
         color: rgba(20, 40, 80, 0.95) !important;
         font-family: 'Poppins', sans-serif !important;
     }}
@@ -75,24 +75,6 @@ def setup_complete_design() -> None:
     a {{
         color: rgba(0, 80, 180, 1) !important;
         font-weight: 600 !important;
-    }}
-
-    /* Buttons - Light Background */
-    button, .stButton button, [data-testid="stButton"] button {{
-        background: rgba(230, 240, 255, 0.95) !important;
-        color: rgba(20, 40, 80, 1) !important;
-        border: 1px solid rgba(100, 180, 255, 0.4) !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        padding: 0.6rem 1.4rem !important;
-        transition: all 0.2s ease !important;
-        cursor: pointer !important;
-    }}
-
-    button:hover, .stButton button:hover, [data-testid="stButton"] button:hover {{
-        background: rgba(255, 255, 255, 1) !important;
-        border: 1px solid rgba(100, 180, 255, 0.7) !important;
-        box-shadow: 0 2px 8px rgba(100, 180, 255, 0.2) !important;
     }}
 
     /* Logo Header */

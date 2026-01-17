@@ -35,216 +35,108 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 REDIRECT_URI = "http://localhost:8501"
 
-# ============================================================
+
+#  ============================================================
 # STYLES
 # ============================================================
-
 st.markdown(
     """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-        /* ========================================
-           UNIVERSAL FONTS
-           ======================================== */
-        html, body, .stMarkdown, div[data-testid="stText"], 
-        .stButton button, label {
+        html, body, .stMarkdown, div[data-testid="stText"], .stButton button {
             font-family: 'Poppins', sans-serif !important;
-            color: rgba(255, 255, 255, 1) !important;
+            color: var(--text-color);
         }
 
-        /* ========================================
-           HEADERS - DARK MODE
-           ======================================== */
         .main-header {
             font-size: 3rem;
-            color: rgba(255, 255, 255, 1);
+            color: #1a237e;
             font-weight: 700;
             text-align: center;
             margin-top: 1rem;
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
         }
-        
         .sub-header {
             text-align: center;
-            color: rgba(255, 255, 255, 0.9);
+            color: #666;
             font-size: 1.2rem;
             margin-bottom: 3rem;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
         }
 
-        /* ========================================
-           CONTENT STYLING
-           ======================================== */
+        @media (prefers-color-scheme: dark) {
+            .main-header { color: #2949FF; }
+            .sub-header { color: #A1A1A1; }
+        }
+
         [data-testid="stVerticalBlockBorderWrapper"] {
             border-radius: 12px !important;
-            background: rgba(15, 20, 40, 0.35) !important;
-            backdrop-filter: blur(32px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
         }
 
-        /* ========================================
-           TEXT COLORS - UNIFIED DARK
-           ======================================== */
-        .price-text { 
-            color: rgba(100, 200, 255, 1) !important; 
-            font-size: 1.4rem; 
-            font-weight: 700; 
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
-        }
-        
-        .carrier-text { 
-            font-size: 1.1rem; 
-            font-weight: 600; 
-            color: rgba(255, 255, 255, 1) !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
-        }
-        
-        .route-text { 
-            color: rgba(255, 255, 255, 0.7) !important; 
-            font-size: 0.9rem;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-        }
+        .price-text { color: var(--primary-color); font-size: 1.4rem; font-weight: 700; }
+        .carrier-text { font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
+        .route-text { color: var(--text-color); opacity: 0.7; font-size: 0.9rem; }
 
-        /* ========================================
-           BADGES & TIMELINE
-           ======================================== */
-        .time-badge { 
-            background-color: rgba(20, 25, 40, 0.9) !important; 
-            color: #4caf50; 
-            padding: 2px 8px; 
-            border-radius: 4px; 
-            font-family: monospace; 
-            font-weight: 700; 
-            margin-right: 10px; 
-            border: 1px solid #4caf50; 
-        }
-        
-        .timeline-row { 
-            margin: 2px 0; 
-            display: flex; 
-            align-items: center; 
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 1) !important;
-        }
-        
-        .duration-info { 
-            margin-left: 35px; 
-            color: rgba(255, 255, 255, 0.6) !important; 
-            font-style: italic; 
-            font-size: 0.8rem;
-        }
-        
-        .layover-info { 
-            margin: 5px 0; 
-            text-align: left; 
-            padding-left: 50px; 
-            color: rgba(255, 255, 255, 0.8) !important; 
-            font-style: italic; 
-            font-size: 0.85rem; 
-            border-top: 1px dashed rgba(255, 255, 255, 0.3); 
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.3); 
-            padding: 2px 0 2px 50px; 
-        }
-        
-        .city-name { 
-            font-weight: 700; 
-            color: rgba(255, 255, 255, 1) !important;
-        }
-        
-        .iata-code { 
-            color: rgba(255, 255, 255, 0.6) !important; 
-        }
+        .time-badge { background-color: #1e1e1e; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-family: monospace; font-weight: 700; margin-right: 10px; border: 1px solid #4caf50; }
+        .timeline-row { margin: 2px 0; display: flex; align-items: center; font-size: 0.9rem; }
+        .duration-info { margin-left: 35px; color: var(--text-color); opacity: 0.6; font-style: italic; font-size: 0.8rem; }
+        .layover-info { margin: 5px 0; text-align: left; padding-left: 50px; color: var(--text-color); opacity: 0.8; font-style: italic; font-size: 0.85rem; border-top: 1px dashed var(--text-color); border-bottom: 1px dashed var(--text-color); padding: 2px 0 2px 50px; }
+        .city-name { font-weight: 700; color: var(--text-color); }
+        .iata-code { color: var(--text-color); opacity: 0.6; }
 
-        /* ========================================
-           SWIPE QUESTION - DARK STYLE
-           ======================================== */
         .swipe-question {
             text-align: center;
             font-size: 1.2rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 1) !important;
+            color: #1a237e;
             margin-bottom: 2rem;
             padding: 0 !important;
             background: none !important;
             border: none !important;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
         }
 
-        /* ========================================
-           HOMEPAGE BUTTONS - DARK DESIGN v8 (UNIFIED)
-           ======================================== */
         .stButton > button {
             width: 100%;
             border-radius: 14px;
             height: 220px !important;
             font-size: 3rem !important;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
             white-space: pre-line !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
             gap: 20px !important;
-            
-            /* Design v8 Dark Colors */
-            background: rgba(25, 35, 55, 0.95) !important;
-            color: rgba(255, 255, 255, 0.99) !important;
-            border: 1.5px solid rgba(80, 120, 180, 0.7) !important;
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.4),
-                inset 0 0 12px rgba(255, 255, 255, 0.04) !important;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
-        }
-
-        .stButton > button:hover {
-            background: rgba(50, 70, 100, 0.98) !important;
-            border: 1.5px solid rgba(100, 150, 220, 0.9) !important;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.5),
-                inset 0 0 15px rgba(255, 255, 255, 0.06) !important;
-            transform: translateY(-2px) !important;
-        }
-
-        .stButton > button:active {
-            transform: translateY(0px) !important;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.3),
-                inset 0 0 8px rgba(255, 255, 255, 0.03) !important;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
+            border: 2px solid #e0e5ed !important;
         }
 
         div[data-testid="stButton"] > button {
-            background: rgba(25, 35, 55, 0.95) !important;
-            color: rgba(255, 255, 255, 0.99) !important;
-            border: 1.5px solid rgba(80, 120, 180, 0.7) !important;
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.4),
-                inset 0 0 12px rgba(255, 255, 255, 0.04) !important;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
+            color: #333;
         }
 
         div[data-testid="stButton"] > button:hover {
-            background: rgba(50, 70, 100, 0.98) !important;
-            border: 1.5px solid rgba(100, 150, 220, 0.9) !important;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.5),
-                inset 0 0 15px rgba(255, 255, 255, 0.06) !important;
-            transform: translateY(-2px) !important;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%) !important;
+            color: white !important;
+            border-color: #1a237e !important;
+            box-shadow: 0 8px 24px rgba(26, 35, 126, 0.25) !important;
+            transform: translateY(-4px) !important;
         }
 
-        div[data-testid="stButton"] > button:active {
-            transform: translateY(0px) !important;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.3),
-                inset 0 0 8px rgba(255, 255, 255, 0.03) !important;
+        @media (max-width: 768px) {
+            .stButton > button {
+                height: 180px !important;
+                font-size: 2.5rem !important;
+            }
+            .swipe-question {
+                font-size: 1rem;
+            }
         }
 
-        /* ========================================
-           PRIDE BADGE - ENHANCED FEEDBACK
-           ======================================== */
         .pride-badge-top-left {
             display: flex;
             align-items: center;
@@ -255,37 +147,22 @@ st.markdown(
         .pride-flag-icon {
             font-size: 48px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             filter: grayscale(1);
-            padding: 8px;
-            border: 3px solid transparent;
-            border-radius: 12px;
+            padding: 0;
+            border: 2px solid transparent;
+            border-radius: 8px;
             line-height: 1;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0);
         }
 
         .pride-flag-icon:hover {
-            transform: scale(1.15);
-            background: rgba(255, 20, 147, 0.1);
-            filter: grayscale(0.7);
-            border: 3px solid rgba(255, 20, 147, 0.3);
+            transform: scale(1.1);
         }
 
         .pride-flag-icon.active {
             filter: grayscale(0);
-            border: 3px solid #FF1493;
-            box-shadow: 
-                0 0 25px rgba(255, 20, 147, 0.8),
-                0 0 40px rgba(255, 20, 147, 0.4),
-                inset 0 0 15px rgba(255, 20, 147, 0.2);
-            background: rgba(255, 20, 147, 0.15);
-            transform: scale(1.2);
-        }
-
-        .pride-flag-icon.active:hover {
-            filter: grayscale(0);
-            transform: scale(1.25);
+            border: 2px solid #FF1493;
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
         }
 
         .pride-info-btn {
@@ -293,92 +170,6 @@ st.markdown(
             padding: 0;
             height: auto;
             min-height: auto;
-            background: rgba(25, 35, 55, 0.95) !important;
-            color: rgba(255, 255, 255, 0.99) !important;
-            border: 1.5px solid rgba(80, 120, 180, 0.7) !important;
-            border-radius: 10px !important;
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.4),
-                inset 0 0 12px rgba(255, 255, 255, 0.04) !important;
-        }
-
-        .pride-info-btn:hover {
-            background: rgba(50, 70, 100, 0.98) !important;
-            border: 1.5px solid rgba(100, 150, 220, 0.9) !important;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.5),
-                inset 0 0 15px rgba(255, 255, 255, 0.06) !important;
-            transform: translateY(-2px) !important;
-        }
-
-        /* ========================================
-           MOBILE RESPONSIVE
-           ======================================== */
-        @media (max-width: 768px) {
-            .main-header {
-                font-size: 2rem;
-            }
-
-            .sub-header {
-                font-size: 0.95rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .stButton > button {
-                height: 180px !important;
-                font-size: 2.5rem !important;
-                border-radius: 10px;
-            }
-
-            .swipe-question {
-                font-size: 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .pride-flag-icon {
-                font-size: 40px;
-                padding: 6px;
-            }
-
-            .pride-flag-icon.active {
-                transform: scale(1.15);
-            }
-
-            .pride-flag-icon.active:hover {
-                transform: scale(1.2);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stButton > button {
-                height: 150px !important;
-                font-size: 2rem !important;
-                gap: 15px !important;
-            }
-
-            .main-header {
-                font-size: 1.5rem;
-            }
-
-            .pride-flag-icon {
-                font-size: 36px;
-                padding: 4px;
-            }
-
-            .swipe-question {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* ========================================
-           DARK MODE MEDIA QUERY OVERRIDE
-           ======================================== */
-        @media (prefers-color-scheme: dark) {
-            .main-header { color: rgba(255, 255, 255, 1) !important; }
-            .sub-header { color: rgba(255, 255, 255, 0.9) !important; }
-            [data-testid="stVerticalBlockBorderWrapper"] {
-                background: rgba(15, 15, 30, 0.35) !important;
-            }
         }
     </style>
     """,
