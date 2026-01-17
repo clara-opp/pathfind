@@ -476,7 +476,7 @@ def render_flight_search(
                                         traveler_counts_key,
                                         {"ADULT": 1, "CHILD": 0, "INFANT": 0},
                                     )
-                                    st.session_state.step = 7
+                                    st.session_state.step = 8
                                     st.rerun()
                                 else:
                                     st.error("Could not confirm price. Please select another flight!")
@@ -579,7 +579,7 @@ def show_booking_step(
 
                 if booking_res and "data" in booking_res:
                     st.session_state.confirmed_booking = booking_res
-                    st.session_state.step = 8
+                    st.session_state.step = 9
                     st.rerun()
                 else:
                     if booking_res and "errors" in booking_res:
@@ -609,7 +609,7 @@ def show_booking_step(
                         st.error("Booking failed. The flight may no longer be available or the connection timed out.")
 
     if st.button("← Back to Flight Results", use_container_width=True):
-        st.session_state.step = 6
+        st.session_state.step = 7
         st.rerun()
 
 
