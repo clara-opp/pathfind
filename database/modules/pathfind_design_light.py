@@ -1,8 +1,5 @@
 # ============================================================
-# pathfind_design_v2.py - CLOUD SAFE + BLUR BOXES
-# ============================================================
-# Production stable for Cloud Foundry + Local
-# No browser storage, responsive, blur containers
+# pathfind_design_v2.py - SIMPLE LIGHT DESIGN
 # ============================================================
 
 import streamlit as st
@@ -21,7 +18,7 @@ def get_img_as_base64(file_path: str) -> str:
         return ""
 
 
-def find_background_image(img_file: str = "background_light.jpg") -> str:
+def find_background_image(img_file: str = "background_light.png") -> str:
     """Find background image in multiple possible directories."""
     possible_dirs = [
         "personas",
@@ -45,7 +42,7 @@ def find_background_image(img_file: str = "background_light.jpg") -> str:
 
 
 def setup_complete_design() -> None:
-    """Setup dark design with blur boxes as main content containers."""
+    """Setup simple light design."""
     
     bin_str = find_background_image("background_light.png")
     if not bin_str:
@@ -55,10 +52,8 @@ def setup_complete_design() -> None:
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Mono:wght@700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-
-    /* App container background - FIXED NO SCROLL */
+    /* Background */
     [data-testid="stAppViewContainer"] {{
-        background-color: #0a0f1e !important;
         background-image: url("data:image/jpeg;base64,{bin_str}");
         background-size: cover;
         background-position: center;
@@ -66,9 +61,27 @@ def setup_complete_design() -> None:
         background-attachment: fixed;
     }}
 
-    /* ========================================
-       LOGO HEADER
-       ======================================== */
+    /* Text - Dark Blue */
+    body, .stMarkdown, span, label, p, div {{
+        color: rgba(20, 40, 80, 0.95) !important;
+        font-family: 'Poppins', sans-serif !important;
+    }}
+
+    h1, h2, h3, h4, h5, h6 {{
+        color: rgba(15, 35, 75, 1) !important;
+        font-weight: 600 !important;
+    }}
+
+    a {{
+        color: rgba(0, 80, 180, 1) !important;
+        font-weight: 600 !important;
+    }}
+
+    a:hover {{
+        color: rgba(0, 50, 150, 1) !important;
+    }}
+
+    /* Logo Header */
     .pathfind-header {{
         text-align: center;
         margin: 1.5rem 0 2rem 0;
@@ -84,15 +97,15 @@ def setup_complete_design() -> None:
         padding: 0;
         color: #FFFFFF;
         text-shadow: 
-            0 0 30px rgba(255, 215, 0, 0.9),
-            0 0 60px rgba(255, 215, 0, 0.5),
-            -3px 3px 0 rgba(0, 0, 0, 0.6);
-        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+            0 0 30px rgba(100, 180, 255, 0.8),
+            0 0 60px rgba(100, 180, 255, 0.4),
+            -3px 3px 0 rgba(0, 0, 0, 0.3);
+        filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.6));
         animation: logo-glow 2.5s ease-in-out infinite;
         display: inline-block;
         padding: 1.2rem 2.5rem;
-        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 255, 0, 0.05) 100%);
-        border: 2px solid rgba(255, 215, 0, 0.4);
+        background: linear-gradient(135deg, rgba(100, 180, 255, 0.15) 0%, rgba(120, 200, 255, 0.08) 100%);
+        border: 2px solid rgba(100, 180, 255, 0.4);
         border-radius: 18px;
         backdrop-filter: blur(10px);
     }}
@@ -110,18 +123,18 @@ def setup_complete_design() -> None:
 
     @keyframes logo-glow {{
         0%, 100% {{
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) brightness(1);
+            filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.6)) brightness(1);
             text-shadow: 
-                0 0 30px rgba(255, 215, 0, 0.9),
-                0 0 60px rgba(255, 215, 0, 0.5),
-                -3px 3px 0 rgba(0, 0, 0, 0.6);
+                0 0 30px rgba(100, 180, 255, 0.8),
+                0 0 60px rgba(100, 180, 255, 0.4),
+                -3px 3px 0 rgba(0, 0, 0, 0.3);
         }}
         50% {{
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9)) brightness(1.05);
+            filter: drop-shadow(0 0 25px rgba(100, 180, 255, 0.8)) brightness(1.05);
             text-shadow: 
-                0 0 40px rgba(255, 215, 0, 1),
-                0 0 80px rgba(255, 215, 0, 0.7),
-                -3px 3px 0 rgba(0, 0, 0, 0.6);
+                0 0 40px rgba(100, 180, 255, 0.9),
+                0 0 80px rgba(100, 180, 255, 0.5),
+                -3px 3px 0 rgba(0, 0, 0, 0.3);
         }}
     }}
 
@@ -130,7 +143,7 @@ def setup_complete_design() -> None:
         display: inline-block;
         margin-right: 0.8rem;
         animation: float-plane 3s ease-in-out infinite;
-        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+        filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.5));
     }}
 
     @keyframes float-plane {{
@@ -152,15 +165,15 @@ def setup_complete_design() -> None:
         font-family: 'Space Mono', monospace;
         font-size: 0.9rem;
         letter-spacing: 3px;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(20, 40, 80, 0.95);
         text-transform: uppercase;
         margin-top: 0.6rem;
         padding: 0.8rem 0;
-        border-top: 1px solid rgba(255, 215, 0, 0.25);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+        border-top: 1px solid rgba(100, 180, 255, 0.25);
+        border-bottom: 1px solid rgba(100, 180, 255, 0.25);
         font-weight: 600;
         animation: fade-in 1s ease-out 0.4s backwards;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3) !important;
     }}
 
     @keyframes fade-in {{
@@ -174,13 +187,14 @@ def setup_complete_design() -> None:
         }}
     }}
 
+    </style>
     """
 
     st.markdown(complete_css, unsafe_allow_html=True)
 
 
 def render_pathfind_header() -> None:
-    """Render PATHFIND header with blur container."""
+    """Render PATHFIND header."""
     st.markdown(
         '''
         <div class="pathfind-header">
@@ -193,4 +207,3 @@ def render_pathfind_header() -> None:
         ''',
         unsafe_allow_html=True,
     )
-
