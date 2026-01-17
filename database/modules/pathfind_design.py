@@ -1,6 +1,6 @@
 # ============================================================
-# pathfind_design.py - UNIFIED DARK DESIGN v10
-# FULLY WORKING FOR STREAMLIT CLOUD + LOCAL
+# pathfind_design.py - UNIFIED DARK DESIGN v11
+# WORKS ON CLOUD + LOCAL (NO ANIMATION - STATIC BLUR)
 # ============================================================
 
 import streamlit as st
@@ -44,12 +44,12 @@ def find_background_image(img_file="background.jpg"):
 
 def setup_complete_design():
     """
-    ULTIMATE DARK DESIGN v10 - PRODUCTION READY FOR CLOUD:
+    ULTIMATE DARK DESIGN v11 - PRODUCTION READY FOR CLOUD:
     - FORCE DARK MODE überall
-    - Dunkel Hintergrund mit Blur (nur Background, nicht Content)
+    - Dunkel Hintergrund mit STATIC BLUR (kein Animation!)
     - HELLER TEXT überall (Kontrast-optimiert)
     - DUNKEL BUTTONS - ALL STATES COVERED
-    - WORKS IDENTICALLY EVERYWHERE
+    - WORKS IDENTICALLY EVERYWHERE (Local + Cloud)
     - MOBILE RESPONSIVE
     """
     
@@ -73,7 +73,7 @@ def setup_complete_design():
     if bin_str:
         bg_css = f"""
     /* ========================================
-       BACKGROUND WITH IMAGE - BLURRED ONLY
+       BACKGROUND WITH IMAGE - STATIC BLUR
        ======================================== */
     html, body {{
         background-image: url("data:image/jpeg;base64,{bin_str}");
@@ -97,10 +97,9 @@ def setup_complete_design():
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        filter: blur(12px) brightness(0.7);
+        filter: blur(10px) brightness(0.7);
         opacity: 1;
-        z-index: -1;
-        pointer-events: none;
+        z-index: -2;
     }}
     
     [data-testid="stAppViewContainer"] {{
@@ -128,7 +127,7 @@ def setup_complete_design():
         width: 100%;
         height: 100%;
         background: rgba(10, 15, 30, 0.4);
-        z-index: -1;
+        z-index: -2;
         pointer-events: none;
     }}
     
