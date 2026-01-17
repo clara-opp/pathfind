@@ -77,8 +77,22 @@ def setup_complete_design() -> None:
         font-weight: 600 !important;
     }}
 
-    a:hover {{
-        color: rgba(0, 50, 150, 1) !important;
+    /* Buttons - Light Background */
+    button, .stButton button, [data-testid="stButton"] button {{
+        background: rgba(230, 240, 255, 0.95) !important;
+        color: rgba(20, 40, 80, 1) !important;
+        border: 1px solid rgba(100, 180, 255, 0.4) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        padding: 0.6rem 1.4rem !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }}
+
+    button:hover, .stButton button:hover, [data-testid="stButton"] button:hover {{
+        background: rgba(255, 255, 255, 1) !important;
+        border: 1px solid rgba(100, 180, 255, 0.7) !important;
+        box-shadow: 0 2px 8px rgba(100, 180, 255, 0.2) !important;
     }}
 
     /* Logo Header */
