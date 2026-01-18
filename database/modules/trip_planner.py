@@ -2,6 +2,8 @@ import os
 import re
 import json
 import requests
+import httpx
+import asyncio
 import streamlit as st
 import streamlit.components.v1 as components
 import concurrent.futures
@@ -16,26 +18,17 @@ from openai import OpenAI
 import polyline
 
 # ---------- Google Places API client ----------
-def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8):
-    """
-    Search for places using Google Places API (New).
-    ll: "lat,lon" string, e.g. "49.75,8.65"
-    """
+async def google_search_places(client: httpx.AsyncClient, query: str, ll: str, radius: int = 4000, limit: int = 5):
     api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
-    if not api_key:
-        raise RuntimeError("Missing GOOGLE_MAPS_API_KEY")
-    
-    url = "https://places.googleapis.com/v1/places:searchText"
-    
-    # Parse lat/lon
     lat_str, lon_str = ll.split(",")
     lat, lon = float(lat_str), float(lon_str)
+    url = "https://places.googleapis.com/v1/places:searchText"
     
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": api_key,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.websiteUri,places.nationalPhoneNumber,places.photos"
-    }
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types"
+     }
     
     data = {
         "textQuery": query,
@@ -50,18 +43,13 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
         },
         "maxResultCount": limit
     }
-    
+        
     try:
-        r = requests.post(url, headers=headers, json=data, timeout=30)
-        
-        if r.status_code != 200:
-            print(f"GOOGLE ERROR: {r.status_code} - {r.text}")
-            return {"error": True, "status": r.status_code, "body": r.text}
-        
+        r = await client.post(url, headers=headers, json=data, timeout=10.0)
+        r.raise_for_status()
         response_data = r.json()
-        results = []
-        
-        for p in response_data.get("places", []):
+        results = []        
+        for p in response_data.get("places", [] or []):
             # Construct photo URLs (up to 3)
             photo_urls = []            
             if p.get("photos"):
@@ -102,7 +90,7 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
         return {"error": False, "results": results}
     
     except Exception as e:
-        return {"error": True, "message": str(e)}
+        return {"error": True, "message": f"Google Places Error: {str(e)}", "results": []}
 
 
 # ---------- Helper: Google Routes API ----------
@@ -189,29 +177,27 @@ def get_route_osrm(coordinates):
     return []
 
 
-def serper_search_prices(query: str):
+async def serper_search_prices(client: httpx.AsyncClient, query: str):
     """Search the web for current prices, entrance fees, or menu costs."""
-    api_key = os.getenv("SERPER_API_KEY", "").strip()
-    if not api_key:
-        return {"error": "Missing SERPER_API_KEY"}
-    url = "https://google.serper.dev/search"
-    headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
     try:
-        r = requests.post(url, headers=headers, json={"q": query}, timeout=15)
-        res = r.json()
-        print(f"DEBUG: Serper API returned {len(res.get('organic', []))} organic results for query: {query}")
-        return res
+        api_key = os.getenv("SERPER_API_KEY", "").strip()
+        if not api_key:
+            return {"error": "Missing SERPER_API_KEY"}
+        r = await client.post("https://google.serper.dev/search", 
+                             headers={"X-API-KEY": api_key}, 
+                             json={"q": query})
+        return r.json()
     except Exception as e:
         return {"error": str(e)}
 
 
 # ---------- OpenAI tool-calling loop ----------
-def run_planner(messages, ll: str, radius: int, budget_eur: float):
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
-    found_places = []
-    
-    tools = [
-        {
+async def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str):
+    async with httpx.AsyncClient() as http_client:
+        ai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
+        found_places = []
+
+        tools = [        {
             "type": "function",
             "function": {
                 "name": "google_search_places",
@@ -242,7 +228,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget.\n"
             "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
             "- Return a JSON object with one key: 'itinerary'.\n"
-            "- 'itinerary' MUST be a list of objects. Each object MUST have: 'id' (the google place_id), 'time_range' (e.g. '09:00-10:30'), 'description' (one liner), and 'price' (numeric value in EUR).\n"
+            "- 'itinerary' MUST be a list of objects. Each object MUST have: 'id' (the google place_id), 'time_range' (e.g. '09:00-10:30'), 'description' (2-3 sentences), and 'price' (numeric value in {currency}).\n"
             "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
             ),
     }
@@ -250,7 +236,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
     context_msg = {
         "role": "user",
         "content": (
-            f"Context:\n- Budget: {budget_eur:.2f} EUR\n- Search center (ll): {ll}\n- Search radius: {radius} m\n\n"
+            f"Context:\n- Budget: {budget_val:.2f} {currency}\n- Search center (ll): {ll}\n- Search radius: {radius} m\n- Traveler Profile: {persona}\n\n"
             "Plan a day trip for today based on my preferences in this chat."
         ),
     }
@@ -258,7 +244,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
     convo = [system_msg] + messages + [context_msg]
     
     # --- Phase 1: Discovery (Get Search Queries) ---
-    resp = client.chat.completions.create(
+    resp = ai_client.chat.completions.create(
         model=st.session_state.model,
         messages=convo,
         tools=tools,
@@ -274,77 +260,63 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
     if tool_calls:
         print(f"DEBUG: AI requested {len(tool_calls)} tool calls: {[tc.function.name for tc in tool_calls]}")
 
-    if tool_calls:
         convo.append(
-            {
-                "role": "assistant",
-                "content": msg.content or "",
-                "tool_calls": [tc.model_dump() for tc in tool_calls],
-            }
-        )            
+        {
+            "role": "assistant",
+            "content": msg.content or "",
+            "tool_calls": [tc.model_dump() for tc in tool_calls],
+        }
+    )            
+        
+        async def execute_tool(tc):
+            fn = tc.function.name
+            args = json.loads(tc.function.arguments or "{}")
             
-        def execute_tool(tc):
-                fn = tc.function.name
-                args = json.loads(tc.function.arguments or "{}")
-                
-                if fn == "google_search_places":
-                    print(f"DEBUG: Executing Google Search: {args.get('query')}")
-                    out = google_search_places(
-                        query=args.get("query", ""),
-                        ll=args.get("ll", ll),
-                        radius=int(args.get("radius", radius)),
-                        limit=int(args.get("limit", 8)),
-                    )
-                    # Return places separately to update main list safely
-                    return tc.id, out, out.get("results", []) if not out.get("error") else []
-                else:
-                    return tc.id, {"error": True, "message": f"Unknown tool: {fn}"}, []
+            if fn == "google_search_places":
+                print(f"DEBUG: Executing Google Search: {args.get('query')}")
+                out = await google_search_places(http_client, **args)
+                # Return places separately to update main list safely
+                return tc.id, out, out.get("results", [])
+            else:
+                return tc.id, {"error": True, "message": f"Unknown tool: {fn}"}, []
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Execute in parallel, preserve order for conversation history
-            results = executor.map(execute_tool, tool_calls)
-            
-            for tc_id, out, new_places in results:
-                if new_places:
-                    found_places.extend(new_places)
-                convo.append({
-                    "role": "tool",
-                    "tool_call_id": tc_id,
-                    "content": json.dumps(out, ensure_ascii=False),
-                })
+        tasks = [execute_tool(tc) for tc in tool_calls]
+        results_list = await asyncio.gather(*tasks)
 
-        # --- Phase 2: Deterministic Enrichment (Price Search) ---
-        if found_places:
-            print(f"DEBUG: Deterministically searching prices for {len(found_places)} places...")
-            with concurrent.futures.ThreadPoolExecutor() as price_executor:
-                price_futures = {
-                    price_executor.submit(serper_search_prices, f"entrance fee price menu cost {p['name']} {p['address']}"): p 
-                    for p in found_places
-                }
-                enriched_data = []
-                for future in concurrent.futures.as_completed(price_futures):
-                    p = price_futures[future]
-                    res = future.result()
-                    enriched_data.append({"place": p['name'], "price_info": res.get("organic", [])[:3]})
+        for tc_id, out, new_places in results_list:
+            if new_places:
+                found_places.extend(new_places)
+            convo.append({
+                "role": "tool",
+                "tool_call_id": tc_id,
+                "content": json.dumps(out, ensure_ascii=False),
+            })
+
+            # --- Phase 2: Deterministic Enrichment (Price Search) ---
+            if found_places:
+                price_tasks = [serper_search_prices(http_client, f"price {p['name']} {p['address']}") 
+                              for p in found_places[:4]]
+                price_results = await asyncio.gather(*price_tasks)            
+                enriched_data = [
+                {"place": p['name'], "price_info": res.get("organic", [])[:2]}
+                for p, res in zip(found_places[:4], price_results)
+            ]
             
             convo.append({
                 "role": "system", 
                 "content": f"CRITICAL PRICE DATA: Use the following search results to determine the budget for your selected places: {json.dumps(enriched_data, ensure_ascii=False)}"
             })
 
-        # --- Phase 3: Synthesis (Generate Itinerary) ---
-        final_resp = client.chat.completions.create(
-            model=st.session_state.model,
-            messages=convo,
-            tools=tools,
-            tool_choice="none", # Force text generation, no more tools
-            response_format={"type": "json_object"},
-            stream=False,
-        )
-        return final_resp.choices[0].message.content or "", found_places
+            # --- Phase 3: Synthesis (Generate Itinerary) ---
+            stream = ai_client.chat.completions.create(
+                model=st.session_state.model,
+                messages=convo,
+                stream=True,
+            )
+            return stream, found_places
 
-    # If no tools were called in Phase 1, return the initial text
-    return (msg.content or "(No response text.)"), found_places
+        # If no tools were called in Phase 1, return the initial text
+        return (msg.content or "(No response text.)"), found_places
 
 
 # ---------- Streamlit UI ----------
@@ -597,47 +569,55 @@ def show_trip_planner():
         st.error("Missing GOOGLE_MAPS_API_KEY in environment/.env")
         st.stop()
     
-    with st.sidebar:
-        st.header("🌍Trip settings")
-        
-        with st.container(border=True):
-            country_list = sorted([c.name for c in pycountry.countries])
-            selected_country = st.selectbox("Select Country", options=country_list, index=country_list.index("Germany"))
+    # Settings moved from sidebar to main area so they only appear within this tab
+    with st.expander("🌍 Trip Settings", expanded=True):
+        # Strip names after commas normally, but for Congo only remove the comma to keep both republics distinct
+        name_to_code = {
+            (c.name.replace(',', '') if "Congo" in c.name else c.name.split(',')[0]): c.alpha_2 
+            for c in pycountry.countries
+        }
+        country_list = sorted(list(name_to_code.keys()))
+        # Set the default country to the one selected in the main travel planner
+        current_sel = st.session_state.get('selected_country', {}).get('country_name', 'Germany')
+        default_country_name = current_sel.replace(',', '') if "Congo" in current_sel else current_sel.split(',')[0]
+        default_country_idx = country_list.index(default_country_name) if default_country_name in country_list else 0
+        selected_country = st.selectbox("Select Country", options=country_list, index=default_country_idx)
             
-            gc = geonamescache.GeonamesCache()
-            country_obj = pycountry.countries.get(name=selected_country)
-            country_code = country_obj.alpha_2 if country_obj else "DE"
+        gc = geonamescache.GeonamesCache()
+        country_code = name_to_code.get(selected_country, "DE")
 
-            country_info = gc.get_countries().get(country_code)
-            capital_city = country_info.get('capital') if country_info else ""
-            
-            city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
-            city_list = sorted(list(set(city_data)))
-            
-            if city_list:
-                default_idx = city_list.index(capital_city) if capital_city in city_list else 0
-                selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
-            else:
-                selected_city = st.text_input("Type City Name", value="Berlin")
-            
-            geolocator = Nominatim(user_agent="day_trip_planner")
-            try:
-                location = geolocator.geocode(f"{selected_city}, {selected_country}", timeout=10)
-            except Exception as e:
-                st.warning(f"Geocoding service unavailable: {e}")
-                location = None
-            
-            if location:
-                ll = f"{location.latitude},{location.longitude}"
-            else:
-                st.error("Location not found. Using fallback.")
-                ll = "49.7500,8.6500"
-            
-            radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
-            budget = st.number_input("Budget (EUR)", min_value=0.0, value=40.0, step=5.0)
+        country_info = gc.get_countries().get(country_code)
+        capital_city = country_info.get('capital') if country_info else ""
         
-        if "model" not in st.session_state:
-            st.session_state.model = "gpt-5-nano-2025-08-07"
+        city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
+        city_list = sorted(list(set(city_data)))
+        
+        if city_list:
+            default_idx = city_list.index(capital_city) if capital_city in city_list else 0
+            selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
+        else:
+            selected_city = st.text_input("Type City Name", value="Berlin")
+        
+        geolocator = Nominatim(user_agent="day_trip_planner")
+        try:
+            search_country = selected_country.split(',')[0]
+            location = geolocator.geocode(f"{selected_city}, {search_country}", timeout=10)
+        except Exception as e:
+            st.warning(f"Geocoding service unavailable: {e}")
+            location = None
+        
+        if location:
+            ll = f"{location.latitude},{location.longitude}"
+        else:
+            st.error("Location not found. Using fallback.")
+            ll = "49.7500,8.6500"
+        
+        radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
+        currency_symbol = st.session_state.get('currency_symbol', '€')
+        budget = st.number_input(f"Budget ({currency_symbol})", min_value=0.0, value=40.0, step=5.0)
+    
+    if "model" not in st.session_state:
+        st.session_state.model = "gpt-5-nano-2025-08-07"
     
     # Chat state
     if "messages" not in st.session_state:
@@ -680,11 +660,30 @@ def show_trip_planner():
                             if m["role"] in ("user", "assistant")
                         ]
                         
-                        raw_json, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
+                        persona = st.session_state.get('selected_persona', 'General Traveler')
+                        # Bridge Sync Streamlit to Async Logic
+                        stream, places = asyncio.run(run_planner(planner_messages, ll, radius, budget, persona, currency_symbol))
+                        
+                        placeholder = st.empty()
+                        full_response = ""
+                        for chunk in stream:
+                            if chunk.choices[0].delta.content:
+                                full_response += chunk.choices[0].delta.content
+                                placeholder.markdown(full_response + "▌")
+                        placeholder.markdown(full_response)
+                        
+                        # Extract JSON from the finished stream
+                        data = {}
                         try:
-                            data = json.loads(raw_json)
-                        except:
-                            data = {}                                   
+                            # Find JSON block in the response
+                            json_match = re.search(r'\{.*\}', full_response, re.DOTALL)
+                            data = json.loads(json_match.group()) if json_match else {}
+
+                        except Exception:
+                            data = {}
+
+                            pass
+                                 
 
                         st.session_state.map_data = {"places": [], "center": ll}
                         itinerary_md = []
@@ -708,9 +707,9 @@ def show_trip_planner():
                                     itinerary_md.append(f"- **Description**: {desc}")
                                     itinerary_md.append(f"- **Price**: €{price}")
                                     itinerary_md.append("")
-                                    
+
                         # Define the answer by joining the markdown list
-                        answer = "\n".join(itinerary_md) if itinerary_md else raw_json      
+                        answer = full_response
 
                         st.markdown(answer)
                         st.session_state.messages.append({"role": "assistant", "content": answer})
