@@ -18,6 +18,7 @@ from modules.country_overview import render_country_overview
 from modules.persona_selector import render_persona_step
 from modules.trip_planner import show_trip_planner
 from modules.pathfind_design_light import setup_complete_design, render_pathfind_header
+from modules.auth_login_page import require_login, render_logout_button
 
 
 # ============================================================
@@ -251,24 +252,6 @@ WEIGHT_KEYS = [
     "hidden_gem", "astro", "jitter",
 ]
 
-SLIDER_HELP = {
-    "safety_tugo": "Prioritizes destinations with lower official travel risk based on travel advisories.",
-    "cost": "Favors destinations where everyday life is cheaper overall.",
-    "restaurant": "Prefers countries where eating out is relatively affordable.",
-    "groceries": "Prioritizes destinations with lower supermarket and grocery costs.",
-    "rent": "Favors countries with lower rental prices, especially for longer stays.",
-    "purchasing_power": "Prefers places where local income has stronger purchasing power.",
-    "qol": "Prioritizes destinations with higher overall living standards.",
-    "health_care": "Favors countries with stronger and more accessible healthcare systems.",
-    "clean_air": "Prioritizes destinations with lower pollution and better air quality.",
-    "culture": "Prefers countries rich in cultural heritage and historical sites.",
-    "weather": "Prioritizes destinations whose average climate matches your preferred temperature.",
-    "luxury_price": "Allows more expensive destinations to rank higher if they offer a premium or luxury experience.",
-    "hidden_gem": "Prefers less obvious destinations (few UNESCO + some controlled randomness).",
-    "astro": "Adds a playful, astrology-based influence to the ranking.",
-    "jitter": "Introduces controlled randomness to diversify otherwise similar results.",
-}
-
 # ============================================================
 # SMALL HELPERS
 # ============================================================
@@ -418,124 +401,6 @@ def _apply_caps_and_redistribute(out: dict, caps: dict, total_points: int) -> di
                     out[k] -= 1
                     drift_abs -= 1
     return out
-
-
-def enforce_sum_100_proportional(changed_key: str):
-    keys = WEIGHT_KEYS
-    if changed_key not in keys:
-        return
-
-    cur = {k: clamp_int(st.session_state.get(f"adv_{k}", 0)) for k in keys}
-    total = sum(cur.values())
-
-    if total <= 0:
-        for k in keys:
-            st.session_state[f"adv_{k}"] = 0
-        st.session_state[f"adv_{changed_key}"] = 100
-        return
-
-    if total == 100:
-        return
-
-    fixed = cur[changed_key]
-    others = [k for k in keys if k != changed_key]
-    candidates = [k for k in others if cur[k] > 0]
-
-    if not candidates:
-        for k in others:
-            st.session_state[f"adv_{k}"] = 0
-        st.session_state[f"adv_{changed_key}"] = 100
-        return
-
-    delta = 100 - total
-
-    if delta > 0:
-        add = _largest_remainder_allocation(
-            {k: float(cur[k]) for k in candidates},
-            delta,
-            caps={k: 100 - cur[k] for k in candidates},
-        )
-        for k in candidates:
-            cur[k] = clamp_int(cur[k] + int(add.get(k, 0)))
-    else:
-        remaining = -delta
-        pool = candidates[:]
-        while remaining > 0 and pool:
-            pool_sum = sum(cur[k] for k in pool)
-            if pool_sum <= 0:
-                break
-
-            rem_alloc = _largest_remainder_allocation(
-                {k: float(cur[k]) for k in pool},
-                remaining,
-                caps={k: cur[k] for k in pool},
-            )
-
-            removed = 0
-            for k in pool:
-                r = int(rem_alloc.get(k, 0))
-                if r > 0:
-                    cur[k] = clamp_int(cur[k] - r)
-                    removed += r
-
-            remaining -= removed
-            pool = [k for k in pool if cur[k] > 0]
-
-            if removed == 0 and remaining > 0 and pool:
-                k_star = max(pool, key=lambda kk: cur[kk])
-                cur[k_star] = clamp_int(cur[k_star] - 1)
-                remaining -= 1
-                pool = [k for k in pool if cur[k] > 0]
-
-    cur[changed_key] = fixed
-    drift = 100 - sum(cur.values())
-    if drift != 0:
-        if drift > 0:
-            for k in sorted(candidates, key=lambda kk: cur[kk], reverse=True):
-                if drift == 0:
-                    break
-                if cur[k] < 100:
-                    cur[k] += 1
-                    drift -= 1
-        else:
-            drift_abs = -drift
-            for k in sorted(candidates, key=lambda kk: cur[kk], reverse=True):
-                if drift_abs == 0:
-                    break
-                if cur[k] > 0:
-                    cur[k] -= 1
-                    drift_abs -= 1
-
-    if sum(cur.values()) <= 0:
-        cur = {k: 0 for k in keys}
-        cur[changed_key] = 100
-
-    for k in keys:
-        st.session_state[f"adv_{k}"] = int(clamp_int(cur[k]))
-
-
-def slider_row(label: str, key: str):
-    left, right = st.columns([0.88, 0.12], vertical_alignment="center")
-    with left:
-        st.markdown(f"**{label}**")
-    with right:
-        with st.popover("❓"):
-            st.markdown(
-                f"<div style='font-size: 1.10rem; line-height: 1.45;'>{SLIDER_HELP.get(key, '')}</div>",
-                unsafe_allow_html=True,
-            )
-
-    st.session_state.setdefault(f"adv_{key}", 0)
-    st.slider(
-        label="",
-        min_value=0,
-        max_value=100,
-        step=1,
-        key=f"adv_{key}",
-        label_visibility="collapsed",
-        on_change=enforce_sum_100_proportional,
-        args=(key,),
-    )
 
 
 def weights_to_unit(weights_100: dict) -> dict:
@@ -926,7 +791,7 @@ def show_basic_info_step(data_manager):
             if st.button(
                 f"{'🏳️‍🌈' if is_active else '🏳️'}",
                 key="lgbtq_toggle",
-                help="Toggle LGBTQ+ Safe Travel Filter",
+                help="LGBTQ+ Safe Travel Filter",
                 use_container_width=True
             ):
                 st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
@@ -944,7 +809,6 @@ def show_basic_info_step(data_manager):
     st.markdown("---")
 
     st.markdown("### What is your nationality?")
-    st.caption("This helps us show visa requirements for your destination")
     
     # Direktes Query der Datenbank für alle Länder
     conn = data_manager.get_connection()
@@ -972,10 +836,11 @@ def show_basic_info_step(data_manager):
         default_idx = country_names.index("Germany")
     
     selected_nationality_name = st.selectbox(
-        "Your nationality:",
+        "Select country of nationality",
         options=country_names,
         index=default_idx,
-        key="passport_nationality_select"
+        key="passport_nationality_select",
+        help="This helps us show visa requirements for your destination"
     )
     
     # Get ISO codes for selected nationality
@@ -1433,7 +1298,18 @@ def show_ban_list_step(data_manager):
 
 
 def show_results_step(data_manager):
-    st.markdown("### 🎉 Your Top Destinations!")
+    """Show results with Start Over button TOP RIGHT ONLY (no emoji, no back)"""
+    
+    # TOP NAV: Start Over (RIGHT ONLY)
+    nav_spacer, nav_col2 = st.columns([0.85, 0.15])
+    
+    with nav_col2:
+        if st.button("Start Over", key="results_start_over", use_container_width=True, help="Reset and begin again"):
+            st.session_state.step=1
+            st.rerun()
+    
+    # Main content
+    st.markdown("### Your Top Destinations!")
     st.caption("Based on your preferences and filters, here are your personalized matches.")
 
     with st.spinner("Analyzing the globe to find your perfect spot..."):
@@ -1553,7 +1429,7 @@ def show_results_step(data_manager):
                                 "Groceries": float(row.get("groceries_value_score", 0.0)) * float(w_unit.get("groceries", 0.0)),
                                 "Rent": float(row.get("rent_score", 0.0)) * float(w_unit.get("rent", 0.0)),
                                 "Purchasing power": float(row.get("purchasing_power_score", 0.0)) * float(w_unit.get("purchasing_power", 0.0)),
-                                "QoL": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
+                                "Quality of Life": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
                                 "Healthcare": float(row.get("health_care_score", 0.0)) * float(w_unit.get("health_care", 0.0)),
                                 "Clean Air": float(row.get("clean_air_score", 0.0)) * float(w_unit.get("clean_air", 0.0)),
                                 "Culture": float(row.get("culture_score", 0.0)) * float(w_unit.get("culture", 0.0)),
@@ -1561,7 +1437,7 @@ def show_results_step(data_manager):
                                 "Luxury": float(row.get("luxury_price_score", 0.0)) * float(w_unit.get("luxury_price", 0.0)),
                                 "Hidden Gem": float(row.get("hidden_gem_score", 0.0)) * float(w_unit.get("hidden_gem", 0.0)),
                                 "Astro": float(row.get("astro_score", 0.0)) * float(w_unit.get("astro", 0.0)),
-                                "Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
+                                "Chaos Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
                             }
                             for cat, val in sorted(contrib.items(), key=lambda x: x[1], reverse=True):
                                 if val > 0.001:
@@ -1581,30 +1457,17 @@ def show_results_step(data_manager):
                         st.session_state.step = 7
                         st.rerun()
 
-        if st.button("🔄 Start Over"):
-            st.session_state.clear()
-            st.rerun()
-
 
 def show_dashboard_step(data_manager):
-    """Country dashboard with overview, chatbot, and PDF"""
+    """Country dashboard with Back & Start Over buttons TOP CORNERS"""
+    
     country = st.session_state.get('selected_country')
     if not country:
         st.error("No country selected. Please go back to results.")
-        if st.button("← Back to Results"):
+        if st.button("Back to Results"):
             st.session_state.step = 6
             st.rerun()
         return
-
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        if st.button("← Back to Results", use_container_width=True):
-            st.session_state.step = 6
-            st.rerun()
-    with col2:
-        if st.button("🔄 Start Over", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
 
     st.markdown("---")
 
@@ -1617,7 +1480,6 @@ def show_dashboard_step(data_manager):
         amadeus_api_secret=AMADEUS_API_SECRET,
         trip_planner_render=show_trip_planner
     )
-
 # ============================================================
 # APP ROUTER
 # ============================================================
@@ -1635,6 +1497,7 @@ def run_app():
         redirect_uri=REDIRECT_URI,
     )
 
+    require_login()
 
     step = st.session_state.step
 
