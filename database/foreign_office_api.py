@@ -70,9 +70,9 @@ def collect(limit: Optional[int] = None) -> List[Dict[str, Any]]:
         print(f"[{idx:3d}/{total}] Fetching {cid}...", end=' ', flush=True)
         try:
             detail = get_json(f"/travelwarning/{cid}")
-            print("✓")
+            print("OK")
         except Exception as e:
-            print(f"✗ {e}")
+            print(f"FAILED {e}")
             continue
 
         country_name = (
@@ -117,7 +117,7 @@ def collect(limit: Optional[int] = None) -> List[Dict[str, Any]]:
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(rows, f, ensure_ascii=False, indent=2)
 
-    print(f"✓ Saved to: {OUT_PATH}")
+    print(f" Saved to: {OUT_PATH}")
     print(f"File size: {OUT_PATH.stat().st_size / 1024:.2f} KB")
     print("="*60)
 

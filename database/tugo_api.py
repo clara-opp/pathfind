@@ -67,7 +67,7 @@ def fetch_country(country_code):
         else:
             return None
     except Exception as e:
-        print(f"  ✗ Error fetching {country_code}: {e}")
+        print(f"  FAIL: Error fetching {country_code}: {e}")
         return None
 
 
@@ -91,10 +91,10 @@ def main():
         if data:
             all_data.append(data)
             successful += 1
-            print("✓")
+            print("OK")
         else:
             failed += 1
-            print("✗")
+            print("FAILED")
 
         # Rate limiting - be nice to the API
         time.sleep(0.1)
