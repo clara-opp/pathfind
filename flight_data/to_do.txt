@@ -1,20 +1,14 @@
-0. Fix flight search: should show image diashow of the destination country: why does that currently not work? Booking does also not work, when I click on the booking button the streamlit app renders but I do not get to the next booking step. What is the issue?
+1.0 Change origin airports selection so that it shows all airports not only the most important one for each country. Note that the default selected airport should still be the most important airport of the country the user is located in.
 
-1. Make the round-trip selection in flight search configuration smaller
-
-1.1 Change origin airports selection so that it shows all airports not only the most important one for each country. Note that the default selected airport should still be the most important airport of the country the user is located in.
+1.1 Fix estimated flight costs information icon (to include that the costs are for a round trip flight with one adult)
 
 2. Activity Planner (should be the tab next to flight search)
     1. Provide the chatbot with all the information the user already entered, e.g. travel profile, swiping cards, destination country. Then let the chatbot plan 3 unique days based on that information. The computation and API calls should start as soon as the user presses the "View Details" button for the top destination results so that the results for the planned 3 unique days are ready as soon as the user navigates to the activity planner tab. The total costs of the trip should be shown as well as the number of adults and children the trip was planned for (leave out infants because they usually don't cost anything).
     Extras:
-        - Add debug statements to check whether the web_search_api returned prices or not
         - Use Google Routes API to generate travel time by foot, car and public transport
 
 3. Downloadable results for the activity planner (which format? pdf? google maps?)
 
-4. Input for activity planner: traveler profiles + swipe results + destination country
+4. Add links for the created google calendar events for the flight booking
 
-5. General:
-- ask for travel time at the beginning and use for all other applications (i.e. flight panner and activity planner) --> same for number of travelers (note that for some travel profiles we can already infer the number of travelers, e.g. Adventurous Solo = 1 traveler, honeymoon = 2 travelers)
-
-6. Add links for the created google calendar events for the flight booking
+5. Add all used APIs to the impressum

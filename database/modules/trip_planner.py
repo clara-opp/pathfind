@@ -1,6 +1,6 @@
 import os
-import re
 import json
+import unicodedata
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
@@ -206,7 +206,7 @@ def serper_search_prices(query: str):
 
 
 # ---------- OpenAI tool-calling loop ----------
-def run_planner(messages, ll: str, radius: int, budget_eur: float):
+def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
     found_places = []
     
@@ -242,7 +242,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
             "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget.\n"
             "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
             "- Return a JSON object with one key: 'itinerary'.\n"
-            "- 'itinerary' MUST be a list of objects. Each object MUST have: 'id' (the google place_id), 'time_range' (e.g. '09:00-10:30'), 'description' (one liner), and 'price' (numeric value in EUR).\n"
+            "- 'itinerary' MUST be a list of objects. Each object MUST have: 'id' (the google place_id), 'time_range' (e.g. '09:00-10:30'), 'description' (2-3 sentences), and 'price' (numeric value in {currency}).\n"
             "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
             ),
     }
@@ -250,7 +250,7 @@ def run_planner(messages, ll: str, radius: int, budget_eur: float):
     context_msg = {
         "role": "user",
         "content": (
-            f"Context:\n- Budget: {budget_eur:.2f} EUR\n- Search center (ll): {ll}\n- Search radius: {radius} m\n\n"
+            f"Context:\n- Budget: {budget_val:.2f} {currency}\n- Search center (ll): {ll}\n- Search radius: {radius} m\n- Traveler Profile: {persona}\n\n"
             "Plan a day trip for today based on my preferences in this chat."
         ),
     }
@@ -597,47 +597,64 @@ def show_trip_planner():
         st.error("Missing GOOGLE_MAPS_API_KEY in environment/.env")
         st.stop()
     
-    with st.sidebar:
-        st.header("🌍Trip settings")
-        
-        with st.container(border=True):
-            country_list = sorted([c.name for c in pycountry.countries])
-            selected_country = st.selectbox("Select Country", options=country_list, index=country_list.index("Germany"))
+    # Settings moved from sidebar to main area so they only appear within this tab
+    with st.expander("🌍 Trip Settings", expanded=True):
+        # Strip names after commas normally, but for Congo only remove the comma to keep both republics distinct
+        name_to_code = {
+            (c.name.replace(',', '') if "Congo" in c.name else c.name.split(',')[0]): c.alpha_2 
+            for c in pycountry.countries
+        }
+        country_list = sorted(list(name_to_code.keys()))
+        # Set the default country to the one selected in the main travel planner
+        current_sel = st.session_state.get('selected_country', {}).get('country_name', 'Germany')
+        default_country_name = current_sel.replace(',', '') if "Congo" in current_sel else current_sel.split(',')[0]
+        default_country_idx = country_list.index(default_country_name) if default_country_name in country_list else 0
+        selected_country = st.selectbox("Select Country", options=country_list, index=default_country_idx)
             
-            gc = geonamescache.GeonamesCache()
-            country_obj = pycountry.countries.get(name=selected_country)
-            country_code = country_obj.alpha_2 if country_obj else "DE"
+        gc = geonamescache.GeonamesCache()
+        country_code = name_to_code.get(selected_country, "DE")
 
-            country_info = gc.get_countries().get(country_code)
-            capital_city = country_info.get('capital') if country_info else ""
-            
-            city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
-            city_list = sorted(list(set(city_data)))
-            
-            if city_list:
-                default_idx = city_list.index(capital_city) if capital_city in city_list else 0
-                selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
-            else:
-                selected_city = st.text_input("Type City Name", value="Berlin")
-            
-            geolocator = Nominatim(user_agent="day_trip_planner")
-            try:
-                location = geolocator.geocode(f"{selected_city}, {selected_country}", timeout=10)
-            except Exception as e:
-                st.warning(f"Geocoding service unavailable: {e}")
-                location = None
-            
-            if location:
-                ll = f"{location.latitude},{location.longitude}"
-            else:
-                st.error("Location not found. Using fallback.")
-                ll = "49.7500,8.6500"
-            
-            radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
-            budget = st.number_input("Budget (EUR)", min_value=0.0, value=40.0, step=5.0)
+        country_info = gc.get_countries().get(country_code)
+        capital_city = country_info.get('capital') if country_info else ""
         
-        if "model" not in st.session_state:
-            st.session_state.model = "gpt-5-nano-2025-08-07"
+        city_data = [c['name'] for c in gc.get_cities().values() if c['countrycode'] == country_code]
+        city_list = sorted(list(set(city_data)))
+        
+        if city_list:
+            # Normalize function to strip accents (e.g., Brasília -> brasilia)
+            norm = lambda s: ''.join(c for c in unicodedata.normalize('NFD', s or "") if unicodedata.category(c) != 'Mn').lower()
+            objs = [c for c in gc.get_cities().values() if c['countrycode'] == country_code]
+            # 1. Try exact name match, 2. Try normalized match, 3. Fallback to largest city
+            best = next((c['name'] for c in objs if c['name'] == capital_city), None)
+            if not best:
+                best = next((c['name'] for c in objs if norm(c['name']) == norm(capital_city)), None)
+            if not best and objs:
+                best = max(objs, key=lambda x: x['population'])['name']
+            default_idx = city_list.index(best) if best in city_list else 0
+            selected_city = st.selectbox("Select City", options=city_list, index=default_idx)
+        else:
+            selected_city = st.text_input("Type City Name", value="Berlin")
+        
+        geolocator = Nominatim(user_agent="day_trip_planner")
+        try:
+            search_country = selected_country.split(',')[0]
+            location = geolocator.geocode(f"{selected_city}, {search_country}", timeout=10)
+        except Exception as e:
+            st.warning(f"Geocoding service unavailable: {e}")
+            location = None
+        
+        if location:
+            ll = f"{location.latitude},{location.longitude}"
+        else:
+            st.error("Location not found. Using fallback.")
+            ll = "49.7500,8.6500"
+        
+        radius = st.slider("Search radius (m)", 500, 20000, 5000, step=500)
+        currency_symbol = st.session_state.get('currency_symbol', '€')
+        budget = st.number_input(f"Budget ({currency_symbol})", min_value=0.0, value=40.0, step=5.0)
+    
+    if "model" not in st.session_state:
+        st.session_state.model = "gpt-5-nano-2025-08-07"
     
     # Chat state
     if "messages" not in st.session_state:
@@ -680,7 +697,8 @@ def show_trip_planner():
                             if m["role"] in ("user", "assistant")
                         ]
                         
-                        raw_json, places = run_planner(planner_messages, ll=ll, radius=radius, budget_eur=budget)
+                        persona = st.session_state.get('selected_persona', 'General Traveler')
+                        raw_json, places = run_planner(planner_messages, ll=ll, radius=radius, budget_val=budget, persona=persona, currency=currency_symbol)
                         try:
                             data = json.loads(raw_json)
                         except:
@@ -708,7 +726,7 @@ def show_trip_planner():
                                     itinerary_md.append(f"- **Description**: {desc}")
                                     itinerary_md.append(f"- **Price**: €{price}")
                                     itinerary_md.append("")
-                                    
+
                         # Define the answer by joining the markdown list
                         answer = "\n".join(itinerary_md) if itinerary_md else raw_json      
 

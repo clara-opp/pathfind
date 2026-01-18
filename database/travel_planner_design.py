@@ -28,14 +28,13 @@ st.set_page_config(page_title="Pathfind - your personal travel planner", page_ic
 setup_complete_design()
 render_pathfind_header()
 
-
 AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
 AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-TRAVEL_BUDDY_API_KEY= os.getenv("TRAVEL_BUDDY_API_KEY")
 REDIRECT_URI = "http://localhost:8501"
+
 
 #  ============================================================
 # STYLES
@@ -368,8 +367,6 @@ def _largest_remainder_allocation(shares_float: dict, total_points: int, caps: d
                 drift_abs -= take
 
     return out
-
-
 
 
 def _apply_caps_and_redistribute(out: dict, caps: dict, total_points: int) -> dict:
@@ -941,54 +938,7 @@ def show_basic_info_step(data_manager):
                 
                 *Note: Data-based guidance only. Not a guarantee of individual safety.*
                 """)
-    st.markdown("---")
 
-    st.markdown("### What is your nationality?")
-    st.caption("This helps us show visa requirements for your destination")
-    
-    # Direktes Query der Datenbank für alle Länder
-    conn = data_manager.get_connection()
-    try:
-        countries_df = pd.read_sql(
-            "SELECT DISTINCT iso2, iso3, country_name FROM countries ORDER BY country_name ASC",
-            conn
-        )
-    except Exception as e:
-        st.error(f"Error loading countries: {e}")
-        countries_df = pd.DataFrame()
-    finally:
-        conn.close()
-    
-    if countries_df.empty:
-        st.error("Could not load countries from database")
-        return
-    
-    # Create selectbox with country names
-    country_names = countries_df["country_name"].tolist()
-    
-    # Set default index to Germany if available
-    default_idx = 0
-    if "Germany" in country_names:
-        default_idx = country_names.index("Germany")
-    
-    selected_nationality_name = st.selectbox(
-        "Your nationality:",
-        options=country_names,
-        index=default_idx,
-        key="passport_nationality_select"
-    )
-    
-    # Get ISO codes for selected nationality
-    if selected_nationality_name:
-        selected_row = countries_df[countries_df["country_name"] == selected_nationality_name]
-        if not selected_row.empty:
-            passport_iso2 = selected_row.iloc[0]["iso2"]
-            passport_iso3 = selected_row.iloc[0]["iso3"]
-            st.session_state['passport_iso2'] = passport_iso2
-            st.session_state['passport_iso3'] = passport_iso3
-            st.session_state['nationality_name'] = selected_nationality_name
-    
-    st.markdown("---")
 
     # Vacation dates
     st.markdown("### When is your vacation?")

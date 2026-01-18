@@ -11,6 +11,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
+from modules.visa_functions import render_visa_requirements
 
 
 def render_country_overview(country, data_manager, openai_client, amadeus, amadeus_api_key, amadeus_api_secret, trip_planner_render=None):
@@ -183,6 +184,10 @@ def render_overview_tab(country, data_manager):
     st.markdown("### ✨ Key Highlights")
     render_highlight_cards(country)
     
+    st.markdown("---")
+
+    render_visa_requirements(country)
+
     st.markdown("---")
     
     # Just show the tip without the full Quick Reference section
