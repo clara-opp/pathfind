@@ -1052,7 +1052,7 @@ def show_swiping_step():
         return
 
     idx = st.session_state.card_index
-    st.markdown(f"### Swipe to Refine Your Choices ({idx + 1}/{len(cards)})")
+    st.markdown(f"### Swipe to Refine Your Choices")
     st.progress(min((idx + 1) / len(cards), 1.0))
 
     card = cards[idx]
@@ -1463,7 +1463,54 @@ def show_results_step(data_manager):
                 st.info(f"🚫 Filtered out {beforecount - aftercount} destinations from banned regions.")
 
         if all_continents_banned:
-            st.info("🏝️ We do not have any travel destinations outside of this earth, but maybe one of the following islands would suit your travel preferences.")
+            st.info("🏝️ We do not have any travel destinations outside of this earth, but maybe you like one of the following islands. If you want to skip the algorithm entirely, just select your country of choice here.")
+            
+            # Load all countries from database
+            conn = data_manager.get_connection()
+            try:
+                all_countries_df = pd.read_sql(
+                    "SELECT DISTINCT iso2, iso3, country_name FROM countries ORDER BY country_name ASC",
+                    conn
+                )
+            except Exception as e:
+                st.error(f"Error loading countries: {e}")
+                all_countries_df = pd.DataFrame()
+            finally:
+                conn.close()
+            
+            if not all_countries_df.empty:
+                col_dropdown, col_button = st.columns([3, 1])
+                
+                with col_dropdown:
+                    country_names = all_countries_df["country_name"].tolist()
+                    selected_country_name = st.selectbox(
+                        "Select a country",
+                        options=[""] + country_names,
+                        key="direct_country_select",
+                        label_visibility="collapsed"
+                    )
+                
+                with col_button:
+                    if selected_country_name and selected_country_name != "":
+                        if st.button("Go to Country", use_container_width=True, key="goto_direct_country"):
+                            # Get the full row for selected country
+                            selected_row = all_countries_df[all_countries_df["country_name"] == selected_country_name]
+                            
+                            if not selected_row.empty:
+                                iso2 = selected_row.iloc[0]["iso2"]
+                                
+                                # Load full data for this specific country
+                                dfbase_full = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
+                                country_data = dfbase_full[dfbase_full["iso2"] == iso2]
+                                
+                                if not country_data.empty:
+                                    st.session_state["selected_country"] = country_data.iloc[0].to_dict()
+                                    st.session_state.step = 7
+                                    st.rerun()
+                                else:
+                                    st.error(f"Could not load data for {selected_country_name}")
+            
+            st.markdown("---")
 
         dfbase = dedupe_one_row_per_country(dfbase)
         matcher = TravelMatcher(dfbase)

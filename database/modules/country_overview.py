@@ -32,7 +32,7 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
         "💰 Budget Planner",
         "🗺️ Plan Trips",
         "✈️ Book Flights",
-        "🤖 AI Assistant", 
+        "🌐 AI Assistant", 
         "📄 Download PDF"
     ])
     
@@ -395,7 +395,7 @@ def render_budget_tab(country, data_manager):
 
 def render_chatbot_tab(country, openai_client):
     """AI-powered trip planning chatbot"""
-    st.markdown("### 🤖 Your AI Travel Assistant")
+    st.markdown("### 🌐 Your AI Travel Assistant")
     
     # ✅ Get all data FIRST before using it
     persona = st.session_state.get('selected_persona', 'Traveler')
@@ -431,8 +431,8 @@ def render_chatbot_tab(country, openai_client):
         st.session_state[chat_key].append({
             "role": "assistant",
             "content": f"Hi! I'm your AI assistant for **{country['country_name']}**! I can help you with:\n\n"
-                    "- 📍 Day-by-day itineraries matched to your interests\n"
-                    "- 🍽️ Restaurants & attractions fitting your style\n"
+                    "- 🌡️ Climate patterns and best times to visit\n"
+                    "- 🍽️ Food culture and regional specialties\n"
                     "- 🚇 Transportation tips for your pace\n"
                     "- 💡 Safety advice & cultural tips\n\n"
                     "What would you like to explore first?"
