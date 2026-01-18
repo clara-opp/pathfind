@@ -33,12 +33,6 @@ def get_valid_credentials():
     
     if credentials:
         return credentials
-    
-    # Default for testing (CHANGE IN PRODUCTION!)
-    return {
-        "admin": "admin123",
-        "demo": "demo123"
-    }
 
 
 def init_auth_session():
