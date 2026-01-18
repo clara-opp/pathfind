@@ -18,6 +18,7 @@ from modules.country_overview import render_country_overview
 from modules.persona_selector import render_persona_step
 from modules.trip_planner import show_trip_planner
 from modules.pathfind_design_light import setup_complete_design, render_pathfind_header
+from modules.auth_login_page import require_login, render_logout_button
 
 
 # ============================================================
@@ -1304,7 +1305,7 @@ def show_results_step(data_manager):
     
     with nav_col2:
         if st.button("Start Over", key="results_start_over", use_container_width=True, help="Reset and begin again"):
-            st.session_state.clear()
+            st.session_state.step=1
             st.rerun()
     
     # Main content
@@ -1496,6 +1497,7 @@ def run_app():
         redirect_uri=REDIRECT_URI,
     )
 
+    require_login()
 
     step = st.session_state.step
 

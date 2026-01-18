@@ -31,7 +31,7 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
     
     with nav_col2:
         if st.button("Start Over", key="dashboard_start_over", use_container_width=True, help="Reset and begin again"):
-            st.session_state.clear()
+            st.session_state.step=1
             st.rerun()
     
     st.markdown("---")
