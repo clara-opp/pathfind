@@ -15,28 +15,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_valid_credentials():
-    """
-    Get credentials from Streamlit secrets or environment variables
-    
-    DEVELOPMENT (.streamlit/secrets.toml):
-    [credentials]
-    users = {
-        "admin" = "admin123",
-        "demo" = "demo123"
-    }
-    
-    PRODUCTION (Streamlit Cloud / Environment):
-    Set in Streamlit Cloud Settings → Secrets:
-    users = {
-        "admin" = "admin123",
-        "demo" = "demo123"
-    }
-    
-    Or as environment variables:
-    LOGIN_ADMIN=admin123
-    LOGIN_DEMO=demo123
-    """
-    
     # Try Streamlit secrets first
     try:
         if "credentials" in st.secrets:
@@ -226,13 +204,13 @@ def render_login_page():
             """, unsafe_allow_html=True)
             
             username = st.text_input(
-                "👤 Username",
+                "Username",
                 placeholder="Enter your username",
                 key="login_username"
             )
             
             password = st.text_input(
-                "🔐 Password",
+                "Password",
                 type="password",
                 placeholder="Enter your password",
                 key="login_password"
