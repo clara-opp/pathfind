@@ -926,7 +926,7 @@ def show_basic_info_step(data_manager):
             if st.button(
                 f"{'🏳️‍🌈' if is_active else '🏳️'}",
                 key="lgbtq_toggle",
-                help="Toggle LGBTQ+ Safe Travel Filter",
+                help="LGBTQ+ Safe Travel Filter",
                 use_container_width=True
             ):
                 st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
@@ -944,7 +944,6 @@ def show_basic_info_step(data_manager):
     st.markdown("---")
 
     st.markdown("### What is your nationality?")
-    st.caption("This helps us show visa requirements for your destination")
     
     # Direktes Query der Datenbank für alle Länder
     conn = data_manager.get_connection()
@@ -972,10 +971,11 @@ def show_basic_info_step(data_manager):
         default_idx = country_names.index("Germany")
     
     selected_nationality_name = st.selectbox(
-        "Your nationality:",
+        "Select country of nationality",
         options=country_names,
         index=default_idx,
-        key="passport_nationality_select"
+        key="passport_nationality_select",
+        help="This helps us show visa requirements for your destination"
     )
     
     # Get ISO codes for selected nationality
@@ -1433,7 +1433,18 @@ def show_ban_list_step(data_manager):
 
 
 def show_results_step(data_manager):
-    st.markdown("### 🎉 Your Top Destinations!")
+    """Show results with Start Over button TOP RIGHT ONLY (no emoji, no back)"""
+    
+    # TOP NAV: Start Over (RIGHT ONLY)
+    nav_spacer, nav_col2 = st.columns([0.85, 0.15])
+    
+    with nav_col2:
+        if st.button("Start Over", key="results_start_over", use_container_width=True, help="Reset and begin again"):
+            st.session_state.clear()
+            st.rerun()
+    
+    # Main content
+    st.markdown("### Your Top Destinations!")
     st.caption("Based on your preferences and filters, here are your personalized matches.")
 
     with st.spinner("Analyzing the globe to find your perfect spot..."):
@@ -1506,7 +1517,7 @@ def show_results_step(data_manager):
                                 "Groceries": float(row.get("groceries_value_score", 0.0)) * float(w_unit.get("groceries", 0.0)),
                                 "Rent": float(row.get("rent_score", 0.0)) * float(w_unit.get("rent", 0.0)),
                                 "Purchasing power": float(row.get("purchasing_power_score", 0.0)) * float(w_unit.get("purchasing_power", 0.0)),
-                                "QoL": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
+                                "Quality of Life": float(row.get("qol_score", 0.0)) * float(w_unit.get("qol", 0.0)),
                                 "Healthcare": float(row.get("health_care_score", 0.0)) * float(w_unit.get("health_care", 0.0)),
                                 "Clean Air": float(row.get("clean_air_score", 0.0)) * float(w_unit.get("clean_air", 0.0)),
                                 "Culture": float(row.get("culture_score", 0.0)) * float(w_unit.get("culture", 0.0)),
@@ -1514,7 +1525,7 @@ def show_results_step(data_manager):
                                 "Luxury": float(row.get("luxury_price_score", 0.0)) * float(w_unit.get("luxury_price", 0.0)),
                                 "Hidden Gem": float(row.get("hidden_gem_score", 0.0)) * float(w_unit.get("hidden_gem", 0.0)),
                                 "Astro": float(row.get("astro_score", 0.0)) * float(w_unit.get("astro", 0.0)),
-                                "Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
+                                "Chaos Jitter": float(row.get("jitter_score", 0.0)) * float(w_unit.get("jitter", 0.0)),
                             }
                             for cat, val in sorted(contrib.items(), key=lambda x: x[1], reverse=True):
                                 if val > 0.001:
@@ -1534,30 +1545,17 @@ def show_results_step(data_manager):
                         st.session_state.step = 7
                         st.rerun()
 
-        if st.button("🔄 Start Over"):
-            st.session_state.clear()
-            st.rerun()
-
 
 def show_dashboard_step(data_manager):
-    """Country dashboard with overview, chatbot, and PDF"""
+    """Country dashboard with Back & Start Over buttons TOP CORNERS"""
+    
     country = st.session_state.get('selected_country')
     if not country:
         st.error("No country selected. Please go back to results.")
-        if st.button("← Back to Results"):
+        if st.button("Back to Results"):
             st.session_state.step = 6
             st.rerun()
         return
-
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        if st.button("← Back to Results", use_container_width=True):
-            st.session_state.step = 6
-            st.rerun()
-    with col2:
-        if st.button("🔄 Start Over", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
 
     st.markdown("---")
 
@@ -1570,7 +1568,6 @@ def show_dashboard_step(data_manager):
         amadeus_api_secret=AMADEUS_API_SECRET,
         trip_planner_render=show_trip_planner
     )
-
 # ============================================================
 # APP ROUTER
 # ============================================================
