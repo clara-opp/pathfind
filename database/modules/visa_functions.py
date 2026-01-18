@@ -185,8 +185,7 @@ def render_visa_requirements(country: Dict, passport_iso2: Optional[str] = None)
     mandatory_reg_name = visa_info.get("mandatory_registration")
     
     if primary_link or mandatory_reg_link:
-        with st.container(border=True):
-            st.markdown("#### 🔗 Important Links")
+        with st.expander("🔗 Important Links"): 
             
             if primary_link:
                 st.markdown(f"**📧 Apply for Visa**")

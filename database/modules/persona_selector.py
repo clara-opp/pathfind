@@ -511,11 +511,31 @@ def render_persona_step(datamanager):
             "jitter": "Chaos Jitter"
         }
         
+        slider_help = {
+            "safety_tugo": "Prioritizes destinations with lower official travel risk based on travel advisories.",
+            "cost": "Favors destinations where everyday life is cheaper overall.",
+            "restaurant": "Prefers countries where eating out is relatively affordable.",
+            "groceries": "Prioritizes destinations with lower supermarket and grocery costs.",
+            "rent": "Favors countries with lower rental prices, especially for longer stays.",
+            "purchasing_power": "Prefers places where local income has stronger purchasing power.",
+            "qol": "Prioritizes destinations with higher overall living standards.",
+            "health_care": "Favors countries with stronger and more accessible healthcare systems.",
+            "clean_air": "Prioritizes destinations with lower pollution and better air quality.",
+            "culture": "Prefers countries rich in cultural heritage and historical sites.",
+            "weather": "Prioritizes destinations whose average climate matches your preferred temperature.",
+            "luxury_price": "Allows more expensive destinations to rank higher if they offer a premium or luxury experience.",
+            "hidden_gem": "Prefers less obvious destinations (few UNESCO + some controlled randomness).",
+            "astro": "Adds a playful, astrology-based influence to the ranking.",
+            "jitter": "Introduces controlled randomness to diversify otherwise similar results.",
+        }
+        
         # Render sliders in exact WEIGHT_KEYS order
         for key in WEIGHT_KEYS:
             label = slider_labels.get(key, key.replace('_', ' ').title())
+            help_text = slider_help.get(key, "")
             
-            col_label, col_slider = st.columns([0.20, 0.80], vertical_alignment="center")
+            # Layout: Label | Slider (with built-in help) | Info icon
+            col_label, col_slider, col_info = st.columns([0.18, 0.75, 0.07], vertical_alignment="center")
             
             with col_label:
                 st.markdown(f"**{label}**")
@@ -528,8 +548,14 @@ def render_persona_step(datamanager):
                     key=f"adv_{key}",
                     label_visibility="collapsed",
                     on_change=enforce_sum_100_proportional,
-                    args=(key, WEIGHT_KEYS)
+                    args=(key, WEIGHT_KEYS),
+                    help=help_text  # ← Tooltip appears on slider
                 )
+            
+            with col_info:
+                # Clickable info icon with same help text
+                with st.popover("ℹ️"):
+                    st.caption(help_text)
         
         st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
         
@@ -543,7 +569,7 @@ def render_persona_step(datamanager):
         
         with col_r:
             if st.button("🔄 Reset to Persona Defaults", use_container_width=True, key="reset_btn"):
-                # Delete ONLY the slider keys, NOT the profile_index or last_profile_idx
+                # Delete ONLY the slider keys
                 keys_to_delete = [k for k in st.session_state.keys() if k.startswith("adv_")]
                 for k in keys_to_delete:
                     del st.session_state[k]

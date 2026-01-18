@@ -12,17 +12,27 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from modules.visa_functions import render_visa_requirements
+from modules.weather_box import render_weather_box
 
 
 def render_country_overview(country, data_manager, openai_client, amadeus, amadeus_api_key, amadeus_api_secret, trip_planner_render=None):
     """
-    Main entry point for country overview page
+    Main entry point - Hero Section ZWISCHEN Back + Start Over buttons
     """
-    # Hero Section
-    render_hero_section(country)
+    nav_col1, hero_col, nav_col2 = st.columns([0.15, 0.70, 0.15])
     
-    # Quick Stats
-    render_quick_stats(country)
+    with nav_col1:
+        if st.button("Back to Results", key="dashboard_back", use_container_width=True, help="Return to results"):
+            st.session_state.step = 6
+            st.rerun()
+    
+    with hero_col:
+        render_hero_section(country)
+    
+    with nav_col2:
+        if st.button("Start Over", key="dashboard_start_over", use_container_width=True, help="Reset and begin again"):
+            st.session_state.clear()
+            st.rerun()
     
     st.markdown("---")
     
@@ -35,6 +45,69 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
         "🌐 AI Assistant", 
         "📄 Download PDF"
     ])
+
+    tab_css = """
+    <style>
+        /* Make tab container full width */
+        .stTabs {
+            width: 100% !important;
+        }
+        
+        /* Tab list - full width, no gaps */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0 !important;
+            width: 100% !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Individual tabs - stretched, transparent */
+        .stTabs [data-baseweb="tab"] {
+            height: auto !important;
+            flex-grow: 1 !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-bottom: 3px solid transparent !important;
+            color: var(--text-color, #31333F) !important;
+            font-weight: 500 !important;
+            padding: 14px 20px !important;
+            margin: 0 !important;
+            transition: all 0.3s ease !important;
+            text-align: center !important;
+        }
+        
+        /* Tab hover state */
+        .stTabs [data-baseweb="tab"]:hover {
+            border-bottom-color: var(--primary-color, #1f6e8a) !important;
+            background-color: rgba(31, 110, 138, 0.08) !important;
+        }
+        
+        /* Active tab - colored bottom border */
+        .stTabs [aria-selected="true"] [data-baseweb="tab"] {
+            border-bottom-color: var(--primary-color, #1f6e8a) !important;
+            color: var(--primary-color, #1f6e8a) !important;
+            background-color: rgba(31, 110, 138, 0.05) !important;
+        }
+        
+        /* Tab content - semi-transparent background + border */
+        .stTabs [data-baseweb="tab-panel"] {
+            padding: 24px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border-top: 3px solid var(--primary-color, #1f6e8a) !important;
+            border-radius: 0 0 8px 8px !important;
+            background-color: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+        }
+        
+        /* Remove extra padding/margin */
+        .stTabs [data-baseweb="tabs"] {
+            margin-bottom: 0 !important;
+            width: 100% !important;
+        }
+    </style>
+    """
+    st.markdown(tab_css, unsafe_allow_html=True)
+    
     
     with tab1:
         render_overview_tab(country, data_manager)
@@ -72,27 +145,35 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
 
 
 def render_hero_section(country):
-    """Hero section with country name and image"""
-    col1, col2 = st.columns([2, 1])
+    """
+    Hero section:
+    LEFT: Flag (flagsapi.com) + Country Name + Match Score
+    RIGHT: Travel Safety
+    """
     
-    with col1:
-        st.markdown(f"# 🌍 {country['country_name']}")
+    # Get ISO2 from country data
+    iso2 = country.get('iso2')
+    
+    col_left, col_right = st.columns([3, 1])
+    
+    with col_left:
+        country_name = country.get('country_name', 'Unknown')
+        
+        # Build markdown with flag image from flagsapi.com (flat style, 64px)
+        if iso2:
+            flag_url = f"https://flagsapi.com/{iso2}/flat/64.png"
+            st.markdown(
+                f'<img src="{flag_url}" width="50" style="margin-right: 10px; vertical-align: middle;"> **{country_name}**', 
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(f"# 🌍 {country_name}")
+        
         score = country.get('final_score', 0) * 100
-        st.caption(f"Your personalized travel guide • Match Score: **{score:.0f}%**")
+        st.caption(f"Match Score: **{score:.0f}%**")
     
-    with col2:
-        imgs = [country.get('img1'), country.get('img2'), country.get('img3')]
-        imgs = [x for x in imgs if x]
-        if imgs:
-            st.image(imgs[0], use_container_width=True)
-
-
-def render_quick_stats(country):
-    """Quick metric cards at the top"""
-    m1, m2, m3, m4 = st.columns(4)
-    
-    with m1:
-        # Get safety score (0-1 = safest, 2 = caution, 3 = most dangerous)
+    with col_right:
+        # Get safety score
         safety_score = country.get('tugo_score')
         advisory = country.get('tugo_advisory_state', 'Unknown')
         advisory = str(advisory) if pd.notna(advisory) else 'Unknown'
@@ -144,29 +225,7 @@ def render_quick_stats(country):
                 emoji = "⚠️"
                 safety_desc = f"{advisory}"
         
-        st.metric("🛡️ Safety", emoji, help=f"{safety_desc}\n\nFull Advisory: {advisory}")
-    
-    with m2:
-        temp = country.get('climate_avg_temp_c')
-        if temp and pd.notna(temp):
-            st.metric("🌡️ Climate", f"{temp:.0f}°C")
-        else:
-            st.metric("🌡️ Climate", "N/A")
-    
-    with m3:
-        unesco = int(country.get('unesco_count', 0))
-        st.metric("🏛️ UNESCO Sites", f"{unesco}")
-    
-    with m4:
-        flight = country.get('flight_price')
-        if flight and pd.notna(flight):
-            symbol = st.session_state.get('currency_symbol', '€')
-            rate = st.session_state.get('currency_rate', 1.0)
-            price = float(flight) * rate
-            st.metric("✈️ Flight", f"{symbol}{price:.0f}")
-        else:
-            st.metric("✈️ Flight", "N/A")
-
+        st.metric("🛡️ Travel Safety", emoji, help=f"{safety_desc}\n\nFull Advisory: {advisory}")
 
 
 
@@ -184,7 +243,8 @@ def render_overview_tab(country, data_manager):
     st.markdown("### ✨ Key Highlights")
     render_highlight_cards(country)
     
-    st.markdown("---")
+    render_weather_box(country, data_manager)
+
 
     render_visa_requirements(country)
 
