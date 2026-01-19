@@ -19,6 +19,28 @@ from modules.persona_selector import render_persona_step
 from modules.trip_planner import show_trip_planner
 from modules.pathfind_design_light import setup_complete_design, render_pathfind_header
 from modules.auth_login_page import require_login, render_logout_button
+from modules.about_page import render_about_page
+
+
+# ============================================================
+# ABOUT PAGE 
+# ============================================================
+
+if "show_about" not in st.session_state:
+    st.session_state["show_about"] = False
+
+about_col_left, about_col_right = st.columns([12, 2])
+with about_col_right:
+    if st.button("About", use_container_width=True):
+        st.session_state["show_about"] = True
+        st.rerun()
+
+if st.session_state["show_about"]:
+    render_about_page()
+    if st.button("Back to dashboard", use_container_width=True):
+        st.session_state["show_about"] = False
+        st.rerun()
+    st.stop()
 
 
 # ============================================================
