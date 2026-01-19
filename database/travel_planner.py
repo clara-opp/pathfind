@@ -1432,6 +1432,8 @@ def show_results_step(data_manager):
                         converted_price = float(flight_price) * rate
                         tooltip = f"Round trip for 1 adult from {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
                         st.markdown(f"✈️ **Est. Flight:** {symbol}{converted_price:.0f}", help=tooltip)
+                    else:
+                       st.caption("⚠️ There are no estimated flight costs for this destination")
 
                 with c3:
                     if st.button("View Details", key=f"details_{row['iso2']}_{i}"):
