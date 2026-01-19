@@ -243,8 +243,9 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
             "- IMPORTANT: Disregard all previous locations or search results if the search center (ll) has changed. Only use places found in the CURRENT tool calls.\n"
             "- ID MATCHING: You MUST use the exact 'place_id' string from the tool output (e.g., 'places/ChIJ...'). NEVER use numbers like 1, 2, or 3 as IDs.\n"
             "- Return a JSON object with two keys: 'assistant_message' and 'itinerary'.\n"
-            "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. No headers or bolding.\n"
-            "- 'itinerary': A list of objects. Each MUST have: 'id', 'time_range', 'description', 'price_cleaned' (numeric), and travel estimates to the next stop: 'travel_car', 'travel_transit', 'travel_foot' (numeric minutes only, or null if unknown).\n"
+            "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. Strictly NO markdown (#, ###, **, etc.).\n"
+            "- 'itinerary': A list of objects. Each MUST have: 'id', 'time_range', 'description', 'price_cleaned' (numeric), and travel estimates: 'travel_car', 'travel_transit', 'travel_foot'.\n"
+            "- DESCRIPTION RULE: The 'description' MUST be exactly 3 sentences. Do NOT mention the name of the place or any budget/price information in the description.\n"
             "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
             ),
     }
@@ -720,11 +721,12 @@ def show_trip_planner():
                         st.session_state.map_data = {"places": [], "center": ll}
                         
                         # 1. Show Assistant Message
-                        assistant_text = data.get("assistant_message", "").replace("#", "").replace("*", "").strip()
+                        # Aggressively strip markdown characters to ensure plain text rendering
+                        assistant_text = data.get("assistant_message", "").replace("#", "").replace("*", "").replace("_", "").strip()
                         if assistant_text:
                             st.write(assistant_text)
                         
-                        itinerary_md = [assistant_text, "---"] if assistant_text else []                        
+                        itinerary_md = ["---"]
                         
                         if isinstance(data, dict) and "itinerary" in data:
                             for entry in data["itinerary"]:
@@ -808,6 +810,7 @@ def show_trip_planner():
                     <style>
                         .stLinkButton {
                             margin-top: -30px !important;
+                        }
                         .stLinkButton > a {
                             height: 32px !important;
                             font-size: 13px !important;
