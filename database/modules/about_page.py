@@ -91,9 +91,68 @@ def render_about_page():
         "Pathfind — About",
         "A live, interactive travel planner dashboard — documentation for workflow, data, scoring, modules, and integrations.",
     )
-
-    st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-
+    tab_css = """
+    <style>
+        /* Make tab container full width */
+        .stTabs {
+            width: 100% !important;
+        }
+        
+        /* Tab list - full width, no gaps */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0 !important;
+            width: 100% !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Individual tabs - stretched, transparent */
+        .stTabs [data-baseweb="tab"] {
+            height: auto !important;
+            flex-grow: 1 !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-bottom: 3px solid transparent !important;
+            color: var(--text-color, #31333F) !important;
+            font-weight: 500 !important;
+            padding: 14px 20px !important;
+            margin: 0 !important;
+            transition: all 0.3s ease !important;
+            text-align: center !important;
+        }
+        
+        /* Tab hover state */
+        .stTabs [data-baseweb="tab"]:hover {
+            border-bottom-color: var(--primary-color, #1f6e8a) !important;
+            background-color: rgba(31, 110, 138, 0.08) !important;
+        }
+        
+        /* Active tab - colored bottom border */
+        .stTabs [aria-selected="true"] [data-baseweb="tab"] {
+            border-bottom-color: var(--primary-color, #1f6e8a) !important;
+            color: var(--primary-color, #1f6e8a) !important;
+            background-color: rgba(31, 110, 138, 0.05) !important;
+        }
+        
+        /* Tab content - semi-transparent background + border */
+        .stTabs [data-baseweb="tab-panel"] {
+            padding: 24px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border-top: 3px solid var(--primary-color, #1f6e8a) !important;
+            border-radius: 0 0 8px 8px !important;
+            background-color: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+        }
+        
+        /* Remove extra padding/margin */
+        .stTabs [data-baseweb="tabs"] {
+            margin-bottom: 0 !important;
+            width: 100% !important;
+        }
+    </style>
+    """
+    st.markdown(tab_css, unsafe_allow_html=True)
+    
     tabs = st.tabs(
         [
             "Overview",

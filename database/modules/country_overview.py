@@ -12,7 +12,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from modules.visa_functions import render_visa_requirements
-from modules.weather_box import render_weather_box
+from modules.info_boxes import render_weather_box, render_unesco_heritage_box
 
 
 def render_country_overview(country, data_manager, openai_client, amadeus, amadeus_api_key, amadeus_api_secret, trip_planner_render=None):
@@ -31,7 +31,7 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
     
     with nav_col2:
         if st.button("Start Over", key="dashboard_start_over", use_container_width=True, help="Reset and begin again"):
-            st.session_state.step=1
+            st.session_state.clear()
             st.rerun()
     
     st.markdown("---")
@@ -245,6 +245,7 @@ def render_overview_tab(country, data_manager):
     
     render_weather_box(country, data_manager)
 
+    render_unesco_heritage_box(country, data_manager)
 
     render_visa_requirements(country)
 

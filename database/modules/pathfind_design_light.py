@@ -1,5 +1,5 @@
 # ============================================================
-# pathfind_design_v2.py - MINIMAL LIGHT DESIGN (ICON-SAFE)
+# pathfind_design.py - COMPLETE DESIGN SYSTEM (CORRECTED)
 # ============================================================
 
 import streamlit as st
@@ -42,16 +42,16 @@ def find_background_image(img_file: str = "background_light.png") -> str:
 
 
 def setup_complete_design() -> None:
-    """Setup minimal light design."""
+    """Setup COMPLETE design with all styles."""
     bin_str = find_background_image("background_light.png")
-    if not bin_str:
-        st.warning("⚠️ Background image not found")
 
     complete_css = f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Mono:wght@700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-    /* Background */
+    /* ============================================================
+       BACKGROUND & BASE STYLING
+       ============================================================ */
     [data-testid="stAppViewContainer"] {{
         background-image: url("data:image/jpeg;base64,{bin_str}");
         background-size: cover;
@@ -60,12 +60,132 @@ def setup_complete_design() -> None:
         background-attachment: fixed;
     }}
 
-    /* Buttons - Light hover state */
+    html, body, .stMarkdown, div[data-testid="stText"], .stButton button {{
+        font-family: 'Poppins', sans-serif !important;
+        color: var(--text-color);
+    }}
+
+    /* ============================================================
+       TYPOGRAPHY
+       ============================================================ */
+    .main-header {{
+        font-size: 3rem;
+        color: #1a237e;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }}
+
+    .sub-header {{
+        text-align: center;
+        color: #666;
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+    }}
+
+    @media (prefers-color-scheme: dark) {{
+        .main-header {{ color: #2949FF; }}
+        .sub-header {{ color: #A1A1A1; }}
+    }}
+
+    /* ============================================================
+       FLIGHT DISPLAY STYLES
+       ============================================================ */
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+        border-radius: 12px !important;
+    }}
+
+    .price-text {{ 
+        color: var(--primary-color); 
+        font-size: 1.4rem; 
+        font-weight: 700; 
+    }}
+    
+    .carrier-text {{ 
+        font-size: 1.1rem; 
+        font-weight: 600; 
+        color: var(--text-color); 
+    }}
+    
+    .route-text {{ 
+        color: var(--text-color); 
+        opacity: 0.7; 
+        font-size: 0.9rem; 
+    }}
+
+    .time-badge {{ 
+        background-color: #1e1e1e; 
+        color: #4caf50; 
+        padding: 2px 8px; 
+        border-radius: 4px; 
+        font-family: monospace; 
+        font-weight: 700; 
+        margin-right: 10px; 
+        border: 1px solid #4caf50; 
+    }}
+    
+    .timeline-row {{ 
+        margin: 2px 0; 
+        display: flex; 
+        align-items: center; 
+        font-size: 0.9rem; 
+    }}
+    
+    .duration-info {{ 
+        margin-left: 35px; 
+        color: var(--text-color); 
+        opacity: 0.6; 
+        font-style: italic; 
+        font-size: 0.8rem; 
+    }}
+    
+    .layover-info {{ 
+        margin: 5px 0; 
+        text-align: left; 
+        padding-left: 50px; 
+        color: var(--text-color); 
+        opacity: 0.8; 
+        font-style: italic; 
+        font-size: 0.85rem; 
+        border-top: 1px dashed var(--text-color); 
+        border-bottom: 1px dashed var(--text-color); 
+        padding: 2px 0 2px 50px; 
+    }}
+    
+    .city-name {{ 
+        font-weight: 700; 
+        color: var(--text-color); 
+    }}
+    
+    .iata-code {{ 
+        color: var(--text-color); 
+        opacity: 0.6; 
+    }}
+
+    /* ============================================================
+       SWIPE QUESTION & BUTTONS
+       ============================================================ */
+    .swipe-question {{
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a237e;
+        margin-bottom: 2rem;
+        padding: 0 !important;
+        background: none !important;
+        border: none !important;
+    }}
+
+    /*  */
     button {{
         background-color: rgba(240, 248, 255, 1) !important;
         color: rgba(20, 40, 80, 1) !important;
         border: 1px solid rgba(100, 180, 255, 0.3) !important;
         transition: all 0.3s ease !important;
+        border-radius: 8px !important;
+        font-size: 1.1rem !important;         
+        padding: 0.8rem 1.5rem !important;
     }}
 
     button:hover {{
@@ -73,6 +193,7 @@ def setup_complete_design() -> None:
         color: rgba(20, 40, 80, 1) !important;
         border-color: rgba(100, 180, 255, 0.6) !important;
         box-shadow: 0 4px 12px rgba(100, 180, 255, 0.2) !important;
+        transform: translateY(-2px) !important;
     }}
 
     button:active {{
@@ -80,7 +201,96 @@ def setup_complete_design() -> None:
         color: rgba(20, 40, 80, 1) !important;
     }}
 
-    /* Logo Header */
+    /* ✅ LARGE SWIPE CARD BUTTONS - ONLY for swipe cards */
+    .swipe-card-container button {{
+        width: 100% !important;
+        border-radius: 14px !important;
+        height: 150px !important;
+        font-size: 2rem !important;
+        font-weight: 600 !important;
+        border: none !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        transition: all 0.3s ease !important;
+        white-space: pre-line !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
+        border: 2px solid #e0e5ed !important;
+        padding: 0 !important;
+        min-height: 150px !important;
+    }}
+
+    .swipe-card-container button:hover {{
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%) !important;
+        color: white !important;
+        border-color: #1a237e !important;
+        box-shadow: 0 8px 24px rgba(26, 35, 126, 0.25) !important;
+        transform: translateY(-3px) !important;
+    }}
+
+    @media (max-width: 768px) {{
+        .swipe-card-container button {{
+            height: 120px !important;
+            font-size: 1.5rem !important;
+            gap: 8px !important;
+        }}
+        .swipe-question {{
+            font-size: 1rem;
+        }}
+    }}
+
+    @media (max-width: 480px) {{
+        .swipe-card-container button {{
+            height: 100px !important;
+            font-size: 1.2rem !important;
+            gap: 6px !important;
+        }}
+    }}
+
+    /* ============================================================
+       PRIDE BADGE
+       ============================================================ */
+    .pride-badge-top-left {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1.5rem;
+    }}
+
+    .pride-flag-icon {{
+        font-size: 48px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        filter: grayscale(1);
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        line-height: 1;
+    }}
+
+    .pride-flag-icon:hover {{
+        transform: scale(1.1);
+    }}
+
+    .pride-flag-icon.active {{
+        filter: grayscale(0);
+        border: 2px solid #FF1493;
+        box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
+    }}
+
+    .pride-info-btn {{
+        font-size: 20px;
+        padding: 0;
+        height: auto;
+        min-height: auto;
+    }}
+
+    /* ============================================================
+       LOGO & HEADER
+       ============================================================ */
     .pathfind-header {{
         text-align: center;
         margin: 1.5rem 0 2rem 0;
@@ -186,3 +396,41 @@ def render_pathfind_header() -> None:
         ''',
         unsafe_allow_html=True,
     )
+
+# Render Footnote
+def render_footer() -> None:
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 0.3, 0.2])
+    
+    with col1:
+        st.markdown(
+            """
+            <p style="text-align: left; font-size: 0.85rem; color: rgba(100, 180, 255, 0.6); margin: 0;">
+                Student Project @University of Mannheim
+            </p>
+            """,
+            unsafe_allow_html=True,
+        )
+    
+    with col3:
+        st.markdown(
+            """
+            <style>
+            .footer-about-btn {
+                background-color: transparent !important;
+                border: none !important;
+                padding: 0.3rem 0.6rem !important;
+            }
+            .footer-about-btn:hover {
+                background-color: transparent !important;
+                border: none !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        if st.button("About Pathfind", use_container_width=False, key="about_btn"):
+            # Speichere den aktuellen step
+            st.session_state.previous_step = st.session_state.step
+            st.session_state.step = "about"
+            st.rerun()

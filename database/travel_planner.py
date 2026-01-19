@@ -17,30 +17,9 @@ from modules.flight_search import (
 from modules.country_overview import render_country_overview
 from modules.persona_selector import render_persona_step
 from modules.trip_planner import show_trip_planner
-from modules.pathfind_design_light import setup_complete_design, render_pathfind_header
+from modules.pathfind_design_light import setup_complete_design, render_pathfind_header, render_footer
 from modules.auth_login_page import require_login, render_logout_button
 from modules.about_page import render_about_page
-
-
-# ============================================================
-# ABOUT PAGE 
-# ============================================================
-
-if "show_about" not in st.session_state:
-    st.session_state["show_about"] = False
-
-about_col_left, about_col_right = st.columns([12, 2])
-with about_col_right:
-    if st.button("About", use_container_width=True):
-        st.session_state["show_about"] = True
-        st.rerun()
-
-if st.session_state["show_about"]:
-    render_about_page()
-    if st.button("Back to dashboard", use_container_width=True):
-        st.session_state["show_about"] = False
-        st.rerun()
-    st.stop()
 
 
 # ============================================================
@@ -48,8 +27,6 @@ if st.session_state["show_about"]:
 # ============================================================
 load_dotenv()
 st.set_page_config(page_title="Pathfind - your personal travel planner", page_icon="✈️", layout="wide")
-setup_complete_design()
-render_pathfind_header()
 
 
 AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
@@ -117,38 +94,6 @@ st.markdown(
             padding: 0 !important;
             background: none !important;
             border: none !important;
-        }
-
-        .stButton > button {
-            width: 100%;
-            border-radius: 14px;
-            height: 220px !important;
-            font-size: 3rem !important;
-            font-weight: 600;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            white-space: pre-line !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 20px !important;
-            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
-            border: 2px solid #e0e5ed !important;
-        }
-
-        div[data-testid="stButton"] > button {
-            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
-            color: #333;
-        }
-
-        div[data-testid="stButton"] > button:hover {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%) !important;
-            color: white !important;
-            border-color: #1a237e !important;
-            box-shadow: 0 8px 24px rgba(26, 35, 126, 0.25) !important;
-            transform: translateY(-4px) !important;
         }
 
         @media (max-width: 768px) {
@@ -827,7 +772,7 @@ def show_basic_info_step(data_manager):
                 st.rerun()
 
         with c_info:
-            with st.popover("ℹ️", use_container_width=True):
+            with st.popover("ⓘ", use_container_width=True):
                 st.markdown("""
                 **LGBTQ+ Safe Travel**
                 
@@ -958,6 +903,7 @@ def show_swiping_step():
 
     st.markdown(f"<div class='swipe-question'>{card['title']}</div>", unsafe_allow_html=True)
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="swipe-card-container">', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2, gap="medium")
 
@@ -1047,6 +993,7 @@ def show_swiping_step():
                 st.session_state.weights = adjust_weights_points(st.session_state.weights, {"culture": +3, "jitter": +2})
 
             post_update()
+    st.markdown('</div>', unsafe_allow_html=True) 
 
 def show_astro_step(data_manager):
     st.markdown(
@@ -1513,6 +1460,10 @@ def show_dashboard_step(data_manager):
 # APP ROUTER
 # ============================================================
 def run_app():
+
+    setup_complete_design()
+    render_pathfind_header()
+
     load_heavy_libs_dynamically()
     data_manager = DataManager()
     init_session_state()
@@ -1560,6 +1511,15 @@ def run_app():
             google_client_secret=GOOGLE_CLIENT_SECRET,
             redirect_uri=REDIRECT_URI,
         )
+    elif step == "about":
+        render_about_page()
+        if st.button("← Back", use_container_width=False):
+            # Zurück zum vorherigen step
+            st.session_state.step = st.session_state.get("previous_step", 1)
+            st.rerun()
+        st.stop()
+
+    render_footer()
 
 
 if __name__ == "__main__":
