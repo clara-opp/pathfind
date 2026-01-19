@@ -1,4 +1,3 @@
-# modules/flight_search.py
 """
 Flight Search / Booking / Confirmation module for the Global Travel Planner.
 
@@ -347,176 +346,83 @@ def render_flight_search(
     if sort_by_key not in st.session_state:
         st.session_state[sort_by_key] = "Price"
 
-    c_filters, c_results = st.columns([1, 3])
+    @st.fragment
+    def render_filtered_results(df, flight_results, maps, carriers, currency_code, key_prefix):
+        c_filters, c_results = st.columns([1, 3])
 
-    with c_filters:
-        st.markdown("##### Filters")
+        with c_filters:
+            st.markdown("##### Filters")
+            symbol_map = {"EUR": "€", "USD": "$"}
+            symbol = symbol_map.get(currency_code, currency_code)
 
-        # Use same symbols mapping
-        symbol_map = {"EUR": "€", "USD": "$"}
-        symbol = symbol_map.get(currency_code, currency_code)
+            min_val = (int(df["Price"].min()) // 50) * 50
+            max_val = ((int(df["Price"].max()) + 49) // 50) * 50
+            if min_val == max_val: max_val += 50
 
-        min_val = (int(df["Price"].min()) // 50) * 50
-        max_val = ((int(df["Price"].max()) + 49) // 50) * 50
-        if min_val == max_val:
-            max_val += 50
+            max_p = st.slider("Price", min_val, max_val, max_val, step=50, format=f"%d {symbol}", key=f"{key_prefix}_f_p")
+            max_dur_limit = int(df["Duration"].dt.total_seconds().max() / 3600) + 1
+            max_dur = st.slider("Duration (Hours)", 1, max(max_dur_limit, 2), max_dur_limit, key=f"{key_prefix}_f_d")
+            max_lay_limit = int(df["Layovers"].max())
+            max_lay = st.slider("Layovers", 0, max(max_lay_limit, 1), max_lay_limit, key=f"{key_prefix}_f_l")
+            selected_airlines = st.multiselect("Airlines", options=sorted(df["Carrier"].unique()), default=list(df["Carrier"].unique()), key=f"{key_prefix}_f_a")
 
-        max_p = st.slider(
-            "Price",
-            min_val, max_val, max_val,
-            step=50,
-            format=f"%d {symbol}",
-            key=f"{key_prefix}_filter_max_price",
-        )
+        with c_results:
+            s_col1, s_col2, _ = st.columns([1, 1, 2])
+            if s_col1.button("💰 Cheapest", use_container_width=True, type="primary" if st.session_state.get(sort_by_key) == "Price" else "secondary", key=f"{key_prefix}_s_p"):
+                st.session_state[sort_by_key] = "Price"
 
-        max_dur_limit = int(df["Duration"].dt.total_seconds().max() / 3600) + 1
-        max_dur = st.slider(
-            "Duration (Hours)",
-            1, max(max_dur_limit, 2), max_dur_limit,
-            key=f"{key_prefix}_filter_max_dur",
-        )
+            if s_col2.button("⚡ Fastest", use_container_width=True, type="primary" if st.session_state.get(sort_by_key) == "Duration" else "secondary", key=f"{key_prefix}_s_d"):
+                st.session_state[sort_by_key] = "Duration"
 
-        max_lay_limit = int(df["Layovers"].max())
-        max_lay = st.slider(
-            "Layovers",
-            0, max(max_lay_limit, 1), max_lay_limit,
-            key=f"{key_prefix}_filter_max_lay",
-        )
+            df_filtered = df[
+                (df["Price"] <= max_p) &
+                (df["Duration"] <= pd.to_timedelta(max_dur, unit="h")) &
+                (df["Layovers"] <= max_lay) &
+                (df["Carrier"].isin(selected_airlines))
+            ].sort_values(st.session_state.get(sort_by_key, "Price"))
 
-        selected_airlines = st.multiselect(
-            "Airlines",
-            options=sorted(df["Carrier"].unique()),
-            default=list(df["Carrier"].unique()),
-            key=f"{key_prefix}_filter_airlines",
-        )
+            if df_filtered.empty:
+                st.info("No flights match your filters.")
+                return
 
-    with c_results:
-        s_col1, s_col2, _ = st.columns([1, 1, 2])
+            st.caption(f"Showing {len(df_filtered)} of {len(df)} flights")
 
-        if s_col1.button(
-            "💰 Cheapest",
-            use_container_width=True,
-            type="primary" if st.session_state.get(sort_by_key) == "Price" else "secondary",
-            key=f"{key_prefix}_sort_price_btn",
-        ):
-            st.session_state[sort_by_key] = "Price"
-            st.rerun()
+            for _, row in df_filtered.iterrows():
+                offer = flight_results["data"][int(row["idx"])]
+                itineraries = offer["itineraries"]
+                with st.container(border=True):
+                    for i, itin in enumerate(itineraries):
+                        if i == 1: st.markdown("---")
+                        colA, colB = st.columns([3, 1])
+                        with colA:
+                            label = "🛫 Outbound" if len(itineraries) > 1 and i == 0 else ("🛬 Return" if i == 1 else "✈️ Flight")
+                            segs = itin["segments"]
+                            dep_time = datetime.datetime.fromisoformat(segs[0]["departure"]["at"].replace("Z", ""))
+                            st.markdown(f"**{label}** <span class='carrier-text'>{dep_time.strftime('%a, %d %b %Y')}</span>", unsafe_allow_html=True)
+                            st.markdown(f"<span class='route-text'>{carriers.get(segs[0]['carrierCode'], 'N/A')} | {maps['city'].get(segs[0]['departure']['iataCode'])} → {maps['city'].get(segs[-1]['arrival']['iataCode'])}</span>", unsafe_allow_html=True)
+                            st.markdown(f"⏱️ {format_duration(itin['duration'])} | 🔄 {len(segs)-1} Layovers", unsafe_allow_html=True)
+                        if i == 0:
+                            with colB:
+                                curr_map = {"EUR": "€", "USD": "$"}
+                                sym = curr_map.get(str(row["Currency"]), str(row["Currency"]))
+                                st.markdown(f"<div class='price-text'>{sym}{row['Price']:.2f}</div>", unsafe_allow_html=True)
+                                if st.button("Book Flight", key=f"{key_prefix}_bk_{int(row['idx'])}"):
+                                    token = amadeus.get_amadeus_access_token(amadeus_api_key, amadeus_api_secret)
+                                    price_res = amadeus.get_flight_price(token, offer)
+                                    if price_res and "data" in price_res:
+                                        st.session_state.priced_offer = price_res["data"]["flightOffers"][0]
+                                        st.session_state.traveler_counts = st.session_state.get(traveler_counts_key, {"ADULT": 1, "CHILD": 0, "INFANT": 0})
+                                        st.session_state.step = 8
+                                        st.rerun()
 
-        if s_col2.button(
-            "⚡ Fastest",
-            use_container_width=True,
-            type="primary" if st.session_state.get(sort_by_key) == "Duration" else "secondary",
-            key=f"{key_prefix}_sort_dur_btn",
-        ):
-            st.session_state[sort_by_key] = "Duration"
-            st.rerun()
+                        with st.expander("View Timeline"):
+                            for seg_idx, seg in enumerate(itin["segments"]):
+                                st.markdown(f"<div class='timeline-row'><span class='time-badge'>{seg['departure']['at'][-8:-3]}</span>{maps['city'].get(seg['departure']['iataCode'])}</div>", unsafe_allow_html=True)
+                                st.markdown(f"<div class='duration-info'>↓ {format_duration(seg['duration'])}</div>", unsafe_allow_html=True)
+                                st.markdown(f"<div class='timeline-row'><span class='time-badge'>{seg['arrival']['at'][-8:-3]}</span>{maps['city'].get(seg['arrival']['iataCode'])}</div>", unsafe_allow_html=True)
 
-        df_filtered = df[
-            (df["Price"] <= max_p) &
-            (df["Duration"] <= pd.to_timedelta(max_dur, unit="h")) &
-            (df["Layovers"] <= max_lay) &
-            (df["Carrier"].isin(selected_airlines))
-        ].sort_values(st.session_state.get(sort_by_key, "Price"))
-
-        if df_filtered.empty:
-            st.info("No flights match your current filter criteria. Try adjusting the price or duration sliders.")
-            return
-
-        st.caption(f"Showing {len(df_filtered)} of {len(df)} flights found")
-
-        for _, row in df_filtered.iterrows():
-            offer = flight_results["data"][int(row["idx"])]
-            itineraries = offer["itineraries"]
-
-            with st.container(border=True):
-                for i, itin in enumerate(itineraries):
-                    if i == 1:
-                        st.markdown("---")
-
-                    colA, colB = st.columns([3, 1])
-                    with colA:
-                        label = (
-                            "🛫 Outbound" if len(itineraries) > 1 and i == 0
-                            else ("🛬 Return" if i == 1 else "✈️ Flight")
-                        )
-                        segs = itin["segments"]
-                        dep_time = datetime.datetime.fromisoformat(segs[0]["departure"]["at"].replace("Z", ""))
-
-                        st.markdown(
-                            f"**{label}** <span class='carrier-text'>{dep_time.strftime('%a, %d %b %Y')}</span>",
-                            unsafe_allow_html=True
-                        )
-                        st.markdown(
-                            f"<span class='route-text'>{carriers.get(segs[0]['carrierCode'], 'N/A')} | "
-                            f"{maps['city'].get(segs[0]['departure']['iataCode'])} → {maps['city'].get(segs[-1]['arrival']['iataCode'])}</span>",
-                            unsafe_allow_html=True
-                        )
-                        st.markdown(
-                            f"⏱️ {format_duration(itin['duration'])} | 🔄 {len(segs)-1} Layovers",
-                            unsafe_allow_html=True
-                        )
-
-                    # Price + book button only on first itinerary (outbound)
-                    if i == 0:
-                        with colB:
-                            curr_map = {"EUR": "€", "USD": "$"}
-                            sym = curr_map.get(str(row["Currency"]), str(row["Currency"]))
-                            st.markdown(
-                                f"<div class='price-text'>{sym}{row['Price']:.2f}</div>",
-                                unsafe_allow_html=True
-                            )
-
-                            if st.button("Book Flight", key=f"{key_prefix}_bk_{int(row['idx'])}"):
-                                token = amadeus.get_amadeus_access_token(amadeus_api_key, amadeus_api_secret)
-                                price_res = amadeus.get_flight_price(token, offer)
-                                if price_res and "data" in price_res:
-                                    st.session_state.priced_offer = price_res["data"]["flightOffers"][0]
-                                    # IMPORTANT: traveler counts stored for booking step
-                                    st.session_state.traveler_counts = st.session_state.get(
-                                        traveler_counts_key,
-                                        {"ADULT": 1, "CHILD": 0, "INFANT": 0},
-                                    )
-                                    st.session_state.step = 8
-                                    st.rerun()
-                                else:
-                                    st.error("Could not confirm price. Please select another flight!")
-
-                    exp_label = (
-                        "View Outbound Timeline" if len(itineraries) > 1 and i == 0
-                        else ("View Return Timeline" if i == 1 else "View Full Timeline")
-                    )
-
-                    with st.expander(exp_label):
-                        segments = itin["segments"]
-                        for seg_idx, seg in enumerate(segments):
-                            st.markdown(
-                                f"""
-                                <div class='timeline-row'>
-                                    <span class='time-badge'>{seg['departure']['at'][-8:-3]}</span>
-                                    <span>departing from <span class='city-name'>{maps['city'].get(seg['departure']['iataCode'])}</span>
-                                    <span class='iata-code'>({seg['departure']['iataCode']})</span></span>
-                                </div>
-                                <div class='duration-info'>↓ Flight duration: {format_duration(seg['duration'])}</div>
-                                <div class='timeline-row'>
-                                    <span class='time-badge'>{seg['arrival']['at'][-8:-3]}</span>
-                                    <span>arrival at <span class='city-name'>{maps['city'].get(seg['arrival']['iataCode'])}</span>
-                                    <span class='iata-code'>({seg['arrival']['iataCode']})</span></span>
-                                </div>
-                                """,
-                                unsafe_allow_html=True
-                            )
-
-                            if seg_idx < len(segments) - 1:
-                                next_seg = segments[seg_idx + 1]
-                                arr_time = datetime.datetime.fromisoformat(seg["arrival"]["at"].replace("Z", ""))
-                                dep_time2 = datetime.datetime.fromisoformat(next_seg["departure"]["at"].replace("Z", ""))
-                                layover_td = dep_time2 - arr_time
-                                hours, remainder = divmod(int(layover_td.total_seconds()), 3600)
-                                minutes, _ = divmod(remainder, 60)
-                                st.markdown(
-                                    f"<div class='layover-info'>Layover: {hours}h {minutes}m</div>",
-                                    unsafe_allow_html=True
-                                )
+    # Finally, call the fragment function at the end of the search section
+    render_filtered_results(df, flight_results, maps, carriers, currency_code, key_prefix)
 
 
 def show_booking_step(

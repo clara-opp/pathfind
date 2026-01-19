@@ -521,6 +521,14 @@ class DataManager:
         conn = _self.get_connection()
         try:
             df = pd.read_sql(query, conn, params=(origin_iata,))
+
+            # Fallback image: High-quality "View from Airplane Window" (works for any destination)
+            # Fills missing images so the Results Page and Slideshow never show blanks.
+            fallback_img = "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+            if not df.empty and "img_1" in df.columns:
+                df["img_1"] = df["img_1"].fillna(fallback_img)
+                df.loc[df["img_1"].astype(str).str.strip() == "", "img_1"] = fallback_img
+
         except Exception as e:
             st.error(f"🚨 SQL error in load_base_data: {e}")
             df = pd.DataFrame()
@@ -553,7 +561,7 @@ class DataManager:
                 query = "SELECT iata_code, city, name FROM airports WHERE iso2 = ? ORDER BY passenger_volume DESC"
                 df = pd.read_sql(query, conn, params=(iso2,))
             else:
-                query = "SELECT iata_code, city, name FROM airports ORDER BY passenger_volume DESC LIMIT 500"
+                query = "SELECT iata_code, city, name FROM airports ORDER BY passenger_volume DESC LIMIT 1000"
                 df = pd.read_sql(query, conn)
         finally:
             conn.close()
@@ -792,14 +800,13 @@ def show_basic_info_step(data_manager):
 
     with col_content:
         st.markdown("### Where are you starting from?")
-        origin_options = {"Germany": "FRA", "United States": "ATL"}
-        selected_origin = st.radio(
-            "Select origin",
-            list(origin_options.keys()),
-            label_visibility="collapsed",
-            horizontal=True
-        )
-        st.session_state["origin_iata"] = origin_options[selected_origin]
+        origin_country_map = {"Germany": "FRA", "United States": "ATL"}
+        sel_country = st.radio("Select your location", list(origin_country_map.keys()), label_visibility="collapsed", horizontal=True)
+        all_airports = data_manager.get_airports()
+        default_iata = origin_country_map[sel_country]
+        default_idx = all_airports[all_airports['iata_code'] == default_iata].index[0] if default_iata in all_airports['iata_code'].values else 0
+        sel_airport = st.selectbox("Departure airport", options=all_airports["display"], index=int(default_idx))
+        st.session_state["origin_iata"] = sel_airport.split("(")[-1].strip(")")
 
     with col_flag_empty:
         c_flag, c_info = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -1470,7 +1477,7 @@ def show_results_step(data_manager):
                     rate = st.session_state.get("currency_rate", 1.0)
                     if flight_price and pd.notna(flight_price):
                         converted_price = float(flight_price) * rate
-                        tooltip = f"From {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
+                        tooltip = f"Round trip for 1 adult from {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
                         st.markdown(f"✈️ **Est. Flight:** {symbol}{converted_price:.0f}", help=tooltip)
 
                 with c3:
