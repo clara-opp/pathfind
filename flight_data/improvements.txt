@@ -1,5 +1,4 @@
-# Activity Planner
-- Before: from entering the user prompt to receiving the full results (chatbot output + map): ~3 minutes 
+@st.cache_data, @st.cache_resource, @st.fragment and for the trip planner hard code as much of hte output as possible and only let the AI fill in the gaps + paralle execution brought down time form prompt to result from ~5min to ~2min
 
 
 # Use dynamic loading (importlib)

@@ -2,6 +2,7 @@ import os
 import json
 import unicodedata
 import requests
+import sqlite3
 import streamlit as st
 import streamlit.components.v1 as components
 import concurrent.futures
@@ -153,14 +154,18 @@ def get_route_google(coordinates, api_key):
     
     try:
         r = requests.post(url, headers=headers, json=data, timeout=10)
+        print(f"DEBUG: Google Routes API Status: {r.status_code}")
         if r.status_code == 200:
             response_data = r.json()
             routes = response_data.get("routes", [])
+            print(f"DEBUG: Google Routes found: {len(routes)} routes")
             if routes:
                 encoded = routes[0].get("polyline", {}).get("encodedPolyline", "")
+                print(f"DEBUG: Encoded Polyline present: {bool(encoded)}")
                 if encoded:
                     return polyline.decode(encoded)
-    except Exception:
+    except Exception as e:
+        print(f"DEBUG: Google Routes Exception: {str(e)}")
         pass
     
     return []
@@ -189,7 +194,7 @@ def get_route_osrm(coordinates):
     return []
 
 
-def serper_search_prices(query: str):
+def serper_search_prices(query: str, num_results: int = 3):
     """Search the web for current prices, entrance fees, or menu costs."""
     api_key = os.getenv("SERPER_API_KEY", "").strip()
     if not api_key:
@@ -197,157 +202,122 @@ def serper_search_prices(query: str):
     url = "https://google.serper.dev/search"
     headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
     try:
-        r = requests.post(url, headers=headers, json={"q": query}, timeout=15)
+        r = requests.post(url, headers=headers, json={"q": query, "num": num_results}, timeout=15) 
         res = r.json()
-        print(f"DEBUG: Serper API returned {len(res.get('organic', []))} organic results for query: {query}")
+        print(f"DEBUG: Serper API returned {len(res.get('organic', []))} results for: {query}")
         return res
     except Exception as e:
         return {"error": str(e)}
 
 
 # ---------- OpenAI tool-calling loop ----------
-def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str, city: str):
+def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str, city: str, iso3: str):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
     found_places = []
+
+    # 1. Start Currency Lookup immediately (Parallel to Phase 1)
+    def get_conversion():
+        try:
+            with sqlite3.connect("unified_country_database.db") as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT r.one_eur_to_currency, p.currency 
+                    FROM numbeo_exchange_rates r
+                    JOIN numbeo_prices p ON r.currency = p.currency
+                    WHERE p.iso3 = ? LIMIT 1
+                """, (iso3,))
+                return cursor.fetchone() or (1.0, "Unknown")
+        except Exception:
+            return (1.0, "Unknown")
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        db_future = executor.submit(get_conversion)
     
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "google_search_places",
-                "description": "Search for places near a lat/lon using Google Places API.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "Search term, e.g. 'museum', 'cafe', 'park'."},
-                        "ll": {"type": "string", "description": "Lat,lon string, e.g. '49.75,8.65'."},
-                        "radius": {"type": "integer", "description": "Radius in meters."},
-                        "limit": {"type": "integer", "description": "Max number of results."},
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "google_search_places",
+                    "description": "Search for places near a lat/lon using Google Places API.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {"type": "string", "description": "Search term, e.g. 'museum', 'cafe', 'park'."},
+                            "ll": {"type": "string", "description": "Lat,lon string, e.g. '49.75,8.65'."},
+                            "radius": {"type": "integer", "description": "Radius in meters."},
+                            "limit": {"type": "integer", "description": "Max number of results."},
+                        },
+                        "required": ["query", "ll"],
                     },
-                    "required": ["query", "ll"],
                 },
             },
-        },
-    ]
+        ]
     
-    system_msg = {
-        "role": "system",
-        "content": (
-            "You are a day-trip planner.\n"
-            "Goal: propose a realistic day-trip itinerary within the user's fixed budget.\n"
-            "Rules:\n"
-            "- Use google_search_places to fetch real nearby places. You MUST generate ALL search queries for the entire day if not specified otherwise by the user.\n"
-            "- Once you have searched for places, the system will automatically provide real-world price data for them. Use that data for your budget calculations.\n"
-            "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget. Do NOT mention these percentages or internal budget rules to the user.\n"
-            "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
-            "- IMPORTANT: Disregard all previous locations or search results if the search center (ll) has changed. Only use places found in the CURRENT tool calls.\n"
-            "- ID MATCHING: You MUST use the exact 'place_id' string from the tool output (e.g., 'places/ChIJ...'). NEVER use numbers like 1, 2, or 3 as IDs.\n"
-            "- Return a JSON object with two keys: 'assistant_message' and 'itinerary'.\n"
-            "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. No headers or bolding.\n"
-            "- 'itinerary': A list of objects. Each MUST have: 'id', 'time_range', 'description', 'price_cleaned' (numeric), and travel estimates to the next stop: 'travel_car', 'travel_transit', 'travel_foot' (numeric minutes only, or null if unknown).\n"
-            "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
+        system_msg = {
+            "role": "system",
+            "content": (
+                "You are a day-trip planner.\n"
+                "Goal: propose a realistic day-trip itinerary within the user's fixed budget.\n"
+                "Rules:\n"
+                "- Use google_search_places to fetch real nearby places. You MUST generate ALL search queries for the entire day if not specified otherwise by the user.\n"
+                "- Once you have searched for places, the system will automatically provide real-world price data for them. Use that data for your budget calculations.\n"
+                "- Target spending: Aim for a total cost between 85% and 90% of the budget. Never exceed the budget. Do NOT mention these percentages or internal budget rules to the user.\n"
+                "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
+                "- IMPORTANT: Disregard all previous locations or search results if the search center (ll) has changed. Only use places found in the CURRENT tool calls.\n"
+                "- ID MATCHING: You MUST use the exact 'place_id' string from the CURRENT tool output. NEVER reuse IDs from previous turns. If you cannot find an ID, use the 'name' of the place as the ID.\n"
+                "- Return a JSON object with two keys: 'assistant_message' and 'itinerary'.\n"
+                "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. Strictly NO markdown (#, ###, **, etc.).\n"
+                "- 'itinerary': A list of objects. Each MUST have: 'id', 'time_range', 'description', 'price_cleaned' (numeric), and travel estimates: 'travel_car', 'travel_transit', 'travel_foot'.\n"
+                "- DESCRIPTION RULE: The 'description' MUST be exactly 3 sentences. Do NOT mention the name of the place or any budget/price information in the description.\n"
+                "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
+                ),
+        }
+    
+        context_msg = {
+            "role": "user",
+            "content": (
+                f"Context:\n- Budget: {budget_val:.2f} {currency}\n- Search center (ll): {ll}\n- Search radius: {radius} m\n- Traveler Profile: {persona}\n\n"
+                "Plan a day trip for today based on my preferences in this chat."
             ),
-    }
+        }
     
-    context_msg = {
-        "role": "user",
-        "content": (
-            f"Context:\n- Budget: {budget_val:.2f} {currency}\n- Search center (ll): {ll}\n- Search radius: {radius} m\n- Traveler Profile: {persona}\n\n"
-            "Plan a day trip for today based on my preferences in this chat."
-        ),
-    }
-    
-    convo = [system_msg] + messages + [context_msg]
-    
-    # --- Phase 1: Discovery (Get Search Queries) ---
-    resp = client.chat.completions.create(
-        model=st.session_state.model,
-        messages=convo,
-        tools=tools,
-        tool_choice="auto",
-    )
-    
-    msg = resp.choices[0].message
-    tool_calls = getattr(msg, "tool_calls", None)
+        convo = [system_msg] + messages + [context_msg]
 
-    if not tool_calls:
-        enriched_data = []
-        print(f"DEBUG: AI decided NOT to call any tools. Content: {msg.content[:100]}...")
+        # --- Phase 1: Discovery ---
+        resp = client.chat.completions.create(model=st.session_state.model, messages=convo, tools=tools, tool_choice="auto")
+        msg = resp.choices[0].message
+        tool_calls = getattr(msg, "tool_calls", None)
 
-    if tool_calls:
-        print(f"DEBUG: AI requested {len(tool_calls)} tool calls: {[tc.function.name for tc in tool_calls]}")
+        if not tool_calls:
+            return (msg.content or ""), found_places, []
 
-    if tool_calls:
-        convo.append(
-            {
-                "role": "assistant",
-                "content": msg.content or "",
-                "tool_calls": [tc.model_dump() for tc in tool_calls],
-            }
-        )            
-            
+        convo.append({"role": "assistant", "content": msg.content or "", "tool_calls": [tc.model_dump() for tc in tool_calls]})
+
         def execute_tool(tc):
-                fn = tc.function.name
-                args = json.loads(tc.function.arguments or "{}")
-                
-                if fn == "google_search_places":
-                    print(f"DEBUG: Executing Google Search: {args.get('query')}")
-                    refined_query = f"{args.get('query', '')} in {city}"
-                    out = google_search_places(
-                        query=refined_query,
-                        ll=args.get("ll", ll),
-                        radius=int(args.get("radius", radius)),
-                        limit=int(args.get("limit", 8)),
-                    )
-                    # Return places separately to update main list safely
-                    return tc.id, out, out.get("results", []) if not out.get("error") else []
-                else:
-                    return tc.id, {"error": True, "message": f"Unknown tool: {fn}"}, []
+            fn, args = tc.function.name, json.loads(tc.function.arguments or "{}")
+            if fn == "google_search_places":
+                out = google_search_places(f"{args.get('query')} in {city}", args.get("ll", ll), int(args.get("radius", radius)), 8)
+                return tc.id, out, (out.get("results", []) if not out.get("error") else [])
+            return tc.id, {"error": True}, []
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Execute in parallel, preserve order for conversation history
-            results = executor.map(execute_tool, tool_calls)
-            
-            for tc_id, out, new_places in results:
-                if new_places:
-                    found_places.extend(new_places)
-                convo.append({
-                    "role": "tool",
-                    "tool_call_id": tc_id,
-                    "content": json.dumps(out, ensure_ascii=False),
-                })
+        for tc_id, out, new_places in executor.map(execute_tool, tool_calls):
+            if new_places: found_places.extend(new_places)
+            convo.append({"role": "tool", "tool_call_id": tc_id, "content": json.dumps(out)})
 
-        # --- Phase 2: Deterministic Enrichment (Price Search) ---
+        # --- Phase 2: Enrichment ---
+        conversion_rate, local_currency_code = db_future.result()
+        enriched_data = []
         if found_places:
-            print(f"DEBUG: Deterministically searching prices for {len(found_places)} places...")
-            with concurrent.futures.ThreadPoolExecutor() as price_executor:
-                price_futures = {
-                    price_executor.submit(serper_search_prices, f"entrance fee price menu cost {p['name']} {p['address']}"): p 
-                    for p in found_places
-                }
-                enriched_data = []
-                for future in concurrent.futures.as_completed(price_futures):
-                    p = price_futures[future]
-                    res = future.result()
-                    enriched_data.append({"place": p['name'], "price_info": res.get("organic", [])[:3]})
+            price_futures = {executor.submit(serper_search_prices, f"entrance fee {p['name']} {p['address']}"): p for p in found_places}
+            for future in concurrent.futures.as_completed(price_futures):
+                p, res = price_futures[future], future.result()
+                enriched_data.append({"place": p['name'], "price_info": res.get("organic", [])[:3]})
             
-            convo.append({
-                "role": "system", 
-                "content": f"CRITICAL PRICE DATA: Use the following search results to determine the budget for your selected places: {json.dumps(enriched_data, ensure_ascii=False)}"
-            })
+            convo.append({"role": "system", "content": f"CRITICAL PRICE DATA: {json.dumps(enriched_data)}\nDETEERMINISTIC CONVERSION: Rate 1 EUR = {conversion_rate} {local_currency_code}. Divide local price by {conversion_rate}."})
 
-        # --- Phase 3: Synthesis (Generate Itinerary) ---
-        final_resp = client.chat.completions.create(
-            model=st.session_state.model,
-            messages=convo,
-            tools=tools,
-            tool_choice="none", # Force text generation, no more tools
-            response_format={"type": "json_object"},
-            stream=False,
-        )
+        # --- Phase 3: Synthesis ---
+        final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
         return final_resp.choices[0].message.content or "", found_places, enriched_data
-
-    return (msg.content or "(No response text.)"), found_places, []
 
 
 # ---------- Streamlit UI ----------
@@ -616,6 +586,8 @@ def show_trip_planner():
             
         gc = geonamescache.GeonamesCache()
         country_code = name_to_code.get(selected_country, "DE")
+        country_obj = pycountry.countries.get(alpha_2=country_code)
+        iso3 = country_obj.alpha_3 if country_obj else "DEU"
 
         country_info = gc.get_countries().get(country_code)
         capital_city = country_info.get('capital') if country_info else ""
@@ -711,7 +683,11 @@ def show_trip_planner():
                         ]
                         
                         persona = st.session_state.get('selected_persona', 'General Traveler')
-                        raw_json, places, prices_list = run_planner(planner_messages, ll=ll, radius=radius, budget_val=budget, persona=persona, currency=currency_symbol, city=selected_city)
+                        raw_json, places, prices_list = run_planner(
+                            planner_messages, ll=ll, radius=radius, budget_val=budget, 
+                            persona=persona, currency=currency_symbol, city=selected_city, 
+                            iso3=iso3
+                        )
                         try:
                             data = json.loads(raw_json)
                         except:
@@ -720,17 +696,25 @@ def show_trip_planner():
                         st.session_state.map_data = {"places": [], "center": ll}
                         
                         # 1. Show Assistant Message
-                        assistant_text = data.get("assistant_message", "").replace("#", "").replace("*", "").strip()
+                        # Aggressively strip markdown characters to ensure plain text rendering
+                        assistant_text = data.get("assistant_message", "").replace("#", "").replace("*", "").replace("_", "").strip()
                         if assistant_text:
                             st.write(assistant_text)
                         
-                        itinerary_md = [assistant_text, "---"] if assistant_text else []                        
+                        itinerary_md = ["---"]
                         
                         if isinstance(data, dict) and "itinerary" in data:
                             for entry in data["itinerary"]:
                                 pid = entry.get("id")
                                 # Find the official place data from our tool results
-                                match = next((p for p in places if p["place_id"] == pid), None)
+                                # Robust matching: Exact ID, partial ID, or Name fallback
+                                match = next(
+                                    (p for p in places if 
+                                     (pid and p["place_id"] == pid) or 
+                                     (pid and pid in p["place_id"]) or 
+                                     (p["name"].lower() in entry.get("description", "").lower())), 
+                                    None
+                                )
                                 if match:
                                     # Add to Map
                                     st.session_state.map_data["places"].append(match)
@@ -767,7 +751,7 @@ def show_trip_planner():
                         answer = "\n".join(itinerary_md)
                         if not itinerary_md: answer = raw_json
 
-                        st.session_state.messages.append({"role": "assistant", "content": answer})
+                        st.session_state.messages.append({"role": "assistant", "content": f"{assistant_text}\n\n{answer}"})
                         st.rerun()
 
         # JavaScript to snap the latest message to the top of the container
@@ -793,7 +777,7 @@ def show_trip_planner():
                 print(f"  Place {i+1}: {p['name']} at {p.get('latitude')}, {p.get('longitude')}")
             m = create_beautiful_map(map_info, radius, center_ll)
             
-            st_folium(m, width="100%", height=650, key="persistent_map")
+            st_folium(m, width=None, use_container_width=True, height=650, key="persistent_map")
 
             # Construct Google Maps Directions URL at the bottom of the map column
             if len(st.session_state.map_data["places"]) >= 2:
@@ -808,6 +792,7 @@ def show_trip_planner():
                     <style>
                         .stLinkButton {
                             margin-top: -30px !important;
+                        }
                         .stLinkButton > a {
                             height: 32px !important;
                             font-size: 13px !important;
