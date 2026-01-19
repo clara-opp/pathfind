@@ -1,3 +1,5 @@
+1.1 Minimize "DEBUG: AI suggested ID ChIpwtG6BzjDDkRDajfOy268bk which was not found in current results." bugs further 
+
 1.2 include optimization in about
 
 1.3 Requirements text updaten

@@ -17,6 +17,7 @@ from openai import OpenAI
 import polyline
 
 # ---------- Google Places API client ----------
+@st.cache_data(show_spinner=False)
 def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8):
     """
     Search for places using Google Places API (New).
@@ -62,6 +63,8 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
         response_data = r.json()
         results = []
         
+        print(f"DEBUG GOOGLE SEARCH: Query='{query}' | Limit={limit}")
+
         for p in response_data.get("places", []):
             # Construct photo URLs (up to 3)
             photo_urls = []            
@@ -100,6 +103,10 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
                 "longitude": place_lon,
             })
         
+        print(f"DEBUG GOOGLE RESULTS: Found {len(results)} places:")
+        for i, res in enumerate(results, 1):
+            print(f"  {i}. {res['name']} (ID: {res['place_id']})")
+
         return {"error": False, "results": results}
     
     except Exception as e:
@@ -107,6 +114,7 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
 
 
 # ---------- Helper: Google Routes API ----------
+@st.cache_data(show_spinner=False)
 def get_route_google(coordinates, api_key):
     """
     Get walking route using Google Routes API.
@@ -170,8 +178,41 @@ def get_route_google(coordinates, api_key):
     
     return []
 
+@st.cache_data(show_spinner=False)
+def get_deterministic_durations(origin_ll, dest_ll):
+    """Fetch real durations for Foot, Car, and Transit between two points."""
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    modes = {"WALK": "travel_foot", "DRIVE": "travel_car", "TRANSIT": "travel_transit"}
+    results = {"travel_foot": "-", "travel_car": "-", "travel_transit": "-"}
+    
+    url = "https://routes.googleapis.com/directions/v2:computeRoutes"
+    headers = {"Content-Type": "application/json", "X-Goog-Api-Key": api_key, "X-Goog-FieldMask": "routes.duration"}
+
+    for google_mode, ui_key in modes.items():
+        data = {
+            "origin": {"location": {"latLng": {"latitude": origin_ll[0], "longitude": origin_ll[1]}}},
+            "destination": {"location": {"latLng": {"latitude": dest_ll[0], "longitude": dest_ll[1]}}},
+            "travelMode": google_mode
+        }
+        try:
+            r = requests.post(url, headers=headers, json=data, timeout=5)
+            if r.status_code == 200:
+                resp_json = r.json()
+                if 'routes' in resp_json and len(resp_json['routes']) > 0:
+                    duration_sec = int(resp_json['routes'][0]['duration'].replace('s', ''))
+                    duration_min = round(duration_sec / 60)
+                    print(f"DEBUG TRAVEL API: Mode={google_mode} | Result={duration_min} min")
+                    results[ui_key] = f"{duration_min} min"
+                else:
+                    print(f"DEBUG TRAVEL API: Mode={google_mode} | Status=OK but NO ROUTES FOUND (Common in restricted regions like Russia)")
+            else:
+                print(f"DEBUG TRAVEL API: Mode={google_mode} | Error={r.status_code} - {r.text}")
+        except:
+            continue
+    return results
 
 # ---------- Fallback: OSRM Routing ----------
+@st.cache_data(show_spinner=False)
 def get_route_osrm(coordinates):
     """
     Fallback routing using free OSRM service.
@@ -193,8 +234,8 @@ def get_route_osrm(coordinates):
     
     return []
 
-
-def serper_search_prices(query: str, num_results: int = 3):
+@st.cache_data(show_spinner=False)
+def serper_search_prices(query: str, num_results: int = 6):
     """Search the web for current prices, entrance fees, or menu costs."""
     api_key = os.getenv("SERPER_API_KEY", "").strip()
     if not api_key:
@@ -218,16 +259,28 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
     # 1. Start Currency Lookup immediately (Parallel to Phase 1)
     def get_conversion():
         try:
-            with sqlite3.connect("unified_country_database.db") as conn:
+            # Fix: Find database in the parent directory relative to this module
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            db_path = os.path.join(base_dir, "..", "unified_country_database.db")
+            
+            # Fallback for different execution contexts
+            if not os.path.exists(db_path):
+                db_path = os.path.join(base_dir, "unified_country_database.db")
+
+            print(f"DEBUG DB: Connecting to {db_path} for ISO3='{iso3}'")
+            with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT r.one_eur_to_currency, p.currency 
+                    SELECT r.one_eur_to_currency, r.currency 
                     FROM numbeo_exchange_rates r
-                    JOIN numbeo_prices p ON r.currency = p.currency
-                    WHERE p.iso3 = ? LIMIT 1
-                """, (iso3,))
-                return cursor.fetchone() or (1.0, "Unknown")
-        except Exception:
+                    WHERE r.currency = (SELECT currency FROM numbeo_prices WHERE iso3 = ? LIMIT 1)""", (iso3,))
+                res = cursor.fetchone()
+                if res:
+                    print(f"DEBUG DB: Success! Rate={res[0]}, Currency={res[1]}")
+                    return res
+                return (1.0, "Unknown")
+        except Exception as e:
+            print(f"DEBUG DB ERROR: {e}")
             return (1.0, "Unknown")
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -267,7 +320,9 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
                 "- ID MATCHING: You MUST use the exact 'place_id' string from the CURRENT tool output. NEVER reuse IDs from previous turns. If you cannot find an ID, use the 'name' of the place as the ID.\n"
                 "- Return a JSON object with two keys: 'assistant_message' and 'itinerary'.\n"
                 "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. Strictly NO markdown (#, ###, **, etc.).\n"
-                "- 'itinerary': A list of objects. Each MUST have: 'id', 'time_range', 'description', 'price_cleaned' (numeric), and travel estimates: 'travel_car', 'travel_transit', 'travel_foot'.\n"
+                "- 'itinerary': List of 5-7 objects. Each MUST have: 'id', 'time_range', 'description', and 'local_price' (The raw numeric value found in search results, e.g., 500 for 500 INR).\n"
+                "- DENSITY: Prioritize a packed schedule. Even if walking takes 200 minutes, assume the user will take a car/taxi to fit in 5-7 stops.\n"
+                "- TRAVEL TIMES: Do NOT calculate or include any travel times (car, foot, transit) in your JSON. These are handled automatically by the system.\n"
                 "- DESCRIPTION RULE: The 'description' MUST be exactly 3 sentences. Do NOT mention the name of the place or any budget/price information in the description.\n"
                 "- STRICTLY PROHIBITED: 'Optional' activities, alternatives, or 'if time permits' suggestions. Provide exactly one definitive path.\n"
                 ),
@@ -288,15 +343,17 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
         msg = resp.choices[0].message
         tool_calls = getattr(msg, "tool_calls", None)
 
+        conversion_rate, local_currency_code = db_future.result()
+
         if not tool_calls:
-            return (msg.content or ""), found_places, []
+            return (msg.content or ""), found_places, [], conversion_rate, local_currency_code
 
         convo.append({"role": "assistant", "content": msg.content or "", "tool_calls": [tc.model_dump() for tc in tool_calls]})
 
         def execute_tool(tc):
             fn, args = tc.function.name, json.loads(tc.function.arguments or "{}")
             if fn == "google_search_places":
-                out = google_search_places(f"{args.get('query')} in {city}", args.get("ll", ll), int(args.get("radius", radius)), 8)
+                out = google_search_places(f"{args.get('query')} in {city}", args.get("ll", ll), int(args.get("radius", radius)), 5)
                 return tc.id, out, (out.get("results", []) if not out.get("error") else [])
             return tc.id, {"error": True}, []
 
@@ -305,7 +362,6 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
             convo.append({"role": "tool", "tool_call_id": tc_id, "content": json.dumps(out)})
 
         # --- Phase 2: Enrichment ---
-        conversion_rate, local_currency_code = db_future.result()
         enriched_data = []
         if found_places:
             price_futures = {executor.submit(serper_search_prices, f"entrance fee {p['name']} {p['address']}"): p for p in found_places}
@@ -317,7 +373,7 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
 
         # --- Phase 3: Synthesis ---
         final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
-        return final_resp.choices[0].message.content or "", found_places, enriched_data
+        return final_resp.choices[0].message.content or "", found_places, enriched_data, conversion_rate, local_currency_code
 
 
 # ---------- Streamlit UI ----------
@@ -581,7 +637,11 @@ def show_trip_planner():
         # Set the default country to the one selected in the main travel planner
         current_sel = st.session_state.get('selected_country', {}).get('country_name', 'Germany')
         default_country_name = current_sel.replace(',', '') if "Congo" in current_sel else current_sel.split(',')[0]
-        default_country_idx = country_list.index(default_country_name) if default_country_name in country_list else 0
+        if default_country_name not in country_list:
+            st.error(f"Unfortunately, {current_sel} is not available for the trip planner yet.")
+            st.stop()
+
+        default_country_idx = country_list.index(default_country_name)
         selected_country = st.selectbox("Select Country", options=country_list, index=default_country_idx)
             
         gc = geonamescache.GeonamesCache()
@@ -632,7 +692,7 @@ def show_trip_planner():
     current_location_key = f"{selected_country}-{selected_city}"
     if st.session_state.get("last_location_key") != current_location_key:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"I'm ready to plan your trip in {selected_city}, {selected_country}! Would like to enjoy sightseeing, shopping, great restaurants or something else?"}
+            {"role": "assistant", "content": f"I'm ready to plan your trip in {selected_city}, {selected_country}! Would you like to enjoy sightseeing, shopping, great restaurants or something else?"}
         ]
         st.session_state.map_data = {"places": [], "center": None}
         st.session_state.last_location_key = current_location_key
@@ -683,10 +743,10 @@ def show_trip_planner():
                         ]
                         
                         persona = st.session_state.get('selected_persona', 'General Traveler')
-                        raw_json, places, prices_list = run_planner(
-                            planner_messages, ll=ll, radius=radius, budget_val=budget, 
-                            persona=persona, currency=currency_symbol, city=selected_city, 
-                            iso3=iso3
+                        raw_json, places, prices_list, rate, local_curr = run_planner(
+                             planner_messages, ll=ll, radius=radius, budget_val=budget, 
+                             persona=persona, currency=currency_symbol, city=selected_city, 
+                             iso3=iso3
                         )
                         try:
                             data = json.loads(raw_json)
@@ -706,15 +766,15 @@ def show_trip_planner():
                         if isinstance(data, dict) and "itinerary" in data:
                             for entry in data["itinerary"]:
                                 pid = entry.get("id")
-                                # Find the official place data from our tool results
-                                # Robust matching: Exact ID, partial ID, or Name fallback
-                                match = next(
-                                    (p for p in places if 
-                                     (pid and p["place_id"] == pid) or 
-                                     (pid and pid in p["place_id"]) or 
-                                     (p["name"].lower() in entry.get("description", "").lower())), 
-                                    None
-                                )
+                                # Robust matching helper: checks ID, partial ID, and Name
+                                def find_match(e):
+                                    eid, edesc = e.get("id", ""), e.get("description", "").lower()
+                                    for p in places:
+                                        if eid and (p["place_id"] == eid or eid in p["place_id"]): return p
+                                        if p["name"].lower() in edesc: return p
+                                    return None
+
+                                match = find_match(entry)
                                 if match:
                                     # Add to Map
                                     st.session_state.map_data["places"].append(match)
@@ -724,24 +784,41 @@ def show_trip_planner():
                                     time = entry.get("time_range", "TBD")
                                     desc = entry.get("description", "")
 
-                                    # Deterministic travel time formatting
-                                    def fmt(v): return f"{v} min" if v and str(v).isdigit() else "-"
-                                    t_car = fmt(entry.get("travel_car"))
-                                    t_bus = fmt(entry.get("travel_transit"))
-                                    t_walk = fmt(entry.get("travel_foot"))
+                                    # --- Deterministic Travel Logic (Google Only) ---
+                                    current_idx = data["itinerary"].index(entry)
+                                    t_car, t_bus, t_walk = None, None, None
+                                    
+                                    # If there is a next stop, calculate travel TO it
+                                    if current_idx < len(data["itinerary"]) - 1:
+                                        next_entry = data["itinerary"][current_idx + 1]
+                                        next_match = find_match(next_entry)
+                                        
+                                        if next_match:
+                                            origin = [match["latitude"], match["longitude"]]
+                                            destination = [next_match["latitude"], next_match["longitude"]]
+                                            real_times = get_deterministic_durations(origin, destination)
+                                            t_car = real_times["travel_car"]
+                                            t_bus = real_times["travel_transit"]
+                                            t_walk = real_times["travel_foot"]
+                                            print(f"DEBUG TRAVEL TIMES: Stop='{name}' -> Next Stop | Foot: {t_walk}, Public: {t_bus}, Car: {t_car}")
 
                                     # Post-AI Assembly: Pull price from Serper data, not AI imagination
-                                    price = entry.get("price_cleaned", "Check website")
+                                    # Deterministic Price Calculation in Python
+                                    local_val = entry.get("local_price", 0)
+                                    price_eur = round(local_val / rate, 2) if rate > 0 else local_val
+                                    print(f"DEBUG CURRENCY: Place='{name}' | Original: {local_val} {local_curr} | Converted: {price_eur} EUR (Rate: {rate})")
                                     
-                                    stop_md = (
-                                        f"### {time} - {name}\n"
-                                        f"- 📝 **Description**: {desc}\n"
-                                        f"- 💰 **Estimated Cost**: {currency_symbol}{price}\n"
-                                        f"- 🚶 **Travel to next stop**:\n"
-                                        f"  - 🏃 Foot: {t_walk}\n"
-                                        f"  - 🚌 Public Transport: {t_bus}\n"
-                                        f"  - 🚗 Car: {t_car}\n"
-                                    )
+                                    # Start building the stop markdown
+                                    stop_md = f"### {time} - {name}\n"
+                                    stop_md += f"- 📝 **Description**: {desc}\n"
+                                    stop_md += f"- 💰 **Estimated Cost**: {currency_symbol}{price_eur}\n"
+                                    
+                                    # Only append travel info if there is a next stop
+                                    if t_walk:
+                                        stop_md += "- 🚶 **Travel to next stop**:\n"
+                                        stop_md += f"  - 🏃 Foot: {t_walk}\n"
+                                        stop_md += f"  - 🚌 Public Transport: {t_bus}\n"
+                                        stop_md += f"  - 🚗 Car: {t_car}\n"
                                     st.markdown(stop_md)
                                     itinerary_md.append(stop_md)
                                 else:
@@ -777,7 +854,14 @@ def show_trip_planner():
                 print(f"  Place {i+1}: {p['name']} at {p.get('latitude')}, {p.get('longitude')}")
             m = create_beautiful_map(map_info, radius, center_ll)
             
-            st_folium(m, width=None, use_container_width=True, height=650, key="persistent_map")
+            st_folium(
+                m, 
+                width=None, 
+                use_container_width=True, 
+                height=650, 
+                key="persistent_map",
+                returned_objects=[]  # This prevents the rerun on click
+            )
 
             # Construct Google Maps Directions URL at the bottom of the map column
             if len(st.session_state.map_data["places"]) >= 2:

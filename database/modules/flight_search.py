@@ -131,6 +131,9 @@ def render_flight_search(
     # We keep your "unique_label" trick for expander rerenders
     unique_label = st.session_state[label_key] + ("\u200b" * int(st.session_state[search_count_key]))
 
+    iso_code = country.get("iso2") if country is not None else None
+    dest_airports = data_manager.get_airports(iso_code) if iso_code else data_manager.get_airports()
+
     # -----------------------------
     # Config expander UI (same as before)
     # -----------------------------
@@ -143,7 +146,6 @@ def render_flight_search(
         )
 
         all_airports = data_manager.get_airports()
-        dest_airports = data_manager.get_airports(country["iso2"])
 
         c1, c2, c3 = st.columns(3)
         default_origin = origin_iata_default or "FRA"
