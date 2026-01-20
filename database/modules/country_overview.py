@@ -23,6 +23,7 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
     
     with nav_col1:
         if st.button("Back to Results", key="dashboard_back", use_container_width=True, help="Return to results"):
+            st.session_state["is_direct_selection"] = False  # ← RESET FLAG
             st.session_state.step = 6
             st.rerun()
     
@@ -138,7 +139,7 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
         )
     
     with tab5:
-        render_chatbot_tab(country, openai_client)
+        render_chatbot_tab(country, openai_client, data_manager)
     
     with tab6:
         render_pdf_tab(country, data_manager)
@@ -169,8 +170,12 @@ def render_hero_section(country):
         else:
             st.markdown(f"# 🌍 {country_name}")
         
-        score = country.get('final_score', 0) * 100
-        st.caption(f"Match Score: **{score:.0f}%**")
+        # Only show match score if NOT directly selected
+        is_direct = st.session_state.get("is_direct_selection", False)
+        if not is_direct:
+            score = country.get("final_score", 0) * 100
+            st.caption(f"Match Score: {score:.0f}%")
+
     
     with col_right:
         # Get safety score
@@ -462,7 +467,7 @@ def render_budget_tab(country, data_manager):
     )
 
 
-def render_chatbot_tab(country, openai_client):
+def render_chatbot_tab(country, openai_client, data_manager):
     """AI-powered trip planning chatbot"""
     st.markdown("### 🌐 Your AI Travel Assistant")
     
@@ -524,15 +529,85 @@ def render_chatbot_tab(country, openai_client):
         # Generate AI response
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = get_ai_travel_response(prompt, country, openai_client, chat_key)
+                response = get_ai_travel_response(prompt, country, openai_client, chat_key, data_manager)
                 st.markdown(response)
         
         st.session_state[chat_key].append({"role": "assistant", "content": response})
         st.rerun()
 
 
+def get_tugo_context_for_ai(country, data_manager):
+    """
+    Query TuGo detail tables and return formatted context for AI.
+    Returns a string with relevant health, safety, and law information.
+    """
+    iso2 = country.get("iso2")
+    if not iso2:
+        return ""
+    
+    try:
+        details = data_manager.get_country_details(iso2)
+    except Exception as e:
+        print(f"Error fetching TuGo details: {e}")
+        return ""
+    
+    context_parts = []
+    
+    # Health warnings (top 5 most critical)
+    # FIX: Use "tugo_health" instead of "health"
+    if "tugo_health" in details and not details["tugo_health"].empty:
+        health_items = details["tugo_health"].head(5)
+        if len(health_items) > 0:
+            context_parts.append("\n**Health & Vaccination Information:**")
+            for idx, row in health_items.iterrows():
+                disease = row.get("disease_name", "").strip()
+                desc = row.get("description", "").strip()
+                if disease and disease != "GENERAL":
+                    context_parts.append(f"- {disease}: {desc[:150]}")
+                elif desc:
+                    context_parts.append(f"- {desc[:150]}")
+    
+    # Safety concerns (top 5)
+    # FIX: Use "tugo_safety" instead of "safety"
+    if "tugo_safety" in details and not details["tugo_safety"].empty:
+        safety_items = details["tugo_safety"].head(5)
+        if len(safety_items) > 0:
+            context_parts.append("\n**Safety Concerns:**")
+            for idx, row in safety_items.iterrows():
+                category = row.get("category", "").strip()
+                desc = row.get("description", "").strip()
+                if desc:
+                    context_parts.append(f"- {category}: {desc[:150]}")
+    
+    # Laws and cultural norms (top 5)
+    # FIX: Use "tugo_laws" instead of "laws"
+    if "tugo_laws" in details and not details["tugo_laws"].empty:
+        law_items = details["tugo_laws"].head(5)
+        if len(law_items) > 0:
+            context_parts.append("\n**Important Local Laws & Cultural Norms:**")
+            for idx, row in law_items.iterrows():
+                category = row.get("category", "").strip()
+                desc = row.get("description", "").strip()
+                if desc:
+                    context_parts.append(f"- {category}: {desc[:150]}")
+    
+    # Entry requirements
+    # FIX: Use "tugo_entry" instead of "entry"
+    if "tugo_entry" in details and not details["tugo_entry"].empty:
+        entry_items = details["tugo_entry"].head(3)
+        if len(entry_items) > 0:
+            context_parts.append("\n**Entry/Exit Requirements:**")
+            for idx, row in entry_items.iterrows():
+                category = row.get("category", "").strip()
+                desc = row.get("description", "").strip()
+                if desc:
+                    context_parts.append(f"- {category}: {desc[:150]}")
+    
+    return "\n".join(context_parts) if context_parts else ""
 
-def get_ai_travel_response(user_query, country, openai_client, chat_key):
+
+
+def get_ai_travel_response(user_query, country, openai_client, chat_key, data_manager):
     """Generate AI response with comprehensive user context"""
     
     # Core user profile
@@ -591,33 +666,39 @@ def get_ai_travel_response(user_query, country, openai_client, chat_key):
     
     pref_text = "; ".join(pref_summary) if pref_summary else "balanced preferences"
     
+    # Get detailed TuGo context
+    tugo_details = get_tugo_context_for_ai(country, data_manager)
+
     # Build comprehensive system prompt
     system_prompt = f"""You are an expert travel assistant helping plan a trip to {country['country_name']}.
 
-🧳 TRAVELER PROFILE:
+TRAVELER PROFILE:
 - Type: {persona}
-- Trip Duration: {duration} days ({start_date.strftime('%B %d')} to {end_date.strftime('%B %d, %Y')})
+- Trip Duration: {duration} days ({start_date.strftime("%B %d")} to {end_date.strftime("%B %d, %Y")})
 - Top Priorities: {priority_text}
 - Specific Preferences: {pref_text}
 {f"- Cosmic Guidance: {astro_sentence}" if astro_sentence else ""}
 
-🌍 DESTINATION CONTEXT:
-- Safety Advisory: {country.get('tugo_advisory_state', 'Unknown')}
-- Climate: {country.get('climate_avg_temp_c', 'N/A')}°C average
-- UNESCO Sites: {country.get('unesco_count', 0)}
-- Cost of Living Index: {country.get('numbeo_cost_of_living_index', 'N/A')} (100 = NYC)
+DESTINATION CONTEXT:
+- Safety Advisory: {country.get("tugo_advisory_state", "Unknown")}
+- Climate: {country.get("climate_avg_temp_c", "N/A")}°C average
+- UNESCO Sites: {country.get("unesco_count", 0)}
+- Cost of Living Index: {country.get("numbeo_cost_of_living_index", "N/A")} (100=NYC)
 
-📋 YOUR ROLE:
-Provide personalized, actionable travel advice that EXPLICITLY references their stated preferences. 
+{tugo_details if tugo_details else ""}
+
+YOUR ROLE:
+Provide personalized, actionable travel advice that EXPLICITLY references their stated preferences.
 
 When making recommendations:
-1. **Always explain WHY** it matches their profile (e.g., "Since you're a {persona} who {pref_text}, I recommend...")
-2. **Reference their priorities** (they value: {priority_text})
-3. **Be specific**: Mention actual places, restaurants, neighborhoods, costs
-4. **Consider their timeline**: Plan within their {duration}-day window
-5. **Match their style**: Align recommendations with their persona and swipe choices
+1. Always explain WHY it matches their profile (e.g., "Since you're a {persona} who {pref_text}, I recommend...")
+2. Reference their priorities (they value: {priority_text})
+3. Be specific: Mention actual places, restaurants, neighborhoods, costs
+4. Consider their timeline: Plan within their {duration}-day window
+5. Match their style: Align recommendations with their persona and swipe choices
+6. **When discussing health, safety, or laws, reference the official TuGo information provided above**
 
-Keep responses conversational, 250-350 words, and structure them well for readability."""
+Keep responses conversational, 250-400 words, and structure them well for readability."""
 
     try:
         response = openai_client.chat.completions.create(

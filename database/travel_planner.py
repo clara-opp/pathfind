@@ -486,17 +486,25 @@ class DataManager:
         conn = _self.get_connection()
         try:
             details = {
-                "safety": pd.read_sql("SELECT category, description FROM tugo_safety WHERE iso2 = ?", conn, params=(iso2,)),
-                "health": pd.read_sql("SELECT disease_name, description FROM tugo_health WHERE iso2 = ? LIMIT 5", conn, params=(iso2,)),
-                "entry": pd.read_sql("SELECT category, description FROM tugo_entry WHERE iso2 = ?", conn, params=(iso2,)),
+                "tugo_safety": pd.read_sql("SELECT category, description FROM tugo_safety WHERE iso2 = ?", conn, params=(iso2,)),
+                "tugo_health": pd.read_sql("SELECT disease_name, description FROM tugo_health WHERE iso2 = ? LIMIT 10", conn, params=(iso2,)),
+                "tugo_laws": pd.read_sql("SELECT category, description FROM tugo_laws WHERE iso2 = ?", conn, params=(iso2,)),
+                "tugo_entry": pd.read_sql("SELECT category, description FROM tugo_entry WHERE iso2 = ?", conn, params=(iso2,)),
                 "unesco": pd.read_sql("SELECT name, category FROM unesco_heritage_sites WHERE country_iso = ? LIMIT 10", conn, params=(iso2,)),
             }
         except Exception as e:
             st.error(f"🚨 SQL error in get_country_details: {e}")
-            details = {"safety": pd.DataFrame(), "health": pd.DataFrame(), "entry": pd.DataFrame(), "unesco": pd.DataFrame()}
+            details = {
+                "tugo_safety": pd.DataFrame(), 
+                "tugo_health": pd.DataFrame(), 
+                "tugo_laws": pd.DataFrame(), 
+                "tugo_entry": pd.DataFrame(), 
+                "unesco": pd.DataFrame()
+            }
         finally:
             conn.close()
         return details
+
 
     @st.cache_data
     def get_airports(_self, iso2=None):
@@ -1375,19 +1383,16 @@ def show_results_step(data_manager):
                 
                 with col_button:
                     if selected_country_name and selected_country_name != "":
-                        if st.button("Go to Country", use_container_width=True, key="goto_direct_country"):
-                            # Get the full row for selected country
+                        if st.button("Go to Country", use_container_width=True, key="go_to_direct_country"):
                             selected_row = all_countries_df[all_countries_df["country_name"] == selected_country_name]
-                            
                             if not selected_row.empty:
                                 iso2 = selected_row.iloc[0]["iso2"]
                                 
-                                # Load full data for this specific country
-                                dfbase_full = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
-                                country_data = dfbase_full[dfbase_full["iso2"] == iso2]
-                                
+                                df_base_full = data_manager.load_base_data(st.session_state.get("origin_iata", "FRA"))
+                                country_data = df_base_full[df_base_full["iso2"] == iso2]
                                 if not country_data.empty:
                                     st.session_state["selected_country"] = country_data.iloc[0].to_dict()
+                                    st.session_state["is_direct_selection"] = True  # ← ADD THIS FLAG
                                     st.session_state.step = 7
                                     st.rerun()
                                 else:
