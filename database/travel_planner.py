@@ -649,13 +649,25 @@ class TravelMatcher:
             0.20 * noise_score
         )
 
-        # Tarot countries boost (+20%)
+        # Tarot countries boost (varying per country)
         tarot_countries = st.session_state.get("tarot_countries", [])
         if tarot_countries and float(weights.get("astro", 0.0)) > 0:
-            df["tarot_boost"] = df["iso3"].isin(tarot_countries).astype(float) * 0.20
-            df["astro_score"] = df["tarot_boost"]
+            mask = df["iso2"].isin(tarot_countries)
+
+            astro_seed = int(prefs.get("astro_seed", 4242))
+
+            # stable but run-dependent variation per country
+            noise = df["iso2"].apply(
+                lambda x: self._stable_noise(str(x), astro_seed)
+            )
+
+            # Tarot countries get strong but varying astro score
+            # range: 0.80 – 1.00
+            df["astro_score"] = 0.0
+            df.loc[mask, "astro_score"] = 0.80 + 0.20 * noise[mask]
         else:
             df["astro_score"] = 0.0
+
 
         if float(weights.get("jitter", 0.0)) > 0:
             seed = int(prefs.get("jitter_seed", 9001))
@@ -680,7 +692,7 @@ class TravelMatcher:
             df["astro_score"] * weights.get("astro", 0.0) +
             df["jitter_score"] * weights.get("jitter", 0.0)
         )
-
+        
         raw = pd.to_numeric(df["final_score_raw"], errors="coerce").fillna(0.0)
         df["final_score"] = raw.clip(lower=0.0, upper=1.0)
 
@@ -708,16 +720,16 @@ SWIPE_CARDS_ALL = [
 # ============================================================
 def init_session_state():
     st.session_state.setdefault("step", 1)
-
+    # define a default human
     st.session_state.setdefault(
         "weights",
         normalize_weights_100({
-            "safety_tugo": 18,
-            "cost": 12, "restaurant": 6, "groceries": 6, "rent": 0,
-            "purchasing_power": 6,
-            "qol": 8, "health_care": 4, "clean_air": 6,
-            "culture": 10, "weather": 12,
-            "luxury_price": 0,
+            "safety_tugo": 10,
+            "cost": 10, "restaurant": 5, "groceries": 5, "rent": 0,
+            "purchasing_power": 5,
+            "qol": 10, "health_care": 5, "clean_air": 5,
+            "culture": 10, "weather": 10,
+            "luxury_price": 5,
             "astro": 0, "hidden_gem": 10, "jitter": 10
         })
     )
@@ -736,7 +748,11 @@ def init_session_state():
     st.session_state.setdefault("card_index", 0)
 
     st.session_state.setdefault("tarot_drawn", False)
-    st.session_state.setdefault("tarot_boosted_countries", [])
+    st.session_state.setdefault("tarot_countries", [])
+    st.session_state.setdefault("tarot_card", {})
+    st.session_state.setdefault("tarot_travel_meaning", "")
+    st.session_state.setdefault("tarot_travel_style", "")
+
 
     st.session_state.setdefault("lgbtq_filter_active", False)
 
@@ -749,8 +765,50 @@ def init_session_state():
 # UI STEPS
 # ============================================================
 def show_basic_info_step(data_manager):
-    """Step 1: Nationality, LGBTQ filter, and vacation dates"""
-    
+    """Step 1: Origin, LGBTQ filter, and vacation dates"""
+
+    # Origin selection
+    col_content, col_flag_empty = st.columns([0.88, 0.12], vertical_alignment="top")
+
+    with col_content:
+        st.markdown("### Where are you starting from?")
+        origin_country_map = {"Germany": "FRA", "United States": "ATL"}
+        sel_country = st.radio("Select your location", list(origin_country_map.keys()), label_visibility="collapsed", horizontal=True)
+        all_airports = data_manager.get_airports()
+        default_iata = origin_country_map[sel_country]
+        default_idx = all_airports[all_airports['iata_code'] == default_iata].index[0] if default_iata in all_airports['iata_code'].values else 0
+        sel_airport = st.selectbox("Departure airport", options=all_airports["display"], index=int(default_idx))
+        st.session_state["origin_iata"] = sel_airport.split("(")[-1].strip(")")
+
+    with col_flag_empty:
+        c_flag, c_info = st.columns([0.65, 0.35], vertical_alignment="bottom")
+        
+        with c_flag:
+            if "lgbtq_filter_active" not in st.session_state:
+                st.session_state.lgbtq_filter_active = False
+            
+            is_active = st.session_state.lgbtq_filter_active
+            
+            if st.button(
+                f"{'🏳️‍🌈' if is_active else '🏳️'}",
+                key="lgbtq_toggle",
+                help="LGBTQ+ Safe Travel Filter",
+                use_container_width=True
+            ):
+                st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
+                st.rerun()
+
+        with c_info:
+            with st.popover("ⓘ", use_container_width=True):
+                st.markdown("""
+                **LGBTQ+ Safe Travel**
+                
+                Filters for countries with stronger legal protections and societal acceptance.
+                
+                *Note: Data-based guidance only. Not a guarantee of individual safety.*
+                """)
+    st.markdown("---")
+
     st.markdown("### What is your nationality?")
     
     # Direktes Query der Datenbank für alle Länder
@@ -778,34 +836,15 @@ def show_basic_info_step(data_manager):
     if "Germany" in country_names:
         default_idx = country_names.index("Germany")
     
-    # Nationality + LGBTQ button in einer Reihe
-    col_nationality, col_lgbtq = st.columns([0.88, 0.12], vertical_alignment="bottom")
+    selected_nationality_name = st.selectbox(
+        "Select country of nationality",
+        options=country_names,
+        index=default_idx,
+        key="passport_nationality_select",
+        help="This helps us show visa requirements for your destination"
+    )
     
-    with col_nationality:
-        selected_nationality_name = st.selectbox(
-            "Select country of nationality",
-            options=country_names,
-            index=default_idx,
-            key="passport_nationality_select",
-            help="This helps us show visa requirements for your destination"
-        )
-    
-    with col_lgbtq:
-        if "lgbtq_filter_active" not in st.session_state:
-            st.session_state.lgbtq_filter_active = False
-        
-        is_active = st.session_state.lgbtq_filter_active
-        
-        if st.button(
-            f"{'🏳️‍🌈' if is_active else '🏳️'}",
-            key="lgbtq_toggle",
-            help="LGBTQ+ Safe Travel Filter",
-            use_container_width=True
-        ):
-            st.session_state.lgbtq_filter_active = not st.session_state.lgbtq_filter_active
-            st.rerun()
-    
-    # Get ISO codes for selected nationality and set defaults
+    # Get ISO codes for selected nationality
     if selected_nationality_name:
         selected_row = countries_df[countries_df["country_name"] == selected_nationality_name]
         if not selected_row.empty:
@@ -814,29 +853,9 @@ def show_basic_info_step(data_manager):
             st.session_state['passport_iso2'] = passport_iso2
             st.session_state['passport_iso3'] = passport_iso3
             st.session_state['nationality_name'] = selected_nationality_name
-            
-            # Set airport and currency based on nationality
-            origin_country_map = {"Germany": ("FRA", "€"), "United States": ("ATL", "$")}
-            
-            if selected_nationality_name in origin_country_map:
-                iata_code, currency = origin_country_map[selected_nationality_name]
-                st.session_state["origin_iata"] = iata_code
-                
-                # Set currency based on nationality
-                if currency == "$":
-                    st.session_state.currency_symbol = "$"
-                    st.session_state.currency_rate = data_manager.get_exchange_rate("USD")
-                else:
-                    st.session_state.currency_symbol = "€"
-                    st.session_state.currency_rate = 1.0
-            else:
-                # Default to Germany/EUR for other countries
-                st.session_state["origin_iata"] = "FRA"
-                st.session_state.currency_symbol = "€"
-                st.session_state.currency_rate = 1.0
     
     st.markdown("---")
-    
+
     # Vacation dates
     st.markdown("### When is your vacation?")
     today = datetime.date.today()
@@ -846,16 +865,23 @@ def show_basic_info_step(data_manager):
         min_value=today,
         help="This helps us find the best flights and weather for your trip.",
     )
-    
+
     # Next button
     if st.button("Next: Choose Your Profile"):
         if not isinstance(vacation_dates, (list, tuple)) or len(vacation_dates) != 2:
             st.error("Please select both a start and end date for your vacation.")
             st.stop()
-        
+
         st.session_state.start_date = vacation_dates[0]
         st.session_state.end_date = vacation_dates[1]
-        
+
+        # Set currency based on origin
+        if st.session_state.origin_iata == "ATL":
+            st.session_state.currency_symbol = "$"
+            st.session_state.currency_rate = data_manager.get_exchange_rate("USD")
+        else:
+            st.session_state.currency_symbol = "€"
+            st.session_state.currency_rate = 1.0
 
         # NEW RUN = NEW SEEDS
         st.session_state.prefs["gem_seed"] = random.randint(1, 10_000_000)
@@ -864,6 +890,12 @@ def show_basic_info_step(data_manager):
         st.session_state.swipe_mode_chosen = False
         st.session_state.active_swipe_cards = []
         st.session_state.card_index = 0
+        # allow drawing a new tarot card
+        st.session_state["tarot_drawn"] = False
+        st.session_state["tarot_countries"] = []
+        st.session_state["tarot_card"] = {}
+        st.session_state["tarot_travel_meaning"] = ""
+        st.session_state["tarot_travel_style"] = ""
 
         st.session_state.step = 2
         st.rerun()
@@ -896,7 +928,7 @@ def show_swiping_step():
 
     card = cards[idx]
 
-    SWIPE_STRENGTH = 1.3   # change for different strength level
+    SWIPE_STRENGTH = 1.5   # change for different strength level
 
     def _scale_deltas(deltas: dict, factor: float) -> dict:
         out = {}
@@ -1063,7 +1095,7 @@ def show_astro_step(data_manager):
         col1, col2 = st.columns(2, gap="large")
         
         with col1:
-            if st.button("🃏 Draw travel trarot card", key="draw_tarot", use_container_width=True):
+            if st.button("🃏 DRAW CARD", key="draw_tarot", use_container_width=True):
                 try:
                     api_key = os.getenv("ROXY_API_KEY")
                     tarot_url = "https://roxyapi.com/api/v1/data/astro/tarot"
@@ -1106,9 +1138,9 @@ def show_astro_step(data_manager):
                     st.session_state["tarot_travel_meaning"] = travel_meaning
                     st.session_state["tarot_travel_style"] = travel_style
 
-                    # Apply astro boost (20%)
+                    # Apply astro boost ()
                     w = st.session_state.weights.copy()
-                    w["astro"] = 20
+                    w["astro"] = 33
                     st.session_state.weights = normalize_weights_100(w)
 
                     st.session_state.tarot_drawn = True
@@ -1118,11 +1150,14 @@ def show_astro_step(data_manager):
                     st.error(f"Stars misaligned: {str(e)}")
 
         with col2:
-            if st.button("Skip, let's keep it rational →", key="skip_tarot", use_container_width=True):
+            if st.button("⏭️ SKIP", key="skip_tarot", use_container_width=True):
                 w = st.session_state.weights.copy()
                 w["astro"] = 0
                 st.session_state.weights = normalize_weights_100(w)
+                st.session_state["tarot_drawn"] = False
                 st.session_state["tarot_countries"] = []
+                st.session_state["tarot_card"] = {}
+                st.session_state["tarot_travel_meaning"] = ""
                 st.session_state.step = 5
                 st.rerun()
 
@@ -1422,8 +1457,6 @@ def show_results_step(data_manager):
                         converted_price = float(flight_price) * rate
                         tooltip = f"Round trip for 1 adult from {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
                         st.markdown(f"✈️ **Est. Flight:** {symbol}{converted_price:.0f}", help=tooltip)
-                    else:
-                       st.caption("⚠️ There are no estimated flight costs for this destination")
 
                 with c3:
                     if st.button("View Details", key=f"details_{row['iso2']}_{i}"):
