@@ -382,7 +382,7 @@ This provides a stable base for ranking while keeping the underlying entities mo
                     "<b>UNESCO</b> — World Heritage Sites (counts and site metadata)",
                     "<b>Berkeley Earth</b> — climate and weather data inputs",
                     "<b>Amadeus</b> — live flight search and itinerary/price signals\n  - Flight Offers Search API\n  - Flight Offers Price API\n  - Flight Create Orders API",
-                    "<b>Google APIs</b> — calendar export and routing/map support\n  - Google Calendar API\n  - Google Places API\n  - Google Routes API",
+                    "<b>Google APIs</b> — calendar export (OAuth) + maps/routing support<ul style='margin-left: -15px; list-style-type: disc;'><li>Google Calendar API</li><li>Google Places API</li><li>Google Routes API</li></ul>",
                     "<b>Serper</b> — used by trip planner to search prices",
                     "<b>OpenAI</b> — chatbot interaction and generated explanations",
                     "<b>Roxy</b> — tarot card draw (optional extension)",
