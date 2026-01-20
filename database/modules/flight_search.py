@@ -516,9 +516,11 @@ def show_booking_step(
                     else:
                         st.error("Booking failed. The flight may no longer be available or the connection timed out.")
 
-    if st.button("← Back to Flight Results", use_container_width=True):
-        st.session_state.step = 7
-        st.rerun()
+    c_back, _ = st.columns([0.15, 0.85])
+    with c_back:
+        if st.button("← Back", use_container_width=True):
+            st.session_state.step = 7
+            st.rerun()
 
 
 def show_confirmation_step(

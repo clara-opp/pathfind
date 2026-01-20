@@ -35,7 +35,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 TRAVEL_BUDDY_API_KEY= os.getenv("TRAVEL_BUDDY_API_KEY")
-REDIRECT_URI = "http://localhost:8501"
+REDIRECT_URI = "https://pathfind.streamlit.app/"
 
 #  ============================================================
 # STYLES
