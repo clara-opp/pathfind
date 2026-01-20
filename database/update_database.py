@@ -23,6 +23,7 @@ import argparse
 SCRIPT_DIR = Path(__file__).parent
 TUGO_SCRIPT = SCRIPT_DIR / "tugo_api.py"
 FOREIGN_OFFICE_SCRIPT = SCRIPT_DIR / "foreign_office_api.py"
+NUMBEO_UPDATE_SCRIPT = SCRIPT_DIR / "update_numbeo.py"
 DATABASE_SCRIPT = SCRIPT_DIR / "database_final.py"
 
 def print_header(message):
@@ -130,7 +131,22 @@ def main():
         print_header("⏭️  Skipping Foreign Office API (--skip-foreign-office or --skip-apis)")
         results["Foreign Office API"] = "skipped"
     
-    # Step 3: Rebuild Database
+    # Step 3: Numbeo Update (indices + exchange rates)
+    if not args.skip_apis:
+        if NUMBEO_UPDATE_SCRIPT.exists():
+            results["Numbeo Update"] = run_script(
+                NUMBEO_UPDATE_SCRIPT,
+                "Numbeo Update (indices + exchange rates)"
+            )
+        else:
+            print(f"⚠️  Warning: {NUMBEO_UPDATE_SCRIPT} not found, skipping")
+            results["Numbeo Update"] = "skipped"
+    else:
+        print_header("⏭️  Skipping Numbeo Update (--skip-apis)")
+        results["Numbeo Update"] = "skipped"
+
+
+    # Step 4: Rebuild Database
     if DATABASE_SCRIPT.exists():
         results["Database Build"] = run_script(
             DATABASE_SCRIPT,
