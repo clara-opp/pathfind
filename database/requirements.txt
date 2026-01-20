@@ -1,3 +1,4 @@
+weasyprint==63.0
 folium==0.20.0
 geonamescache==3.0.0
 geopy==2.4.1

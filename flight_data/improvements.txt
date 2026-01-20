@@ -1,4 +1,4 @@
-@st.cache_data, @st.cache_resource, @st.fragment and for the trip planner hard code as much of hte output as possible and only let the AI fill in the gaps + paralle execution brought down time form prompt to result from ~5min to ~2min
+@st.cache_data, @st.cache_resource, @st.fragment and for the trip planner hard code as much of hte output as possible and only let the AI fill in the gaps + parallel execution brought down time form prompt to result from ~6min to ~3min
 
 
 # Use dynamic loading (importlib)

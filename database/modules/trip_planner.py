@@ -2,6 +2,8 @@ import os
 import json
 import unicodedata
 import requests
+import math
+import time
 import sqlite3
 import streamlit as st
 import streamlit.components.v1 as components
@@ -115,21 +117,21 @@ def google_search_places(query: str, ll: str, radius: int = 4000, limit: int = 8
 
 # ---------- Helper: Google Routes API ----------
 @st.cache_data(show_spinner=False)
-def get_route_google(coordinates, api_key):
+def get_route_google(coordinates, api_key, optimize=False):
     """
     Get walking route using Google Routes API.
     coordinates: List of [lat, lon] pairs.
-    Returns: List of [lat, lon] points representing the walking path.
+    Returns: {"polyline": [[lat, lon], ...], "optimized_indices": [int, ...]}
     """
     if len(coordinates) < 2:
-        return []
+        return {"polyline": [], "optimized_indices": []}
     
     url = "https://routes.googleapis.com/directions/v2:computeRoutes"
     
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": api_key,
-        "X-Goog-FieldMask": "routes.polyline.encodedPolyline"
+        "X-Goog-FieldMask": "routes.polyline.encodedPolyline,routes.optimizedIntermediateWaypointIndex"
     }
     
     # Build waypoints
@@ -153,8 +155,8 @@ def get_route_google(coordinates, api_key):
     data = {
         "origin": origin,
         "destination": destination,
-        "travelMode": "WALK",
-        "polylineQuality": "HIGH_QUALITY"
+        "polylineQuality": "HIGH_QUALITY",
+        "optimizeWaypointOrder": "true" if optimize and len(waypoints) > 0 else "false"
     }
     
     if waypoints:
@@ -168,15 +170,19 @@ def get_route_google(coordinates, api_key):
             routes = response_data.get("routes", [])
             print(f"DEBUG: Google Routes found: {len(routes)} routes")
             if routes:
-                encoded = routes[0].get("polyline", {}).get("encodedPolyline", "")
-                print(f"DEBUG: Encoded Polyline present: {bool(encoded)}")
-                if encoded:
-                    return polyline.decode(encoded)
+                route = routes[0]
+                encoded = route.get("polyline", {}).get("encodedPolyline", "")
+                # Google returns the new indices for intermediates only
+                opt_indices = route.get("optimizedIntermediateWaypointIndex", [])
+                
+                return {
+                    "polyline": polyline.decode(encoded) if encoded else [],
+                    "optimized_indices": opt_indices
+                }
     except Exception as e:
         print(f"DEBUG: Google Routes Exception: {str(e)}")
-        pass
     
-    return []
+    return {"polyline": [], "optimized_indices": []}
 
 @st.cache_data(show_spinner=False)
 def get_deterministic_durations(origin_ll, dest_ll):
@@ -253,7 +259,10 @@ def serper_search_prices(query: str, num_results: int = 6):
 
 # ---------- OpenAI tool-calling loop ----------
 def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str, city: str, iso3: str):
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
+    client = OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY", "").strip(),
+        max_retries=5
+    )
     found_places = []
 
     # 1. Start Currency Lookup immediately (Parallel to Phase 1)
@@ -318,7 +327,8 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
                 "- Use the provided price data for every activity. Do not include disclaimers like 'could not be retrieved'; use the data provided or your best estimate if data is missing.\n"
                 "- IMPORTANT: Disregard all previous locations or search results if the search center (ll) has changed. Only use places found in the CURRENT tool calls.\n"
                 "- ID MATCHING: You MUST use the exact 'place_id' string from the CURRENT tool output. NEVER reuse IDs from previous turns. If you cannot find an ID, use the 'name' of the place as the ID.\n"
-                "- Return a JSON object with two keys: 'assistant_message' and 'itinerary'.\n"
+                "- Return a JSON object with four keys: 'assistant_message', 'itinerary', 'adult_count', and 'kid_count'.\n"
+                "- TRAVELER IDENTIFICATION: Identify the number of adults and children from the chat. If not mentioned, default to 1 adult and 0 kids.\n"
                 "- 'assistant_message': A brief, friendly conversational response. Use PLAIN TEXT ONLY. Strictly NO markdown (#, ###, **, etc.).\n"
                 "- 'itinerary': List of 5-7 objects. Each MUST have: 'id', 'time_range', 'description', and 'local_price' (The raw numeric value found in search results, e.g., 500 for 500 INR).\n"
                 "- DENSITY: Prioritize a packed schedule. Even if walking takes 200 minutes, assume the user will take a car/taxi to fit in 5-7 stops.\n"
@@ -372,6 +382,7 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
             convo.append({"role": "system", "content": f"CRITICAL PRICE DATA: {json.dumps(enriched_data)}\nDETEERMINISTIC CONVERSION: Rate 1 EUR = {conversion_rate} {local_currency_code}. Divide local price by {conversion_rate}."})
 
         # --- Phase 3: Synthesis ---
+        time.sleep(1.5)
         final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
         return final_resp.choices[0].message.content or "", found_places, enriched_data, conversion_rate, local_currency_code
 
@@ -502,11 +513,12 @@ def create_beautiful_map(map_info, radius, center_ll):
     
     # Draw the walking route - THIS IS THE KEY SECTION
     if len(route_points) > 1:
-        # Try Google Routes API first
+        # Optimization is handled in the main loop before calling this, 
+        # but we call it here for the polyline rendering
         api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
-        path_latlon = get_route_google(route_points, api_key)
+        route_res = get_route_google(route_points, api_key, optimize=False)
+        path_latlon = route_res["polyline"]
         
-        # Fallback to OSRM if Google fails
         if not path_latlon:
             path_latlon = get_route_osrm(route_points)
         
@@ -586,8 +598,47 @@ def create_beautiful_map(map_info, radius, center_ll):
     """
     m.get_root().header.add_child(folium.Element(map_css))
 
-
     return m
+
+def generate_itinerary_pdf(messages, city, country):
+    """Extracts the last itinerary and generates a PDF"""
+    try:
+        from weasyprint import HTML
+    except ImportError:
+        print("DEBUG: WeasyPrint (GTK Runtime) not found. PDF generation skipped.")
+        return None
+    except OSError:
+        print("DEBUG: GTK DLLs not found in Path. Please install GTK Runtime.")
+        return None
+
+    itinerary_text = next((m["content"] for m in reversed(messages) if m["role"] == "assistant" and "###" in m["content"]), None)
+    if not itinerary_text:
+        return None
+
+    # Convert Markdown-style text to basic HTML for WeasyPrint
+    html_body = itinerary_text.replace("### ", "<h2>").replace("###", "<h2>")
+    html_body = html_body.replace("**", "<b>").replace("\n", "<br>")
+
+    html_content = f"""
+    <html>
+    <head>
+        <style>
+            body {{ 
+                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+                line-height: 1.6; color: #333; padding: 40px; 
+            }}
+            h1 {{ color: #1a237e; text-align: center; border-bottom: 2px solid #1a237e; padding-bottom: 10px; }}
+            h2 {{ color: #283593; margin-top: 20px; font-size: 18px; border-bottom: 1px solid #eee; }}
+            b {{ color: #000; }}
+        </style>
+    </head>
+    <body>
+        <h1>Day Trip Itinerary: {city}, {country}</h1>
+        <div>{html_body}</div>
+    </body>
+    </html>
+    """
+    return HTML(string=html_content).write_pdf()
 
 
 def show_trip_planner():
@@ -762,16 +813,71 @@ def show_trip_planner():
                             st.write(assistant_text)
                         
                         itinerary_md = ["---"]
+                        total_day_cost = 0
+
+                        # --- NEW: ROUTE OPTIMIZATION LOGIC ---
+                        if isinstance(data, dict) and "itinerary" in data and len(data["itinerary"]) > 2:
+                            # 1. Resolve all places first to get coordinates
+                            temp_itinerary = []
+                            coords = []
+                            
+                            def find_match_pre(eid, edesc):
+                                for p in places:
+                                    if p["place_id"] == eid or eid in p["place_id"]: return p
+                                    if p["name"].lower() == eid.lower(): return p
+                                    if p["name"].lower() in edesc.lower(): return p
+                                return None
+
+                            for entry in data["itinerary"]:
+                                m = find_match_pre(entry.get("id", ""), entry.get("description", ""))
+                                if m:
+                                    temp_itinerary.append({"entry": entry, "match": m})
+                                    coords.append([m["latitude"], m["longitude"]])
+                            
+                            if len(coords) > 2:
+                                api_key = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+                                opt_res = get_route_google(coords, api_key, optimize=True)
+                                opt_idx = opt_res["optimized_indices"] # e.g. [1, 0] for intermediates
+                                
+                                if opt_idx:
+                                    # Reconstruct: Origin (0) + Optimized Intermediates + Destination (last)
+                                    new_order = [0] + [i + 1 for i in opt_idx] + [len(coords) - 1]                                    
+                                    # Preserve original time slots in order
+                                    time_slots = [e["entry"]["time_range"] for e in temp_itinerary]
+                                    
+                                    optimized_itinerary = []
+                                    for i, original_pos in enumerate(new_order):
+                                        item = temp_itinerary[original_pos]
+                                        item["entry"]["time_range"] = time_slots[i] # Re-assign time slot
+                                        optimized_itinerary.append(item["entry"])
+                                    
+                                    data["itinerary"] = optimized_itinerary
+                                    print(f"DEBUG: Route optimized. New sequence: {new_order}")                        
+
+                        # Get traveler counts from AI response
+                        adults = data.get("adult_count", 1)
+                        kids = data.get("kid_count", 0)
+                        multiplier = adults + (kids * 0.5)         
+                        print(f"DEBUG TRAVELERS: Adults={adults}, Kids={kids}, Multiplier={multiplier}")               
                         
                         if isinstance(data, dict) and "itinerary" in data:
                             for entry in data["itinerary"]:
                                 pid = entry.get("id")
-                                # Robust matching helper: checks ID, partial ID, and Name
+                                # Robust matching helper: checks ID, partial ID, and Name-as-ID
                                 def find_match(e):
-                                    eid, edesc = e.get("id", ""), e.get("description", "").lower()
+                                    eid = e.get("id", "")
+                                    edesc = e.get("description", "").lower()
+                                    if not eid: return None
                                     for p in places:
-                                        if eid and (p["place_id"] == eid or eid in p["place_id"]): return p
-                                        if p["name"].lower() in edesc: return p
+                                        p_id = p["place_id"]
+                                        p_name = p["name"].lower()
+                                        
+                                        # 1. Match against Google Place ID
+                                        if p_id == eid or eid in p_id: return p
+                                        # 2. Match against Name (if AI used name as ID)
+                                        if p_name == eid.lower() or eid.lower() in p_name: return p
+                                        # 3. Fallback: Name is in the description
+                                        if p_name in edesc: return p
                                     return None
 
                                 match = find_match(entry)
@@ -805,13 +911,19 @@ def show_trip_planner():
                                     # Post-AI Assembly: Pull price from Serper data, not AI imagination
                                     # Deterministic Price Calculation in Python
                                     local_val = entry.get("local_price", 0)
-                                    price_eur = round(local_val / rate, 2) if rate > 0 else local_val
+                                    # Calculate per-person price then multiply by deterministic traveler count
+                                    base_price_eur = (local_val / rate) if rate > 0 else local_val
+                                    price_eur = int(math.ceil(base_price_eur * multiplier))
+                                    print(f"DEBUG PRICE CALC: Place='{name}' | Local={local_val} {local_curr} | Rate={rate} | Base EUR={base_price_eur:.2f} | Mult={multiplier} | Final EUR={price_eur}")
+
+                                    total_day_cost += price_eur    
+
                                     print(f"DEBUG CURRENCY: Place='{name}' | Original: {local_val} {local_curr} | Converted: {price_eur} EUR (Rate: {rate})")
                                     
                                     # Start building the stop markdown
                                     stop_md = f"### {time} - {name}\n"
                                     stop_md += f"- 📝 **Description**: {desc}\n"
-                                    stop_md += f"- 💰 **Estimated Cost**: {currency_symbol}{price_eur}\n"
+                                    stop_md += f"- 💰 **Estimated Cost**: {currency_symbol}{price_eur}.00\n"
                                     
                                     # Only append travel info if there is a next stop
                                     if t_walk:
@@ -823,13 +935,40 @@ def show_trip_planner():
                                     itinerary_md.append(stop_md)
                                 else:
                                     # Fallback if AI hallucinates an ID from a previous city
-                                    print(f"DEBUG: AI suggested ID {pid} which was not found in current results.")                                    
+                                    print(f"DEBUG: AI suggested ID {pid} which was not found in current results.")            
+
+                        # Append Total Cost
+                        total_md = f"### 💰 Total Estimated Day Cost: {currency_symbol}{total_day_cost}.00"
+                        st.markdown(total_md)
+                        itinerary_md.append(total_md)                                                            
 
                         answer = "\n".join(itinerary_md)
                         if not itinerary_md: answer = raw_json
 
                         st.session_state.messages.append({"role": "assistant", "content": f"{assistant_text}\n\n{answer}"})
                         st.rerun()
+
+        # Download PDF Button (Bottom of Column 1)
+        if len(st.session_state.messages) > 1:
+            pdf_data = generate_itinerary_pdf(st.session_state.messages, selected_city, selected_country)
+            if pdf_data:
+                st.markdown("""
+                    <style>
+                        .pdf-download-container {
+                            margin-top: -30px !important;
+                        }
+                    </style>
+                """, unsafe_allow_html=True)
+                
+                col_pdf, _ = st.columns([0.5, 0.5])
+                with col_pdf:
+                    st.download_button(
+                        label="📄 Download Itinerary (PDF)",
+                        data=bytes(pdf_data),
+                        file_name=f"itinerary_{selected_city}.pdf",
+                        mime="application/pdf",
+                        key="pdf_download"
+                    )                        
 
         # JavaScript to snap the latest message to the top of the container
         components.html(

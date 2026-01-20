@@ -1,13 +1,15 @@
-1.1 Minimize "DEBUG: AI suggested ID ChIpwtG6BzjDDkRDajfOy268bk which was not found in current results." bugs further 
+1. fix chatbot in google cloud
 
-1.2 include optimization in about
+2. include optimization in about + check workflow for flight search and trip planner
 
-1.3 Requirements text updaten
+3. Requirements text updaten
 
-1.4 APIs + Datensatz + gescrapte website in impressum reinpacken
+5. APIs + Datensatz + gescrapte website in impressum reinpacken
 
-1.5 Fix google calendar (currently flight is not added the first time you register your gmail)
+6. Google calendar back to testing (add send me mail to thomas.petrausch@students.uni-mannheim.de text when someones access is denied by the app)
 
-3. pdf Downloadable results for the activity planner 
+7. pdf Downloadable results for the activity planner 
 
-4. Add links for the created google calendar events for the flight booking
+8. Add links for the created google calendar events for the flight booking
+
+9. update database.py file
