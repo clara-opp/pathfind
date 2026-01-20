@@ -381,13 +381,15 @@ This provides a stable base for ranking while keeping the underlying entities mo
                     "<b>Auswärtiges Amt</b> — official travel information (Germany)",
                     "<b>UNESCO</b> — World Heritage Sites (counts and site metadata)",
                     "<b>Berkeley Earth</b> — climate and weather data inputs",
-                    "<b>Amadeus</b> — live flight search and itinerary/price signals",
-                    "<b>Google APIs</b> — calendar export and routing/map support",
-                    "<b>Serper</b> — search enrichment for POIs / planning",
+                    "<b>Amadeus</b> — live flight search and itinerary/price signals\n  - Flight Offers Search API\n  - Flight Offers Price API\n  - Flight Create Orders API",
+                    "<b>Google APIs</b> — calendar export and routing/map support\n  - Google Calendar API\n  - Google Places API\n  - Google Routes API",
+                    "<b>Serper</b> — used by trip planner to search prices",
                     "<b>OpenAI</b> — chatbot interaction and generated explanations",
                     "<b>Roxy</b> — tarot card draw (optional extension)",
                     "<b>Travel Buddy</b> — visa requirements matched to the user’s nationality",
-
+                    "<b>OpenTravelData (Github)</b> — data for airports",
+                    "<b>gettocenter.com</b> — scraped data to sort airports by passenger volume",
+                    "<b>Unsplash API</b> — images for countries",
                 ]
             ),
         )
