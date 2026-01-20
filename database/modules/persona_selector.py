@@ -425,7 +425,7 @@ def render_persona_step(datamanager):
         random.shuffle(order)
         st.session_state.persona_order = order
         st.session_state.profile_index = 0
-    st.session_state.last_profile_idx = -1  # forces slider init for new first persona
+        st.session_state.last_profile_idx = -1  # forces slider init for new first persona
     # Apply order
     travel_profiles = [travel_profiles[i] for i in st.session_state.persona_order]
 
