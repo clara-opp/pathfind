@@ -52,7 +52,7 @@ def _mini_card(title: str, body_html: str):
 
 
 def _html_list(items):
-    lis = "\n".join([f"<li>{it}</li>" for it in items])
+    lis = "\n".join([f"<li>{it.replace(chr(10), '<br>').replace('  ', '&nbsp;&nbsp;')}</li>" for it in items])
     return f"<ul style='margin-top:0; line-height:1.9;'>{lis}</ul>"
 
 

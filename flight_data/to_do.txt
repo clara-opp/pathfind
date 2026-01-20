@@ -1,10 +1,10 @@
-1. fix chatbot in google cloud
+1. fix chatbot in google cloud (remove the time stuff since it did not work)
+
+1.0 fix connection to google calendar in streamlit cloud
+
+1.1. Make the "Back to flight results button" in the Confirm Your Booking page smaller (i.e. not 100% width but more like 15%)
 
 2. include optimization in about + check workflow for flight search and trip planner
-
-3. Requirements text updaten
-
-5. APIs + Datensatz + gescrapte website in impressum reinpacken
 
 6. Google calendar back to testing (add send me mail to thomas.petrausch@students.uni-mannheim.de text when someones access is denied by the app)
 

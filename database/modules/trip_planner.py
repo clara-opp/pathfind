@@ -3,7 +3,6 @@ import json
 import unicodedata
 import requests
 import math
-import time
 import sqlite3
 import streamlit as st
 import streamlit.components.v1 as components
@@ -257,8 +256,11 @@ def serper_search_prices(query: str, num_results: int = 6):
         return {"error": str(e)}
 
 
-# ---------- OpenAI tool-calling loop ----------
-def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str, currency: str, city: str, iso3: str):
+# ---------- OpenAI tool-calling loop (Cached to prevent redundant cloud calls) ----------
+@st.cache_data(show_spinner=False)
+def run_planner(messages_json, ll: str, radius: int, budget_val: float, persona: str, currency: str, city: str, iso3: str):
+    # Convert JSON back to list (st.cache_data requires hashable inputs)
+    messages = json.loads(messages_json)
     client = OpenAI(
         api_key=os.getenv("OPENAI_API_KEY", "").strip(),
         max_retries=5
@@ -382,7 +384,6 @@ def run_planner(messages, ll: str, radius: int, budget_val: float, persona: str,
             convo.append({"role": "system", "content": f"CRITICAL PRICE DATA: {json.dumps(enriched_data)}\nDETEERMINISTIC CONVERSION: Rate 1 EUR = {conversion_rate} {local_currency_code}. Divide local price by {conversion_rate}."})
 
         # --- Phase 3: Synthesis ---
-        time.sleep(1.5)
         final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
         return final_resp.choices[0].message.content or "", found_places, enriched_data, conversion_rate, local_currency_code
 
@@ -794,11 +795,17 @@ def show_trip_planner():
                         ]
                         
                         persona = st.session_state.get('selected_persona', 'General Traveler')
-                        raw_json, places, prices_list, rate, local_curr = run_planner(
-                             planner_messages, ll=ll, radius=radius, budget_val=budget, 
-                             persona=persona, currency=currency_symbol, city=selected_city, 
-                             iso3=iso3
-                        )
+                        # Convert messages to string so they can be hashed for caching
+                        msgs_str = json.dumps(planner_messages)
+                        try:
+                            raw_json, places, rate, local_curr = run_planner(
+                                 msgs_str, ll=ll, radius=radius, budget_val=budget, 
+                                 persona=persona, currency=currency_symbol, city=selected_city, 
+                                 iso3=iso3
+                            )
+                        except Exception as e:
+                            st.error(f"OpenAI is currently throttling requests from Streamlit's shared servers. Please wait 10 seconds and try again. Detail: {str(e)}")
+                            st.stop()
                         try:
                             data = json.loads(raw_json)
                         except:
