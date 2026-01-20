@@ -351,7 +351,13 @@ def run_planner(messages_json, ll: str, radius: int, budget_val: float, persona:
         convo = [system_msg] + messages + [context_msg]
 
         # --- Phase 1: Discovery ---
-        resp = client.chat.completions.create(model=st.session_state.model, messages=convo, tools=tools, tool_choice="auto")
+        try:
+            resp = client.chat.completions.create(model=st.session_state.model, messages=convo, tools=tools, tool_choice="auto")
+        except Exception as e:
+            print(f"DEBUG PHASE 1 ERROR: {str(e)}")
+            if hasattr(e, 'response'): print(f"HEADERS: {e.response.headers}")
+            st.error(f"OpenAI Phase 1 Failed: {str(e)}")
+            return "ERROR", [], [], 0, ""
         msg = resp.choices[0].message
         tool_calls = getattr(msg, "tool_calls", None)
 
@@ -384,7 +390,12 @@ def run_planner(messages_json, ll: str, radius: int, budget_val: float, persona:
             convo.append({"role": "system", "content": f"CRITICAL PRICE DATA: {json.dumps(enriched_data)}\nDETEERMINISTIC CONVERSION: Rate 1 EUR = {conversion_rate} {local_currency_code}. Divide local price by {conversion_rate}."})
 
         # --- Phase 3: Synthesis ---
-        final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
+        try:
+            final_resp = client.chat.completions.create(model=st.session_state.model, messages=convo, response_format={"type": "json_object"})
+        except Exception as e:
+            print(f"DEBUG PHASE 3 ERROR: {str(e)}")
+            st.error(f"OpenAI Phase 3 Failed: {str(e)}")
+            return "ERROR", [], [], 0, ""
         return final_resp.choices[0].message.content or "", found_places, enriched_data, conversion_rate, local_currency_code
 
 
@@ -798,10 +809,10 @@ def show_trip_planner():
                         # Convert messages to string so they can be hashed for caching
                         msgs_str = json.dumps(planner_messages)
                         try:
-                            raw_json, places, rate, local_curr = run_planner(
-                                 msgs_str, ll=ll, radius=radius, budget_val=budget, 
-                                 persona=persona, currency=currency_symbol, city=selected_city, 
-                                 iso3=iso3
+                            raw_json, places, _, rate, local_curr = run_planner(
+                                  msgs_str, ll=ll, radius=radius, budget_val=budget, 
+                                  persona=persona, currency=currency_symbol, city=selected_city, 
+                                  iso3=iso3
                             )
                         except Exception as e:
                             st.error(f"OpenAI is currently throttling requests from Streamlit's shared servers. Please wait 10 seconds and try again. Detail: {str(e)}")
