@@ -114,13 +114,16 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
         render_overview_tab(country, data_manager)
     
     with tab2:
+        render_chatbot_tab(country, openai_client, data_manager)
+    
+    with tab3:
         render_budget_tab(country, data_manager)
 
-    with tab3:
+    with tab4:
         if trip_planner_render:
             trip_planner_render()
     
-    with tab4:
+    with tab5:
         # Import existing flight search - KEEP INLINE
         from modules.flight_search import render_flight_search
         iso3 = country.get('iso3') or "NA"
@@ -137,9 +140,6 @@ def render_country_overview(country, data_manager, openai_client, amadeus, amade
             image_urls=(country.get('img_1'), country.get('img_2'), country.get('img_3')),
             key_prefix=f"fs_{iso3}"
         )
-    
-    with tab5:
-        render_chatbot_tab(country, openai_client, data_manager)
     
     with tab6:
         render_pdf_tab(country, data_manager)
