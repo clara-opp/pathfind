@@ -9,130 +9,174 @@ from typing import Optional, Dict, Any
 import random
 import pandas as pd
 import re
+from typing import Optional, Dict, Any
+import streamlit as st
+import calendar
+from datetime import date, datetime
 
-def get_first_travel_month(data_manager) -> Optional[int]:
-    """Get first travel month from session state"""
+# Known name fixes (extend as needed)
+COUNTRY_ALIASES = {
+    # examples you mentioned
+    "iran": "Islamic Republic of Iran",
+    "viet nam": "Vietnam",
+
+    # auto-derived common mismatches between ISO and climate naming (from your files)
+    "saint kitts and nevis": "St Kitts and Nevis",
+    "vanuatu": "Vanatu",
+    "puerto rico": "Puerto Rica",
+    "christmas island": "Christmas Isl",
+    "sao tome and principe": "Sao Tome + Principe",
+    "central african republic": "Central African Rep",
+    "norfolk island": "Norfolk Isl",
+    "bosnia and herzegovina": "Bosnia-Herzegovinia",
+}
+
+def _norm(s: str) -> str:
+    return (s or "").strip().lower()
+
+def get_first_travel_month(data_manager=None) -> Optional[int]:
     try:
-        # Try: start_date (from st.date_input)
         start_date = st.session_state.get('start_date')
-        if start_date:
+        if isinstance(start_date, (date, datetime)):
             return start_date.month
-        
-        # Fallback: travel_dates list
+        if start_date:  # sometimes date_input returns datetime.date
+            return start_date.month
+
         travel_dates = st.session_state.get('travel_dates')
-        if travel_dates and len(travel_dates) > 0:
-            first_date = travel_dates[0]
-            return first_date.month
-        
+        if travel_dates and len(travel_dates) > 0 and travel_dates[0]:
+            return travel_dates[0].month
+    except Exception:
         return None
-    except:
-        pass
     return None
+
+
+def _days_in_selected_month(month: int) -> int:
+    # Use selected start_date year if available (leap years)
+    start_date = st.session_state.get("start_date")
+    year = start_date.year if isinstance(start_date, (date, datetime)) else 2025
+    return calendar.monthrange(year, month)[1]
 
 
 def fetch_weather_data(data_manager, country: Dict, month: int) -> Optional[Dict[str, Any]]:
     """
-    Fetch weather data from climate_monthly table using ISO3 code mapping
+    Keeps your old 'works most of the time' matching approach,
+    but adds a deterministic alias layer and returns precip as month + derived day avg.
+    precip in your climate JSON is monthly total (precip_mm). [file:38]
     """
+    conn = None
     try:
         conn = data_manager.get_connection()
         cursor = conn.cursor()
-        
+
         iso3 = country.get('iso3')
-        country_name = country.get('country_name')
-        
+        # IMPORTANT: support both keys
+        country_name = country.get('country_name') or country.get('countryname')
+
         if not iso3 and not country_name:
             return None
-        
-        result = None
+
         matched_climate_country = None
-        
-        # Strategy 1: Use ISO3 to find ALL climate_monthly entries, then pick best match
-        if iso3:
-            # First, get all unique country names from climate_monthly
-            cursor.execute("""
-                SELECT DISTINCT country_name_climate 
-                FROM climate_monthly
-            """)
-            
-            climate_countries = [row[0] for row in cursor.fetchall()]
-            
-            # Try to match using the country_name or ISO3 hints
+
+        # Pull all climate country names once (small list)
+        cursor.execute("SELECT DISTINCT country_name_climate FROM climate_monthly")
+        climate_countries = [row[0] for row in cursor.fetchall() if row and row[0]]
+
+        # normalize once
+        climate_norm = {c.lower(): c for c in climate_countries}
+
+        # 0) Alias layer (hard mapping)
+        if country_name:
+            n = _norm(country_name)
+            alias = COUNTRY_ALIASES.get(n)
+            if alias and alias.lower() in climate_norm:
+                matched_climate_country = climate_norm[alias.lower()]
+
+        # 1) exact match
+        if not matched_climate_country and country_name:
+            if country_name.lower() in climate_norm:
+                matched_climate_country = climate_norm[country_name.lower()]
+
+        # 2) contains match (old behavior)
+        if not matched_climate_country and country_name:
+            cn = country_name.lower()
             for climate_country in climate_countries:
-                # Exact match
-                if climate_country.lower() == country_name.lower():
+                cc = climate_country.lower()
+                if cn in cc:
                     matched_climate_country = climate_country
                     break
-                
-                # Partial match (e.g., "Iran" in "Islamic Republic of Iran")
-                if country_name.lower() in climate_country.lower():
+
+        # 3) reverse contains match (old behavior; but keep it conservative)
+        if not matched_climate_country and country_name:
+            cn = country_name.lower()
+            for climate_country in climate_countries:
+                words = [w for w in climate_country.split() if len(w) > 4]
+                if any(w.lower() in cn for w in words):
                     matched_climate_country = climate_country
                     break
-            
-            # If still no match, try reverse (e.g., "Islamic" in country keywords)
-            if not matched_climate_country:
-                for climate_country in climate_countries:
-                    if any(word.lower() in country_name.lower() 
-                           for word in climate_country.split() if len(word) > 3):
-                        matched_climate_country = climate_country
-                        break
-        
-        # Strategy 2: Direct fuzzy match on country_name
+
+        # 4) last fallback: LIKE query (old behavior)
         if not matched_climate_country and country_name:
             cursor.execute("""
-                SELECT DISTINCT country_name_climate 
+                SELECT DISTINCT country_name_climate
                 FROM climate_monthly
                 WHERE country_name_climate LIKE ?
                 LIMIT 1
             """, (f"%{country_name}%",))
-            
             match = cursor.fetchone()
             if match:
                 matched_climate_country = match[0]
-        
-        # Now fetch the actual weather data
-        if matched_climate_country:
-            cursor.execute("""
-                SELECT * FROM climate_monthly 
-                WHERE country_name_climate = ?
-                LIMIT 1
-            """, (matched_climate_country,))
-            
-            result = cursor.fetchone()
-        
-        conn.close()
-        
-        if result:
-            columns = [description[0] for description in cursor.description]
-            result_dict = dict(zip(columns, result))
-            
-            temp_key = f"climate_temp_month_{month}"
-            precip_key = f"climate_precip_month_{month}"
-            cloud_key = f"climate_cloud_month_{month}"
-            
-            cloud_pct = result_dict.get(cloud_key, 50)
-            if cloud_pct is None:
-                cloud_pct = 50
-            
-            sunshine_hours = (24 - float(cloud_pct) / 100 * 24) if cloud_pct else 12
-            
-            return {
-                "temperature_avg": float(result_dict.get("climate_avg_temp_c") or 0),
-                "temperature_daytime": float(result_dict.get(temp_key) or 0),
-                "precipitation": float(result_dict.get(precip_key) or 0),
-                "sunshine_hours": max(0, sunshine_hours),
-                "cloud_pct": float(cloud_pct or 50),
-            }
-        
-        return None
-        
+
+        if not matched_climate_country:
+            return None
+
+        cursor.execute("""
+            SELECT * FROM climate_monthly
+            WHERE country_name_climate = ?
+            LIMIT 1
+        """, (matched_climate_country,))
+        result = cursor.fetchone()
+        if not result:
+            return None
+
+        columns = [description[0] for description in cursor.description]
+        result_dict = dict(zip(columns, result))
+
+        temp_key = f"climate_temp_month_{month}"
+        precip_key = f"climate_precip_month_{month}"
+        cloud_key = f"climate_cloud_month_{month}"
+
+        cloud_pct = result_dict.get(cloud_key, 50)
+        if cloud_pct is None:
+            cloud_pct = 50
+
+        sunshine_hours = 24 * (1 - float(cloud_pct) / 100)
+
+        precip_month = float(result_dict.get(precip_key) or 0.0)   # mm/month [file:38]
+        days = _days_in_selected_month(month)
+        precip_day = precip_month / days if days else 0.0
+
+        return {
+            "matched_climate_country": matched_climate_country,
+            "temperature_avg": float(result_dict.get("climate_avg_temp_c") or 0),
+            "temperature_daytime": float(result_dict.get(temp_key) or 0),
+            "precipitation_month_mm": precip_month,  # mm/month
+            "precipitation_day_mm": precip_day,      # derived mm/day
+            "sunshine_hours": max(0, float(sunshine_hours)),
+            "cloud_pct": float(cloud_pct or 50),
+        }
+
     except Exception as e:
-        print(f"Weather fetch error for {country.get('country_name')} ({country.get('iso3')}): {e}")
+        print(f"Weather fetch error for {country.get('country_name') or country.get('countryname')} ({country.get('iso3')}): {e}")
         return None
+    finally:
+        try:
+            if conn:
+                conn.close()
+        except Exception:
+            pass
 
 
 def get_month_name(month: int) -> str:
-    """Get month name from number"""
     months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -140,44 +184,39 @@ def get_month_name(month: int) -> str:
     return months[month - 1] if 1 <= month <= 12 else "Unknown"
 
 
-def render_weather_box(country: Dict, data_manager) -> None:
-    """Render clean weather data box for travel month"""
-    
+def render_weather_box(country: Dict, data_manager) -> Optional[Dict[str, Any]]:
     if not country:
         st.info("🌤️ No country selected")
-        return
-    
-    travel_month = get_first_travel_month(data_manager)
+        return None
+
+    travel_month = get_first_travel_month()
     if not travel_month:
         st.info("🌤️ Select travel dates to see weather information")
-        return
-    
+        return None
+
     weather_data = fetch_weather_data(data_manager, country, travel_month)
     if not weather_data:
-        country_name = country.get('country_name', 'Unknown')
+        country_name = country.get('country_name') or country.get('countryname') or 'Unknown'
         st.warning(f"⚠️ Weather data not available for {country_name}")
-        return
-    
+        return None
+
     month_name = get_month_name(travel_month)
-    
+
     st.markdown("---")
     st.markdown(f"### Weather in {month_name}")
-    
-    # 4 clean metrics
+
     col1, col2, col3, col4 = st.columns(4)
-    
     with col1:
         st.metric("🌡️ Daytime", f"{int(weather_data.get('temperature_daytime', 0))}°C")
-    
     with col2:
         st.metric("☀️ Sunshine", f"{int(weather_data.get('sunshine_hours', 0))}h")
-    
     with col3:
-        st.metric("🌧️ Rainfall", f"{int(weather_data.get('precipitation', 0))}mm")
-    
+        st.metric("🌧️ Rainfall", f"{int(weather_data.get('precipitation_month_mm', 0))} mm/month")
+        st.caption(f"≈ {weather_data.get('precipitation_day_mm', 0):.1f} mm/day")
     with col4:
         st.metric("☁️ Clouds", f"{int(weather_data.get('cloud_pct', 0))}%")
 
+    return weather_data
 
 def render_unesco_heritage_box(country, data_manager):
     """UNESCO mit 1 Site oben + Tabelle zum Ausklappen für Auswahl"""

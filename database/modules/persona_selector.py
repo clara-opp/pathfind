@@ -235,12 +235,74 @@ def load_carousel_css():
         }
 
 
-
         .nav-button:active {
             transform: scale(0.95) translateY(2px);
             box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
         }
+
+        /* ============================================================
+           PERSONA CAROUSEL - MOBILE RESPONSIVE
+           ============================================================ */
+        .persona-carousel-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            width: 100%;
+            flex-direction: row;
+        }
+
+        .persona-side-card {
+            display: flex;
+            flex: 1;
+        }
+
+        .persona-center-card {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Mobile: Hide side cards */
+        @media (max-width: 768px) {
+            .persona-side-card {
+                display: none !important;
+            }
+
+            .persona-carousel-container {
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 22px !important;
+                flex-shrink: 0;
+            }
+
+            .persona-center-card {
+                flex: 0 1 100%;
+                max-width: 100%;
+            }
+
+            .profile-card.active {
+                transform: scale(1) rotateY(0deg) !important;
+                border: 3px solid #667eea !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-button {
+                width: 45px !important;
+                height: 45px !important;
+                font-size: 20px !important;
+            }
+
+            .persona-carousel-container {
+                gap: 0.8rem;
+            }
+        }
         </style>
+
     """, unsafe_allow_html=True)
 
 
@@ -461,8 +523,10 @@ def render_persona_step(datamanager):
     prev_idx = (current_idx - 1) % total_profiles
     next_idx = (current_idx + 1) % total_profiles
     
+    st.markdown('<div class="persona-carousel-container">', unsafe_allow_html=True)
+
     col_nav_prev, col_prev, col_active, col_next, col_nav_next = st.columns(
-        [0.8, 1.6, 2.5, 1.6, 0.8], 
+        [0.6, 1.4, 2.5, 1.4, 0.6],
         vertical_alignment="center",
         gap="medium"
     )
@@ -472,19 +536,36 @@ def render_persona_step(datamanager):
             st.session_state.profile_index = prev_idx
             st.rerun()
     
+    with col_prev:
+        st.markdown(
+            '<div class="persona-side-card">' + 
+            create_card_html(travel_profiles[prev_idx], is_active=False) + 
+            '</div>', 
+            unsafe_allow_html=True
+        )
+    
+    with col_active:
+        st.markdown(
+            '<div class="persona-center-card">' + 
+            create_card_html(travel_profiles[current_idx], is_active=True) + 
+            '</div>', 
+            unsafe_allow_html=True
+        )
+    
+    with col_next:
+        st.markdown(
+            '<div class="persona-side-card">' + 
+            create_card_html(travel_profiles[next_idx], is_active=False) + 
+            '</div>', 
+            unsafe_allow_html=True
+        )
+    
     with col_nav_next:
         if st.button("▶", key="nav_next", use_container_width=True):
             st.session_state.profile_index = next_idx
             st.rerun()
-    
-    with col_prev:
-        st.markdown(create_card_html(travel_profiles[prev_idx], is_active=False), unsafe_allow_html=True)
-    
-    with col_active:
-        st.markdown(create_card_html(travel_profiles[current_idx], is_active=True), unsafe_allow_html=True)
-    
-    with col_next:
-        st.markdown(create_card_html(travel_profiles[next_idx], is_active=False), unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
     
     persona_name = selected_profile["display_name"]
     st.session_state.selected_persona = persona_name

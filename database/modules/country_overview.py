@@ -251,7 +251,10 @@ def render_overview_tab(country, data_manager):
         st.markdown("### ✨ Key Highlights")
         render_highlight_cards(country)
         
-        render_weather_box(country, data_manager)
+        #Load data for match reasons
+        weather_data = render_weather_box(country, data_manager)
+        st.session_state["weather_data"] = weather_data
+
         render_unesco_heritage_box(country, data_manager)
     
     with tab_requirements:
@@ -294,11 +297,14 @@ def render_match_reasons(country):
             reasons.append("🌬️ **Clean air quality** - Low pollution levels")
     
     # Based on swipe preferences
-    prefs = st.session_state.get('prefs', {})
-    target_temp = prefs.get('target_temp', 25)
-    actual_temp = country.get('climate_avg_temp_c')
-    if actual_temp and abs(target_temp - actual_temp) < 5:
-        reasons.append(f"🌡️ **Perfect weather** - {actual_temp:.0f}°C matches your preference")
+    prefs = st.session_state.get("prefs", {})
+    targettemp = float(prefs.get("targettemp", 25) or 25)
+
+    weather = st.session_state.get("weather_data") or {}
+    actualtemp = weather.get("temperature_daytime")
+
+    if actualtemp is not None and abs(targettemp - float(actualtemp)) < 5:
+        reasons.append(f"🌡️ **Perfect weather** - {float(actualtemp):.0f}°C matches your preference")
     
     # Based on tarot
     if tarot and country.get('iso3') in st.session_state.get('tarot_boosted_countries', []):
