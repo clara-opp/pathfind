@@ -565,13 +565,12 @@ The core ranking is database-driven (fast and repeatable), while several modules
             )
         with b:
             _mini_card(
-                "Flight Search (two-stage: DB → live)",
+                "Flight Search (DB; live)",
                 _html_list(
                     [
-                        "Stage 1: fast flight context from database-backed flight-cost samples via airport mappings.",
-                        "Stage 2: optional live flight search via Amadeus when the user proceeds (dates, passengers, origin/destination airports).",
-                        "Returns itineraries (carriers, layovers, times, prices) based on provider availability.",
-                        "Live prices can change rapidly; the dashboard treats this as a live signal, not a guarantee.",
+                        "Destinations Page: estimated flight costs from the database <br>&nbsp;&nbsp;• Note: because of rate limits estimated flight costs are only available when Germany or US are selected as nationality)",
+                        "Flight Search Module: live flight search via Amadeus when the user proceeds (dates, passengers, origin/destination airports).<br>&nbsp;&nbsp;• Provides the complete experience: <div style='margin-top:8px; display:flex; align-items:center; gap:6px; font-size:0.85rem;'><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Search Flight</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Book Flight</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Add flight to Calendar</span></div>"
+                        ""
                     ]
                 ),
             )
