@@ -219,12 +219,6 @@ def render_weather_box(country: Dict, data_manager) -> Optional[Dict[str, Any]]:
     return weather_data
 
 def render_unesco_heritage_box(country, data_manager):
-    """UNESCO mit 1 Site oben + Tabelle zum Ausklappen für Auswahl"""
-    
-    import sqlite3
-    import json
-    import random
-    import pandas as pd
     
     iso3 = country.get('iso3')
     if not iso3:
@@ -234,7 +228,6 @@ def render_unesco_heritage_box(country, data_manager):
         conn = sqlite3.connect(data_manager.db_path)
         cursor = conn.cursor()
         
-        # ISO3 -> ISO2 Mapping
         cursor.execute("SELECT iso2 FROM countries WHERE iso3 = ?", (iso3,))
         iso2_result = cursor.fetchone()
         if not iso2_result:
@@ -243,7 +236,6 @@ def render_unesco_heritage_box(country, data_manager):
         
         iso2 = iso2_result[0]
         
-        # UNESCO Summary laden
         cursor.execute("""
             SELECT COUNT(*) as count
             FROM unesco_by_country
@@ -255,9 +247,6 @@ def render_unesco_heritage_box(country, data_manager):
             conn.close()
             return
         
-        count = result[0]
-        
-        # Detail-Daten
         cursor.execute("""
             SELECT id, name, category, main_image_url, short_description, description
             FROM unesco_heritage_sites
@@ -275,7 +264,6 @@ def render_unesco_heritage_box(country, data_manager):
     if not all_sites:
         return
     
-    # STATE: Aktuelle ausgewählte Site
     spotlight_key = f"unesco_current_{iso3}"
     
     if spotlight_key not in st.session_state:
@@ -286,15 +274,12 @@ def render_unesco_heritage_box(country, data_manager):
     
     site_id, name, category, main_image_url, short_description, description = current_site
     
-    # HEADER
     st.markdown("---")
     st.markdown("### UNESCO World Heritage Site")
     
-    # SPOTLIGHT: 1 SITE DISPLAY
     col_img, col_info = st.columns([1.2, 4])
     
     with col_img:
-        # Bild oder Travel Emoji
         if main_image_url:
             try:
                 st.image(main_image_url, use_container_width=False, width=240)
@@ -324,70 +309,69 @@ def render_unesco_heritage_box(country, data_manager):
         
         st.markdown("")
         
-        # Short description - first 2 lines
         if short_description:
             lines = short_description.split('\n')[:2]
             desc_preview = '\n'.join(lines)
             st.write(desc_preview)
-        
         elif description:
             lines = description.split('\n')[:2]
             desc_preview = '\n'.join(lines)
             st.write(desc_preview)
         
+        st.markdown("")
         
-        # Navigation - inline buttons
-        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
-        with col_btn1:
-            if st.button("Prev", key=f"prev_btn_{iso3}", use_container_width=True):
-                st.session_state[spotlight_key] = (current_site_idx - 1) % len(all_sites)
-                st.rerun()
-        
-        with col_btn2:
-            if st.button("Next", key=f"next_btn_{iso3}", use_container_width=True):
-                st.session_state[spotlight_key] = (current_site_idx + 1) % len(all_sites)
-                st.rerun()
+        # NAVIGATION - NUR wenn mehr als 1 Site
+        if len(all_sites) > 1:
+            col_btn1, col_btn2 = st.columns(2)
+            with col_btn1:
+                if st.button("◀ Previous", key=f"prev_btn_{iso3}", use_container_width=True):
+                    st.session_state[spotlight_key] = (current_site_idx - 1) % len(all_sites)
+                    st.rerun()
+            
+            with col_btn2:
+                if st.button("Next ▶", key=f"next_btn_{iso3}", use_container_width=True):
+                    st.session_state[spotlight_key] = (current_site_idx + 1) % len(all_sites)
+                    st.rerun()
     
-    # EXPANDABLE: ALLE STÄTTEN
     st.markdown("")
     
-    with st.expander(f"View all {len(all_sites)} sites", expanded=False):
-        
-        sites_data = []
-        for idx, site in enumerate(all_sites):
-            site_id, name, category, main_image_url, short_description, description = site
-            category_str = str(category) if category else "Mixed"
-            is_natural = "natural" in category_str.lower()
-            cat_emoji = "🌿" if is_natural else "🏛️"
+    # EXPANDABLE - NUR wenn mehr als 1 Site
+    if len(all_sites) > 1:
+        with st.expander(f"View all {len(all_sites)} sites", expanded=False):
             
-            sites_data.append({
-                "Site": f"{cat_emoji} {name}",
-                "Category": category_str,
-                "idx": idx
-            })
-        
-        df = pd.DataFrame(sites_data)
-        
-        # Selectbox
-        selected_site = st.selectbox(
-            "Select site:",
-            options=df["Site"].tolist(),
-            key=f"site_select_{iso3}"
-        )
-        
-        selected_idx = df[df["Site"] == selected_site].iloc[0]["idx"]
-        
-        if st.button("View", key=f"view_site_{iso3}", type="primary", use_container_width=True):
-            st.session_state[spotlight_key] = selected_idx
-            st.rerun()
-        
-        # Tabelle
-        st.dataframe(
-            df[["Site", "Category"]], 
-            use_container_width=True,
-            hide_index=True,
-            height=300
-        )
+            sites_data = []
+            for idx, site in enumerate(all_sites):
+                site_id, name, category, main_image_url, short_description, description = site
+                category_str = str(category) if category else "Mixed"
+                is_natural = "natural" in category_str.lower()
+                cat_emoji = "🌿" if is_natural else "🏛️"
+                
+                sites_data.append({
+                    "Site": f"{cat_emoji} {name}",
+                    "Category": category_str,
+                    "idx": idx
+                })
+            
+            df = pd.DataFrame(sites_data)
+            
+            selected_site = st.selectbox(
+                "Select site:",
+                options=df["Site"].tolist(),
+                key=f"site_select_{iso3}"
+            )
+            
+            selected_idx = df[df["Site"] == selected_site].iloc[0]["idx"]
+            
+            if st.button("View", key=f"view_site_{iso3}", type="primary", use_container_width=True):
+                st.session_state[spotlight_key] = selected_idx
+                st.rerun()
+            
+            st.dataframe(
+                df[["Site", "Category"]], 
+                use_container_width=True,
+                hide_index=True,
+                height=300
+            )
 
 def fetch_safety_data(data_manager, country: Dict) -> Optional[Dict[str, Any]]:
     """
