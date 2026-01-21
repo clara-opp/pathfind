@@ -615,42 +615,60 @@ def create_beautiful_map(map_info, radius, center_ll):
 def generate_itinerary_pdf(messages, city, country):
     """Extracts the last itinerary and generates a PDF"""
     try:
-        from weasyprint import HTML
+        from reportlab.lib.pagesizes import letter
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.colors import navy
+        from io import BytesIO
+        import re
     except ImportError:
-        print("DEBUG: WeasyPrint (GTK Runtime) not found. PDF generation skipped.")
-        return None
-    except OSError:
-        print("DEBUG: GTK DLLs not found in Path. Please install GTK Runtime.")
-        return None
+        print("DEBUG: ReportLab not found. PDF generation skipped.")
+        return None        
 
     itinerary_text = next((m["content"] for m in reversed(messages) if m["role"] == "assistant" and "###" in m["content"]), None)
     if not itinerary_text:
         return None
 
-    # Convert Markdown-style text to basic HTML for WeasyPrint
-    html_body = itinerary_text.replace("### ", "<h2>").replace("###", "<h2>")
-    html_body = html_body.replace("**", "<b>").replace("\n", "<br>")
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+    styles = getSampleStyleSheet()
+    story = []
 
-    html_content = f"""
-    <html>
-    <head>
-        <style>
-            body {{ 
-                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-                line-height: 1.6; color: #333; padding: 40px; 
-            }}
-            h1 {{ color: #1a237e; text-align: center; border-bottom: 2px solid #1a237e; padding-bottom: 10px; }}
-            h2 {{ color: #283593; margin-top: 20px; font-size: 18px; border-bottom: 1px solid #eee; }}
-            b {{ color: #000; }}
-        </style>
-    </head>
-    <body>
-        <h1>Day Trip Itinerary: {city}, {country}</h1>
-        <div>{html_body}</div>
-    </body>
-    </html>
-    """
-    return HTML(string=html_content).write_pdf()
+    # Title
+    title_style = styles["Title"]
+    title_style.textColor = navy
+    story.append(Paragraph(f"Day Trip Itinerary: {city}, {country}", title_style))
+    story.append(Spacer(1, 12))
+
+    # Content parsing
+    lines = itinerary_text.split('\n')
+    for line in lines:
+        line = line.strip()
+        if not line: continue
+        
+        # Convert Markdown bold (**text**) to ReportLab XML (<b>text</b>)
+        line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+
+        if line.startswith("###"):
+            # Header
+            text = line.replace("###", "").strip()
+            h2 = styles["Heading2"]
+            h2.textColor = navy
+            story.append(Spacer(1, 12))
+            story.append(Paragraph(text, h2))
+            story.append(Spacer(1, 6))
+        elif line.startswith("-"):
+            # Bullet point
+            text = line[1:].strip()
+            bullet_style = ParagraphStyle('Bullet', parent=styles['BodyText'], bulletIndent=10, leftIndent=20, spaceAfter=4)
+            story.append(Paragraph(text, bullet_style))
+        else:
+            # Normal text
+            story.append(Paragraph(line, styles["BodyText"]))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 
 def show_trip_planner():
@@ -773,7 +791,7 @@ def show_trip_planner():
     current_location_key = f"{selected_country}-{selected_city}"
     if st.session_state.get("last_location_key") != current_location_key:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"I'm ready to plan your trip to {selected_city}, {selected_country}! Would you like to enjoy:\n\n- 🏛️ Sightseeing \n- 🛍️ Shopping \n- 🍽️ Great restaurants \n- ✨ Or something else?"}
+            {"role": "assistant", "content": f"I'm ready to plan your trip to {selected_city}, {selected_country}! What would you like to include in your trip?:\n\n- 🏛️ Sightseeing \n- 🛍️ Shopping \n- 🍽️ Cafes/Restaurants \n- 🌳 Nature \n- ✨ Or something else?"}
         ]
         st.session_state.map_data = {"places": [], "center": None}
         st.session_state.last_location_key = current_location_key
@@ -974,7 +992,13 @@ def show_trip_planner():
                                     print(f"DEBUG: AI suggested ID {pid} which was not found in current results.")            
 
                         # Append Total Cost
-                        total_md = f"### 💰 Total Estimated Day Cost: {currency_symbol}{total_day_cost}.00"
+                        adult_text = "adult" if adults == 1 else "adults"
+                        kid_text = "child" if kids == 1 else "children"
+                        pax_info = f"for {adults} {adult_text}"
+                        if kids > 0:
+                            pax_info += f" and {kids} {kid_text}"
+
+                        total_md = f"### 💰 Total Cost: {currency_symbol}{total_day_cost}.00 {pax_info}"
                         st.markdown(total_md)
                         itinerary_md.append(total_md)                                                            
 
@@ -990,7 +1014,7 @@ def show_trip_planner():
             if pdf_data:
                 st.markdown("""
                     <style>
-                        .pdf-download-container {
+                        div[data-testid="stDownloadButton"] {
                             margin-top: -30px !important;
                         }
                     </style>
@@ -999,11 +1023,12 @@ def show_trip_planner():
                 col_pdf, _ = st.columns([0.5, 0.5])
                 with col_pdf:
                     st.download_button(
-                        label="📄 Download Itinerary (PDF)",
+                        label="📄 Download PDF",
                         data=bytes(pdf_data),
                         file_name=f"itinerary_{selected_city}.pdf",
                         mime="application/pdf",
-                        key="pdf_download"
+                        key="pdf_download",
+                        use_container_width=True
                     )                        
 
         # JavaScript to snap the latest message to the top of the container
@@ -1049,27 +1074,8 @@ def show_trip_planner():
                 # Inject CSS to make the button more compact and match Pathfind colors
                 st.markdown("""
                     <style>
-                        .stLinkButton {
+                        div[data-testid="stLinkButton"] {
                             margin-top: -30px !important;
-                        }
-                        .stLinkButton > a {
-                            height: 32px !important;
-                            font-size: 13px !important;
-                            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%) !important;
-                            color: #333 !important;
-                            border: 2px solid #e0e5ed !important;
-                            border-radius: 10px !important;
-                            text-decoration: none !important;
-                            font-weight: 600 !important;
-                            display: inline-flex !important;
-                            align-items: center !important;
-                            transition: all 0.3s ease !important;
-                        }
-                        .stLinkButton > a:hover {
-                            background: linear-gradient(135deg, #1a237e 0%, #283593 100%) !important;
-                            color: white !important;
-                            border-color: #1a237e !important;
-                            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2) !important;
                         }
                     </style>
                 """, unsafe_allow_html=True)
@@ -1077,6 +1083,6 @@ def show_trip_planner():
                 # Align button to the left
                 col_btn, _ = st.columns([0.5, 0.5])
                 with col_btn:
-                    st.link_button("🌍 Open in Google Maps", gmaps_url)
+                    st.link_button("🌍 Open in Google Maps", gmaps_url, use_container_width=True)
         else:
             st.info("🎯 The map will appear here once a trip is planned.")

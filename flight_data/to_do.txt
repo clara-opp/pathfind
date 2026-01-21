@@ -1,10 +1,10 @@
 1. fix connection to google calendar so that it works in streamlit cloud (change reconnect in flight_search.py to https://pathfind.streamlit.app/ instead of localhost)
 
-2. Make the "Back to flight results button" in the Confirm Your Booking page smaller (i.e. not 100% width but more like 15%)
+2. Google calendar: add: send me mail to thomas.petrausch@students.uni-mannheim.de warning when someones clicks "add to google calendar" but fails to authorize because the google calendar api is currently in "testing" and therefore I must add the emails (gmail only) of the allowed user manually in the google cloud
 
-3. Google calendar: add: send me mail to thomas.petrausch@students.uni-mannheim.de warning when someones clicks "add to google calendar" but fails to authorize because the google calendar api is currently in "testing" and therefore I must add the emails (gmail only) of the allowed user manually in the google cloud
+3. check why estimated flight price info when not available does not appear anymore
 
-4. pdf Downloadable results for the activity planner 
+4. pdf Downloadable results for the activity planner. Make pdf button and google maps button the same size.
 
 5. Add links for the created google calendar events for the flight booking
 
