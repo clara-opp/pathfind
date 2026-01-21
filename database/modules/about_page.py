@@ -652,7 +652,7 @@ Export and reporting features (e.g., PDF summaries) can be enabled in the main d
                         "Unified SQLite database as single source of truth for most signals",
                         "Two-stage design: DB-backed estimates first, optional live APIs second",
                         "Avoids unnecessary API calls and keeps the dashboard responsive",
-                        "Leverages parallel execution for concurrent API calls and database lookups, significantly reducing latency during complex planning workflows",
+                        "Leverages parallel execution for concurrent API calls and database lookups, significantly reducing latency during complex planning workflows which brought down the result generation of the trip planner from around 6 minutes to around 2 minutes",
                     ]
                 ),
             )

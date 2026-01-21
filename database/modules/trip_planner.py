@@ -733,17 +733,35 @@ def show_trip_planner():
         else:
             selected_city = st.text_input("Type City Name", value="Berlin")
         
-        geolocator = Nominatim(user_agent="day_trip_planner")
+        # Geocoding: Try Nominatim first (Free), fallback to Google (Robust)
+        ll = None
+        search_query = f"{selected_city}, {selected_country.split(',')[0]}"
+
+        # 1. Try Nominatim
         try:
-            search_country = selected_country.split(',')[0]
-            location = geolocator.geocode(f"{selected_city}, {search_country}", timeout=10)
-        except Exception as e:
-            st.warning(f"Geocoding service unavailable: {e}")
-            location = None
-        
-        if location:
-            ll = f"{location.latitude},{location.longitude}"
-        else:
+            geolocator = Nominatim(user_agent="day_trip_planner")
+            location = geolocator.geocode(search_query, timeout=3)
+            if location:
+                ll = f"{location.latitude},{location.longitude}"
+        except Exception:
+            pass
+
+        # 2. Fallback to Google Maps API if Nominatim failed
+        if not ll:
+            try:
+                api_key = os.getenv("GOOGLE_MAPS_API_KEY", "")
+                if api_key:
+                    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json", 
+                                   params={"address": search_query, "key": api_key}, timeout=5)
+                    if r.status_code == 200:
+                        res = r.json().get("results", [])
+                        if res:
+                            loc = res[0]["geometry"]["location"]
+                            ll = f"{loc['lat']},{loc['lng']}"
+            except Exception:
+                pass
+
+        if not ll:
             st.error("Location not found. Using fallback.")
             ll = "49.7500,8.6500"
         
@@ -755,7 +773,7 @@ def show_trip_planner():
     current_location_key = f"{selected_country}-{selected_city}"
     if st.session_state.get("last_location_key") != current_location_key:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"I'm ready to plan your trip in {selected_city}, {selected_country}! Would you like to enjoy sightseeing, shopping, great restaurants or something else?"}
+            {"role": "assistant", "content": f"I'm ready to plan your trip to {selected_city}, {selected_country}! Would you like to enjoy:\n\n- 🏛️ Sightseeing \n- 🛍️ Shopping \n- 🍽️ Great restaurants \n- ✨ Or something else?"}
         ]
         st.session_state.map_data = {"places": [], "center": None}
         st.session_state.last_location_key = current_location_key

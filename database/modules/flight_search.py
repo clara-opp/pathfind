@@ -570,11 +570,7 @@ def show_confirmation_step(
         auth_url, _ = calendar_client.get_auth_url_and_state(flow, state=state_data)
 
         st.session_state.google_auth_active = True
-        # (you had this duplicated; keeping behavior identical)
-        auth_url, _ = calendar_client.get_auth_url_and_state(flow, state=state_data)
-        st.session_state.google_auth_active = True
-
-        st.markdown(f'<meta http-equiv="refresh" content="0; url={auth_url}">', unsafe_allow_html=True)
+        st.markdown(f'<script>window.top.location.href = "{auth_url}";</script>', unsafe_allow_html=True)
 
     if st.button("Start Over"):
         st.session_state.clear()
