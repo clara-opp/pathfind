@@ -1317,12 +1317,28 @@ def show_ban_list_step(data_manager):
 def show_results_step(data_manager):
     """Show results with Start Over button TOP RIGHT ONLY (no emoji, no back)"""
     
-    # TOP NAV: Start Over (RIGHT ONLY)
-    nav_spacer, nav_col2 = st.columns([0.85, 0.15])
-    
-    with nav_col2:
-        if st.button("Start Over", key="results_start_over", use_container_width=True, help="Reset and begin again"):
-            st.session_state.step=1
+    # Include back and restart
+    nav_col_left, nav_spacer, nav_col_right = st.columns([0.18, 0.64, 0.18])
+
+    with nav_col_left:
+        if st.button(
+            "Back to Ban List",
+            key="results_back_to_banlist",
+            use_container_width=True,
+            help="Adjust banned regions and recalculate matches"
+        ):
+            # No reset, just back to ban
+            st.session_state.step = 5.1 
+            st.rerun()
+
+    with nav_col_right:
+        if st.button(
+            "Start Over",
+            key="results_start_over",
+            use_container_width=True,
+            help="Reset and begin again"
+        ):
+            st.session_state.step = 1
             st.rerun()
     
     # Main content

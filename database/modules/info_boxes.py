@@ -8,6 +8,7 @@ import json
 from typing import Optional, Dict, Any
 import random
 import pandas as pd
+import re
 
 def get_first_travel_month(data_manager) -> Optional[int]:
     """Get first travel month from session state"""
@@ -473,8 +474,6 @@ def format_text(text: str) -> str:
     if not text:
         return text
     
-    import re
-    
     # Add space after period if missing (but not for abbreviations like "U.S.")
     text = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', text)
     
@@ -526,6 +525,11 @@ def format_text(text: str) -> str:
     
     return text
 
+
+def remove_double_star_segments(text: str) -> str:
+    if not text:
+        return False
+    return bool(re.search(r"(^|\n)\s*\*\*", str(text)))
 
 
 
@@ -689,7 +693,14 @@ def render_safety_box(country: Dict, data_manager) -> None:
                 # Skip COVID-19
                 if "COVID" in disease_name or "covid" in disease_name.lower():
                     continue
-                
+                 # Skip Yellow Fever komplett
+                if "yellow fever" in disease_name.lower():
+                    continue
+
+                # Skip alle verbuggten Einträge (enthält ** irgendwo)
+                if remove_double_star_segments(description):
+                    continue
+
                 is_important = any(
                     disease.lower() in disease_name.lower() 
                     for disease in important_diseases
