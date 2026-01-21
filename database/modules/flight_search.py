@@ -301,18 +301,31 @@ def render_flight_search(
                 img_placeholder.empty()
 
         try:
-            st.session_state[flight_results_key] = future.result()
+            res = future.result()
+            if res is None:
+                # The function likely caught an error and logged it to terminal
+                st.session_state[flight_results_key] = {"error_code": 500, "detail": "Internal Server Error (Check Terminal)"}
+            else:
+                st.session_state[flight_results_key] = res
         except Exception as e:
-            st.error(f"Flight search failed: {e}")
-            st.session_state[flight_results_key] = {"data": []}
+            st.session_state[flight_results_key] = {"error_code": 500, "detail": str(e)}
 
     # -----------------------------
     # Render results (same behavior)
     # -----------------------------
     flight_results = st.session_state.get(flight_results_key)
 
-    if not flight_results:
+    # Check for API Errors (500 etc) in the data or if results are empty/None
+    if flight_results is not None and ("error_code" in flight_results or "errors" in flight_results):
+        err_str = str(flight_results)
+        if "500" in err_str:
+            st.warning("✈️ The flight search service is temporarily unavailable. We apologize for the inconvenience. Please try again later.")
+        else:
+            st.error(f"Flight search failed: {flight_results.get('detail', 'Unknown Error')}")
         return
+        
+    if not flight_results:
+        return        
 
     if not flight_results.get("data"):
         orig_label = st.session_state.get(last_origin_key, "Origin")
@@ -521,7 +534,7 @@ def show_booking_step(
                                 )
                     else:
                         st.error("Booking failed. The flight may no longer be available or the connection timed out.")
-                        
+
 
 def show_confirmation_step(
     *,

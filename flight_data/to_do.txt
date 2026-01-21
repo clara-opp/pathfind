@@ -1,12 +1,12 @@
 1. fix chatbot in google cloud 
 
-1.0 fix connection to google calendar in streamlit cloud (change reconnect in flight_search.py to https://pathfind.streamlit.app/ instead of localhost)
+1.0 fix connection to google calendar so that it works in streamlit cloud (change reconnect in flight_search.py to https://pathfind.streamlit.app/ instead of localhost)
 
 1.1. Make the "Back to flight results button" in the Confirm Your Booking page smaller (i.e. not 100% width but more like 15%)
 
-2. include optimization in about + check workflow for flight search and trip planner
+2. check workflow for flight search in about
 
-6. Google calendar back to testing (add send me mail to thomas.petrausch@students.uni-mannheim.de text when someones access is denied by the app)
+6. Google calendar: add: send me mail to thomas.petrausch@students.uni-mannheim.de warning when someones clicks "add to google calendar" but fails to authorize because the google calendar api is currently in "testing" and therefore I must add the emails (gmail only) of the allowed user manually in the google cloud
 
 7. pdf Downloadable results for the activity planner 
 
