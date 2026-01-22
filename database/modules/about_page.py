@@ -181,7 +181,7 @@ Users can explore destinations by dynamically adjusting profiles, sliders, filte
 
 Pathfind is **interactive** because it works like a guided exploration or mini-game: users can select personas, answer swipe questions, tune preferences, and (optionally) interact with chatbot features for questions and planning.
 
-Pathfind is **live** because selected components rely on live API calls (e.g., flight search, routing, interactive planning, Visa Requirements), and because parts of the underlying database contain regularly updated snapshots of external sources (e.g., travel safety and entry information). The system is therefore a hybrid of curated database signals and live services.
+Pathfind is **live** because selected components rely on live API calls (e.g., flight search, routing, interactive planning, Visa Requirements), and because four main datasources of our database are automatically updated daily with the windows task scheduler (travel safety, health information, exchange rates and country indices). The system is therefore a hybrid of daily updated database signals and live services.
 
 Pathfind can also optionally check **visa requirements** (powered by Travel Buddy) by matching the user’s selected nationality against destination-specific rules.
 This feature integrates visa information directly into the destination overview and planning flow.
@@ -676,7 +676,7 @@ Export and reporting features (e.g., PDF summaries) can be enabled in the main d
                 _html_list(
                     [
                         "Live modules rely on API calls (flights, routing, chat interaction)",
-                        "Database stores curated data and regularly updated snapshots (e.g., advisories)",
+                        "Database stores curated data and is daily updated with selected sources (travel safety, health information, exchange rates and country indices)",
                         "Clear separation between fast offline-capable signals and live services",
                     ]
                 ),
