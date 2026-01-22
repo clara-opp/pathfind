@@ -971,14 +971,16 @@ def generate_country_pdf(country, data_manager):
     advisory_raw = country.get('tugo_advisory_state')
     advisory = str(advisory_raw) if advisory_raw is not None and pd.notna(advisory_raw) else 'N/A'
 
-    temp_val = country.get('climate_avg_temp_c', 'N/A')
-    if temp_val is not None and not (isinstance(temp_val, float) and pd.isna(temp_val)):
+    weather = st.session_state.get("weather_data") or {}
+    actualtemp = weather.get("temperature_daytime")
+
+    if actualtemp is not None and not (isinstance(actualtemp, float) and pd.isna(actualtemp)):
         try:
-            climate_str = f"{float(temp_val):.0f}°C"
+            climate_str = f"{float(actualtemp):.0f}°C"
         except Exception:
-            climate_str = 'N/A'
+            climate_str = "N/A"
     else:
-        climate_str = 'N/A'
+        climate_str = "N/A"
 
     healthcare_val = safe_format_number(country.get('numbeo_healthcare_index'))
     if healthcare_val == 'N/A':

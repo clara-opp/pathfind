@@ -181,7 +181,7 @@ Users can explore destinations by dynamically adjusting profiles, sliders, filte
 
 Pathfind is **interactive** because it works like a guided exploration or mini-game: users can select personas, answer swipe questions, tune preferences, and (optionally) interact with chatbot features for questions and planning.
 
-Pathfind is **live** because selected components rely on live API calls (e.g., flight search, routing, interactive planning, Visa Requirements), and because parts of the underlying database contain regularly updated snapshots of external sources (e.g., travel safety and entry information). The system is therefore a hybrid of curated database signals and live services.
+Pathfind is **live** because selected components rely on live API calls (e.g., flight search, routing, interactive planning, Visa Requirements), and because four main datasources of our database are automatically updated daily with the windows task scheduler (travel safety, health information, exchange rates and country indices). The system is therefore a hybrid of daily updated database signals and live services.
 
 Pathfind can also optionally check **visa requirements** (powered by Travel Buddy) by matching the user’s selected nationality against destination-specific rules.
 This feature integrates visa information directly into the destination overview and planning flow.
@@ -376,17 +376,17 @@ This provides a stable base for ranking while keeping the underlying entities mo
             "Data providers & credits",
             _html_list(
                 [
-                    "<b>Numbeo</b> — cost of living indices and item-level prices (scoring + cost estimator)",
-                    "<b>Tugo</b> — travel advisories (safety / health / entry), stored as database tables",
-                    "<b>Auswärtiges Amt</b> — official travel information (Germany)",
-                    "<b>UNESCO</b> — World Heritage Sites (counts and site metadata)",
-                    "<b>Berkeley Earth</b> — climate and weather data inputs",
+                    "<b>Numbeo API</b> — cost of living indices and item-level prices (scoring + cost estimator)",
+                    "<b>Tugo API</b> — travel advisories (safety / health / entry), stored as database tables",
+                    "<b>Auswärtiges Amt API</b> — official travel information (Germany)",
+                    "<b>UNESCO API</b> — World Heritage Sites (counts and site metadata)",
+                    "<b>Berkeley Earth API</b> — climate and weather data inputs",
                     "<b>Amadeus</b> — live flight search and itinerary/price signals<br>&nbsp;&nbsp;• Flight Offers Search API<br>&nbsp;&nbsp;• Flight Offers Price API<br>&nbsp;&nbsp;• Flight Create Orders API",
                     "<b>Google APIs</b> — calendar export (OAuth) + maps/routing support<br>&nbsp;&nbsp;• Google Calendar API<br>&nbsp;&nbsp;• Google Places API<br>&nbsp;&nbsp;• Google Routes API",
                     "<b>Serper API</b> — performs web search to search prices for trip planner",
                     "<b>OpenAI</b> — chatbot interaction and generated explanations",
-                    "<b>Roxy</b> — tarot card draw (optional extension)",
-                    "<b>Travel Buddy</b> — visa requirements matched to the user’s nationality",
+                    "<b>Roxy API</b> — tarot card draw (optional extension)",
+                    "<b>Travel Buddy API</b> — visa requirements matched to the user’s nationality",
                     "<b>OpenTravelData (Github)</b> — data for airports",
                     "<b>gettocenter.com</b> — scraped to obtain passenger volume of airports",
                     "<b>Unsplash API</b> — images for countries",
@@ -612,10 +612,11 @@ The core ranking is database-driven (fast and repeatable), while several modules
                 "Chatbot interaction (Q&A and planning support)",
                 _html_list(
                     [
+                        "Retrieves TUGO health and safety data from the DB; uses this data to answer the user request.",
                         "Natural-language interface for questions about destinations, safety context, budgets, and planning.",
                         "Can generate itinerary ideas under constraints (e.g., “2 days, low budget, nature + cafés”).",
-                        "Can explain rankings (“why is X high?”) by referencing sub-scores and weights.",
-                        "Human-in-the-loop: the user controls preferences; the assistant supports exploration and explanation.",
+                        "Human-in-the-loop: the user controls preferences; the assistant retrieves data and supports exploration.",
+                        
                     ]
                 ),
             )
@@ -675,7 +676,7 @@ Export and reporting features (e.g., PDF summaries) can be enabled in the main d
                 _html_list(
                     [
                         "Live modules rely on API calls (flights, routing, chat interaction)",
-                        "Database stores curated data and regularly updated snapshots (e.g., advisories)",
+                        "Database stores curated data and is daily updated with selected sources (travel safety, health information, exchange rates and country indices)",
                         "Clear separation between fast offline-capable signals and live services",
                     ]
                 ),
