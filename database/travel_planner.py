@@ -772,9 +772,57 @@ def init_session_state():
 # ============================================================
 # UI STEPS
 # ============================================================
+
+import streamlit as st
+
+import streamlit as st
+
+def render_intro_box():
+    st.markdown(
+        """
+        <style>
+        .pf-intro {
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin: 8px 0 18px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .pf-intro h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .pf-intro p {
+            margin: 0;
+            line-height: 1.45;
+            font-size: 0.95rem;
+            opacity: 0.92;
+        }
+        </style>
+
+        <div class="pf-intro">
+            <h3>Welcome to Pathfind — Let’s find your path.</h3>
+            <p>
+                Pathfind helps you discover destinations that match your travel style — based on safety, costs,
+                weather, culture, and more. Follow the buttons at the bottom and explore your top matches.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# Step 1:
+# render_intro_box()
+
+
 def show_basic_info_step(data_manager):
     """Step 1: Nationality, LGBTQ filter, and vacation dates"""
-    
+    render_intro_box()
+
     st.markdown("### What is your nationality?")
     
     # Direktes Query der Datenbank für alle Länder
@@ -865,7 +913,6 @@ def show_basic_info_step(data_manager):
                 st.session_state.currency_symbol = "€"
                 st.session_state.currency_rate = 1.0
     
-    st.markdown("---")
     
     # Vacation dates
     st.markdown("### When is your vacation?")
