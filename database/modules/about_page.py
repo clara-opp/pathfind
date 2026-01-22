@@ -603,7 +603,7 @@ The core ranking is database-driven (fast and repeatable), while several modules
                     "<div style='font-size:0.88rem; border-left: 3px solid #1f6e8a; padding-left: 12px;'>"
                     "<b>5. Visualization & Export</b><br>"
                     "• <i>Folium:</i> Maps the final itinerary with interactive markers and polylines.<br>"
-                    "• <i>WeasyPrint:</i> Converts the chatbot's conversational output into a structured PDF."
+                    "• <i>Reportlab:</i> Converts the chatbot's conversational output into a structured PDF."
                     "</div>"
                 )
             )

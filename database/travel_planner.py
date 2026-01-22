@@ -514,7 +514,7 @@ class DataManager:
                 query = "SELECT iata_code, city, name FROM airports WHERE iso2 = ? ORDER BY passenger_volume DESC"
                 df = pd.read_sql(query, conn, params=(iso2,))
             else:
-                query = "SELECT iata_code, city, name FROM airports ORDER BY passenger_volume DESC LIMIT 1000"
+                query = "SELECT iata_code, city, name FROM airports ORDER BY passenger_volume DESC LIMIT 3000"
                 df = pd.read_sql(query, conn)
         finally:
             conn.close()
@@ -850,23 +850,18 @@ def show_basic_info_step(data_manager):
             st.session_state['passport_iso3'] = passport_iso3
             st.session_state['nationality_name'] = selected_nationality_name
             
-            # Set airport and currency based on nationality
-            origin_country_map = {"Germany": ("FRA", "€"), "United States": ("ATL", "$")}
-            
-            if selected_nationality_name in origin_country_map:
-                iata_code, currency = origin_country_map[selected_nationality_name]
-                st.session_state["origin_iata"] = iata_code
-                
-                # Set currency based on nationality
-                if currency == "$":
-                    st.session_state.currency_symbol = "$"
-                    st.session_state.currency_rate = data_manager.get_exchange_rate("USD")
-                else:
-                    st.session_state.currency_symbol = "€"
-                    st.session_state.currency_rate = 1.0
+            # 1. Determine Origin Airport (Busiest in selected country, fallback to FRA)
+            country_airports = data_manager.get_airports(passport_iso2)
+            if not country_airports.empty:
+                # get_airports returns sorted by passenger_volume DESC, so index 0 is busiest
+                st.session_state["origin_iata"] = country_airports.iloc[0]["iata_code"]
             else:
-                # Default to Germany/EUR for other countries
-                st.session_state["origin_iata"] = "FRA"
+                st.session_state["origin_iata"] = "FRA"                
+            # 2. Set Currency (USD for US, EUR for everyone else as default)
+            if selected_nationality_name == "United States":
+                st.session_state.currency_symbol = "$"
+                st.session_state.currency_rate = data_manager.get_exchange_rate("USD")
+            else:
                 st.session_state.currency_symbol = "€"
                 st.session_state.currency_rate = 1.0
     
@@ -1476,10 +1471,14 @@ def show_results_step(data_manager):
                     flight_price = row.get("flight_price")
                     symbol = st.session_state.get("currency_symbol", "€")
                     rate = st.session_state.get("currency_rate", 1.0)
-                    if flight_price and pd.notna(flight_price):
+                    nationality = st.session_state.get("nationality_name", "")
+
+                    if flight_price and pd.notna(flight_price) and nationality in ["Germany", "United States"]:
                         converted_price = float(flight_price) * rate
                         tooltip = f"Round trip for 1 adult from {row.get('flight_origin', 'your origin')} to {row.get('flight_dest', 'destination')}"
                         st.markdown(f"✈️ **Est. Flight:** {symbol}{converted_price:.0f}", help=tooltip)
+                    else:
+                        st.markdown(f"✈️ **Est. Flight:** -", help="Flight price data not available")                        
 
                 with c3:
                     if st.button("View Details", key=f"details_{row['iso2']}_{i}"):

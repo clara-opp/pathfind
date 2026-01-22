@@ -2,9 +2,7 @@
 
 2. Google calendar: add: send me mail to thomas.petrausch@students.uni-mannheim.de warning when someones clicks "add to google calendar" but fails to authorize because the google calendar api is currently in "testing" and therefore I must add the emails (gmail only) of the allowed user manually in the google cloud
 
-3. check why estimated flight price info when not available does not appear anymore
-
-4. pdf Downloadable results for the activity planner. Make pdf button and google maps button the same size.
+4. layover time not displayed for flights
 
 5. Add links for the created google calendar events for the flight booking
 

@@ -758,7 +758,7 @@ def show_trip_planner():
         # 1. Try Nominatim
         try:
             geolocator = Nominatim(user_agent="day_trip_planner")
-            location = geolocator.geocode(search_query, timeout=3)
+            location = geolocator.geocode(search_query, timeout=5)
             if location:
                 ll = f"{location.latitude},{location.longitude}"
         except Exception:
@@ -791,7 +791,7 @@ def show_trip_planner():
     current_location_key = f"{selected_country}-{selected_city}"
     if st.session_state.get("last_location_key") != current_location_key:
         st.session_state.messages = [
-            {"role": "assistant", "content": f"I'm ready to plan your trip to {selected_city}, {selected_country}! What would you like to include in your trip?:\n\n- 🏛️ Sightseeing \n- 🛍️ Shopping \n- 🍽️ Cafes/Restaurants \n- 🌳 Nature \n- ✨ Or something else?"}
+            {"role": "assistant", "content": f"I'm ready to plan your day in {selected_city}, {selected_country}! What would you like to include in your trip?:\n\n- 🏛️ Sightseeing \n- 🛍️ Shopping \n- 🍽️ Cafes/Restaurants \n- 🌳 Nature \n- ✨ Or something else?"}
         ]
         st.session_state.map_data = {"places": [], "center": None}
         st.session_state.last_location_key = current_location_key
@@ -1015,8 +1015,15 @@ def show_trip_planner():
                 st.markdown("""
                     <style>
                         div[data-testid="stDownloadButton"] {
-                            margin-top: -30px !important;
+                            margin-top: -25px !important;
                         }
+                        div[data-testid="stDownloadButton"] > button {
+                            min-height: 42px !important;
+                            height: 42px !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                        }                            
                     </style>
                 """, unsafe_allow_html=True)
                 
@@ -1077,6 +1084,27 @@ def show_trip_planner():
                         div[data-testid="stLinkButton"] {
                             margin-top: -30px !important;
                         }
+                        /* Apply Global App Button Styles to the Link */
+                        div[data-testid="stLinkButton"] > a {
+                            background-color: rgba(240, 248, 255, 1) !important;
+                            color: rgba(20, 40, 80, 1) !important;
+                            border: 1px solid rgba(100, 180, 255, 0.3) !important;
+                            border-radius: 8px !important;
+                            transition: all 0.3s ease !important;
+                            min-height: 42px !important;
+                            height: 42px !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            text-decoration: none !important;
+                        }
+                        div[data-testid="stLinkButton"] > a:hover {
+                            background-color: rgba(100, 180, 255, 0.15) !important;
+                            color: rgba(20, 40, 80, 1) !important;
+                            border-color: rgba(100, 180, 255, 0.6) !important;
+                            box-shadow: 0 4px 12px rgba(100, 180, 255, 0.2) !important;
+                            transform: translateY(-2px) !important;
+                        }                            
                     </style>
                 """, unsafe_allow_html=True)
 
