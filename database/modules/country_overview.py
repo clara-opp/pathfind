@@ -270,7 +270,7 @@ def render_overview_tab(country, data_manager):
     
     # Just show the tip without the full Quick Reference section
     st.markdown("### 💡 Tip")
-    st.success("Use our Budget Planner, Flight Planner and AI Assistant to plan your trip!")
+    st.success("Use our Budget Planner, Flight Planner, Trip Planner and AI Assistant to plan your trip!")
 
 
 def render_match_reasons(country):
