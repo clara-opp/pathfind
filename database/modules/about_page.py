@@ -612,10 +612,11 @@ The core ranking is database-driven (fast and repeatable), while several modules
                 "Chatbot interaction (Q&A and planning support)",
                 _html_list(
                     [
+                        "Retrieves TUGO health and safety data from the DB; uses this data to answer the user request.",
                         "Natural-language interface for questions about destinations, safety context, budgets, and planning.",
                         "Can generate itinerary ideas under constraints (e.g., “2 days, low budget, nature + cafés”).",
-                        "Can explain rankings (“why is X high?”) by referencing sub-scores and weights.",
-                        "Human-in-the-loop: the user controls preferences; the assistant supports exploration and explanation.",
+                        "Human-in-the-loop: the user controls preferences; the assistant retrieves data and supports exploration.",
+                        
                     ]
                 ),
             )
