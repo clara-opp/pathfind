@@ -382,7 +382,7 @@ This provides a stable base for ranking while keeping the underlying entities mo
                     "<b>UNESCO API</b> — World Heritage Sites (counts and site metadata)",
                     "<b>Berkeley Earth API</b> — climate and weather data inputs",
                     "<b>Amadeus</b> — live flight search and itinerary/price signals<br>&nbsp;&nbsp;• Flight Offers Search API<br>&nbsp;&nbsp;• Flight Offers Price API<br>&nbsp;&nbsp;• Flight Create Orders API",
-                    "<b>Google APIs</b> — calendar export (OAuth) + maps/routing support<br>&nbsp;&nbsp;• Google Calendar API<br>&nbsp;&nbsp;• Google Places API<br>&nbsp;&nbsp;• Google Routes API",
+                    "<b>Google APIs</b> — calendar export (OAuth) + maps/routing support<br>&nbsp;&nbsp;• Google Geolocation API<br>&nbsp;&nbsp;• Google Places API<br>&nbsp;&nbsp;• Google Routes API",
                     "<b>Serper API</b> — performs web search to search prices for trip planner",
                     "<b>OpenAI</b> — chatbot interaction and generated explanations",
                     "<b>Roxy API</b> — tarot card draw (optional extension)",
@@ -569,7 +569,7 @@ The core ranking is database-driven (fast and repeatable), while several modules
                 _html_list(
                     [
                         "Destinations Page: estimated flight costs from the database <br>&nbsp;&nbsp;• Note: because of rate limits estimated flight costs are only available when Germany or US are selected as nationality)",
-                        "Flight Search Module: live flight search via Amadeus when the user proceeds (dates, passengers, origin/destination airports).<br>&nbsp;&nbsp;• Provides the complete experience: <div style='margin-top:8px; display:flex; align-items:center; gap:6px; font-size:0.85rem;'><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Search Flight</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Book Flight</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Add flight to Calendar</span></div>"
+                        "Flight Search Module: live flight search via Amadeus when the user proceeds (dates, passengers, origin/destination airports).<br>&nbsp;&nbsp;• Provides the complete experience: <div style='margin-top:8px; display:flex; align-items:center; gap:6px; font-size:0.85rem;'><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Search Flight</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Confirm Price</span><span style='opacity:0.4;'>→</span><span style='background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);'>Book Flight</span></div>"
                         ""
                     ]
                 ),

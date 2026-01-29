@@ -556,22 +556,6 @@ def show_confirmation_step(
     else:
         st.error("No booking record found.")
 
-    if st.session_state.get("google_creds"):
-        st.success("✅ Flight added to your Google Calendar!")
-
-    if not st.session_state.get("google_creds") and st.button("Add to Google Calendar 📅"):
-        flow = calendar_client.get_google_flow(google_client_id, google_client_secret, redirect_uri)
-
-        state_payload = {
-            "offer": st.session_state.priced_offer,
-            "booking": st.session_state.confirmed_booking,
-        }
-        state_data = base64.urlsafe_b64encode(json.dumps(state_payload).encode()).decode()
-        auth_url, _ = calendar_client.get_auth_url_and_state(flow, state=state_data)
-
-        st.session_state.google_auth_active = True
-        st.markdown(f'<script>window.top.location.href = "{auth_url}";</script>', unsafe_allow_html=True)
-
     if st.button("Start Over"):
         st.session_state.clear()
         st.rerun()
